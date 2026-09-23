@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>崇明國小三年九班 - 班級管理與師生互動系統</title>
+  <!-- Google Fonts & Font Awesome 圖示庫 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-light: #eff6ff;
+      --secondary: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --gray-bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #1e293b;
+      --text-sub: #64748b;
+      --border: #e2e8f0;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+      --radius: 12px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Noto Sans TC', sans-serif; }
+    body { background-color: var(--gray-bg); color: var(--text-main); padding-bottom: 80px; }
+
+    /* 頂部導覽列 */
+    header {
+      background-color: var(--card-bg);
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 50;
+      padding: 12px 20px;
+      display: flex; justify-content: space-between; align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+    }
+    .header-title h1 { font-size: 1.15rem; font-weight: 700; color: #1e40af; }
+    .header-title p { font-size: 0.8rem; color: var(--text-sub); }
+    .cloud-status {
+      font-size: 0.75rem; padding: 4px 10px; border-radius: 20px;
+      background: #e0f2fe; color: #0284c7; display: flex; align-items: center; gap: 5px; cursor: pointer;
+    }
+    .cloud-status.active { background: #dcfce7; color: #15803d; }
+
+    /* 導航切換列 */
+    .tab-bar {
+      display: flex; gap: 8px; background: #fff; padding: 8px 16px;
+      border-bottom: 1px solid var(--border); overflow-x: auto;
+      white-space: nowrap; scrollbar-width: none;
+    }
+    .tab-bar::-webkit-scrollbar { display: none; }
+    .tab-btn {
+      padding: 8px 14px; border: none; border-radius: 8px; background: transparent;
+      color: var(--text-sub); font-size: 0.9rem; font-weight: 500; cursor: pointer;
+      display: flex; align-items: center; gap: 6px; transition: all 0.2s ease;
+    }
+    .tab-btn.active {
+      background: var(--primary-light); color: var(--primary); font-weight: 700;
+    }
+
+    /* 內容容器 */
+    .container { max-width: 960px; margin: 20px auto; padding: 0 16px; }
+    .page-section { display: none; }
+    .page-section.active { display: block; animation: fadeIn 0.25s ease-in-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* 卡片容器 */
+    .card {
+      background: var(--card-bg); border-radius: var(--radius);
+      box-shadow: var(--shadow); padding: 18px; margin-bottom: 20px;
+      border: 1px solid var(--border);
+    }
+    .card-title {
+      font-size: 1.05rem; font-weight: 700; margin-bottom: 14px;
+      display: flex; align-items: center; gap: 8px; color: #334155;
+    }
+
+    /* 操作控制列 */
+    .action-bar {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 14px; padding: 10px 14px; background: #f1f5f9; border-radius: 8px;
+      flex-wrap: wrap; gap: 8px;
+    }
+    .action-group {
+      display: flex; align-items: center; gap: 8px;
+    }
+    .btn-upload {
+      background: #059669; color: #fff; border: none; border-radius: 6px;
+      padding: 7px 14px; font-size: 0.85rem; font-weight: 700; cursor: pointer;
+      display: flex; align-items: center; gap: 6px; transition: background 0.2s;
+    }
+    .btn-upload:hover { background: #047857; }
+
+    .btn-reset {
+      background: #fff; color: #dc2626; border: 1.5px solid #fca5a5; border-radius: 6px;
+      padding: 6px 12px; font-size: 0.85rem; font-weight: 600; cursor: pointer;
+      display: flex; align-items: center; gap: 5px; transition: all 0.2s;
+    }
+    .btn-reset:hover { background: #fee2e2; border-color: #ef4444; }
+
+    /* 學生按鈕網格 */
+    .student-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 10px;
+    }
+    .student-btn {
+      background: #fff; border: 1.5px solid var(--border); border-radius: 10px;
+      padding: 12px 10px; text-align: center; cursor: pointer;
+      transition: all 0.2s ease; user-select: none;
+      display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 4px;
+      touch-action: manipulation;
+    }
+    .student-btn:hover { border-color: var(--primary); transform: translateY(-1px); }
+    .student-btn .seat { font-size: 0.75rem; color: var(--text-sub); font-weight: 600; }
+    .student-btn .name { font-size: 1rem; font-weight: 700; transition: color 0.2s; }
+    .student-btn .status { font-size: 0.75rem; margin-top: 4px; border-radius: 4px; padding: 2px 8px; }
+
+    /* 點名狀態色彩 */
+    .student-btn.att-present { background-color: #ecfdf5; border-color: #34d399; color: #065f46; }
+    .student-btn.att-absent { background-color: #fef2f2; border-color: #f87171; color: #991b1b; }
+    .student-btn.att-sick { background-color: #fffbeb; border-color: #fbbf24; color: #92400e; }
+    .student-btn.att-late { background-color: #f5f3ff; border-color: #a78bfa; color: #5b21b6; }
+
+    /* 常規亮燈效果（打掃、潔牙、漱口水） */
+    .indicator-lamp {
+      width: 12px; height: 12px; border-radius: 50%;
+      background: #cbd5e1; margin-bottom: 2px;
+      transition: all 0.2s;
+    }
+    .student-btn.is-lit {
+      background: #f0fdf4 !important; border-color: #22c55e !important;
+      box-shadow: 0 0 10px rgba(34, 197, 94, 0.35);
+    }
+    .student-btn.is-lit .indicator-lamp {
+      background: #22c55e; box-shadow: 0 0 8px #22c55e;
+    }
+
+    /* 師生互動：作業繳交 5 色亮燈 */
+    .student-btn.hw-green { background-color: #f0fdf4 !important; border-color: #16a34a !important; box-shadow: 0 0 10px rgba(22, 163, 74, 0.35); }
+    .student-btn.hw-green .name { color: #16a34a; }
+    .student-btn.hw-green .status { background: #dcfce7; color: #15803d; }
+    .student-btn.hw-green .indicator-lamp { background: #16a34a; box-shadow: 0 0 8px #16a34a; }
+
+    .student-btn.hw-purple { background-color: #faf5ff !important; border-color: #9333ea !important; box-shadow: 0 0 10px rgba(147, 51, 234, 0.35); }
+    .student-btn.hw-purple .name { color: #9333ea; }
+    .student-btn.hw-purple .status { background: #f3e8ff; color: #7e22ce; }
+    .student-btn.hw-purple .indicator-lamp { background: #9333ea; box-shadow: 0 0 8px #9333ea; }
+
+    .student-btn.hw-yellow { background-color: #fefce8 !important; border-color: #eab308 !important; box-shadow: 0 0 10px rgba(234, 179, 8, 0.35); }
+    .student-btn.hw-yellow .name { color: #ca8a04; }
+    .student-btn.hw-yellow .status { background: #fef08a; color: #854d0e; }
+    .student-btn.hw-yellow .indicator-lamp { background: #eab308; box-shadow: 0 0 8px #eab308; }
+
+    .student-btn.hw-blue { background-color: #eff6ff !important; border-color: #2563eb !important; box-shadow: 0 0 10px rgba(37, 99, 235, 0.35); }
+    .student-btn.hw-blue .name { color: #2563eb; }
+    .student-btn.hw-blue .status { background: #dbeafe; color: #1d4ed8; }
+    .student-btn.hw-blue .indicator-lamp { background: #2563eb; box-shadow: 0 0 8px #2563eb; }
+
+    .student-btn.hw-red { background-color: #fef2f2 !important; border-color: #dc2626 !important; box-shadow: 0 0 10px rgba(220, 38, 38, 0.35); }
+    .student-btn.hw-red .name { color: #dc2626; }
+    .student-btn.hw-red .status { background: #fee2e2; color: #b91c1c; }
+    .student-btn.hw-red .indicator-lamp { background: #dc2626; box-shadow: 0 0 8px #dc2626; }
+
+    /* 表單元件 */
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; }
+    .form-control {
+      width: 100%; padding: 10px 12px; border: 1.5px solid var(--border);
+      border-radius: 8px; font-size: 0.95rem; outline: none;
+    }
+    .form-control:focus { border-color: var(--primary); }
+    .btn-submit {
+      width: 100%; padding: 12px; background: var(--primary); color: #fff;
+      font-size: 0.95rem; font-weight: 700; border: none; border-radius: 8px;
+      cursor: pointer; transition: background 0.2s;
+    }
+    .btn-submit:hover { background: #1d4ed8; }
+
+    .album-category-list {
+      display: flex; gap: 8px; margin-bottom: 16px; overflow-x: auto; padding-bottom: 4px;
+    }
+    .album-chip {
+      padding: 6px 14px; background: #e2e8f0; border-radius: 20px;
+      font-size: 0.85rem; cursor: pointer; border: none; white-space: nowrap;
+    }
+    .album-chip.active { background: var(--primary); color: #fff; }
+    .gallery-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px;
+    }
+    .gallery-item {
+      border-radius: 8px; overflow: hidden; border: 1px solid var(--border);
+      background: #fff; display: flex; flex-direction: column;
+    }
+    .gallery-item .desc { padding: 8px; font-size: 0.8rem; }
+
+    /* 公告列表樣式 */
+    .bulletin-list { list-style: none; }
+    .bulletin-item {
+      padding: 14px 12px; border-bottom: 1px solid var(--border); cursor: pointer;
+      display: flex; justify-content: space-between; align-items: center;
+      transition: background 0.15s;
+    }
+    .bulletin-item:hover { background: #f8fafc; }
+    .bulletin-badge {
+      font-size: 0.72rem; padding: 3px 8px; border-radius: 4px;
+      background: #fee2e2; color: #b91c1c; margin-right: 8px; font-weight: 600;
+    }
+
+    .manage-bulletin-item {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px;
+      margin-bottom: 8px; background: #fff;
+    }
+    .btn-del {
+      background: #fee2e2; color: #dc2626; border: none; border-radius: 6px;
+      padding: 6px 10px; font-size: 0.8rem; cursor: pointer; font-weight: 600;
+    }
+    .btn-del:hover { background: #fecaca; }
+
+    /* 彈跳視窗（Modal） */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+      display: none; justify-content: center; align-items: center; z-index: 100;
+      padding: 16px;
+    }
+    .modal-overlay.active { display: flex; animation: fadeIn 0.15s ease-in; }
+    .modal-box {
+      background: #fff; border-radius: var(--radius); width: 100%; max-width: 440px;
+      padding: 20px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+    }
+    .modal-box h3 { margin-bottom: 12px; font-size: 1.1rem; }
+    .modal-options { display: flex; flex-direction: column; gap: 8px; }
+    .opt-btn {
+      padding: 12px; border-radius: 8px; border: 1.5px solid var(--border);
+      background: #fff; text-align: left; font-size: 0.95rem; cursor: pointer;
+      display: flex; justify-content: space-between; align-items: center;
+      font-weight: 500;
+    }
+    .opt-btn:hover { background: #f8fafc; border-color: var(--primary); }
+
+    /* 手機底部懸浮導航列 */
+    @media (max-width: 768px) {
+      .tab-bar {
+        position: fixed; bottom: 0; left: 0; right: 0;
+        background: #fff; z-index: 50; border-top: 1px solid var(--border);
+        border-bottom: none; justify-content: space-around; padding: 6px 0;
+      }
+      .tab-btn { flex-direction: column; font-size: 0.68rem; gap: 3px; padding: 4px 6px; }
+      .tab-btn i { font-size: 1.15rem; }
+      body { padding-bottom: 70px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 頁頭 -->
+  <header>
+    <div class="header-title">
+      <h1>崇明國小 三年九班</h1>
+      <p>班級管理與智慧互動系統</p>
+    </div>
+    <div id="cloudStatus" class="cloud-status" onclick="openSettingsModal()">
+      <i class="fa-solid fa-cloud"></i>
+      <span id="cloudStatusText">雲端未連線 (點我設定)</span>
+    </div>
+  </header>
+
+  <!-- 導航切換列 -->
+  <nav class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('tab-attendance')">
+      <i class="fa-solid fa-user-check"></i><span>1.到校點名</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('tab-records')">
+      <i class="fa-solid fa-notes-medical"></i><span>3.傷病/親師</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('tab-album')">
+      <i class="fa-solid fa-images"></i><span>4.學生相簿</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('tab-interactive')">
+      <i class="fa-solid fa-chalkboard-user"></i><span>5.師生互動</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('tab-bulletin')">
+      <i class="fa-solid fa-bullhorn"></i><span>7.校園公告</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('tab-settings')">
+      <i class="fa-solid fa-gear"></i><span>設定後台</span>
+    </button>
+  </nav>
+
+  <main class="container">
+
+    <!-- 第一部分：學生到校點名 -->
+    <section id="tab-attendance" class="page-section active">
+      <div class="card">
+        <div class="card-title"><i class="fa-solid fa-clock text-primary"></i> 每日到校點名</div>
+        
+        <div class="action-bar">
+          <div style="font-size:0.85rem; font-weight:600;" id="currentDateDisplay"></div>
+          <div class="action-group">
+            <button class="btn-reset" onclick="resetAttendance()">
+              <i class="fa-solid fa-rotate-left"></i> 一鍵重整全到
+            </button>
+            <button class="btn-upload" onclick="uploadAttendanceBatch()">
+              <i class="fa-solid fa-cloud-arrow-up"></i> 彙整上傳點名表
+            </button>
+          </div>
+        </div>
+
+        <p style="font-size:0.8rem; color:var(--text-sub); margin-bottom:12px;">點選學生姓名可彈出挑選假別，全部登記完成後點擊綠色「彙整上傳點名表」。</p>
+        <div class="student-grid" id="attendanceGrid"></div>
+      </div>
+    </section>
+
+    <!-- 第三部分：傷病通知單和親師溝通紀錄 -->
+    <section id="tab-records" class="page-section">
+      <div class="card">
+        <div class="card-title"><i class="fa-solid fa-file-waveform"></i> 新增學生傷病 / 親師溝通紀錄</div>
+        <form id="recordForm" onsubmit="handleRecordSubmit(event)">
+          <div class="form-group">
+            <label>選擇紀錄類型</label>
+            <select id="recordType" class="form-control">
+              <option value="傷病通知">🏥 學生健康/傷病通知單</option>
+              <option value="親師溝通">📞 親師聯絡/溝通紀錄</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>學生座號與姓名</label>
+            <select id="recordStudentSelect" class="form-control"></select>
+          </div>
+          <div class="form-group">
+            <label>事由或主要情況說明</label>
+            <textarea id="recordDetail" class="form-control" rows="3" placeholder="例如：體育課跌倒擦傷膝蓋，已至健康中心擦藥；或是與家長電話討論作業複習進度。" required></textarea>
+          </div>
+          <div class="form-group">
+            <label>處理方式 / 聯絡反饋</label>
+            <input type="text" id="recordFollowup" class="form-control" placeholder="例如：已通知家長留意、給予衛教關懷">
+          </div>
+          <button type="submit" class="btn-submit"><i class="fa-solid fa-cloud-arrow-up"></i> 儲存並上傳至 Google 試算表</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- 第四部分：學生相簿 -->
+    <section id="tab-album" class="page-section">
+      <div class="card">
+        <div class="card-title"><i class="fa-solid fa-photo-film"></i> 班級活動相簿 (分項瀏覽)</div>
+        <div class="album-category-list">
+          <button class="album-chip active" onclick="filterAlbum('all')">全部活動</button>
+          <button class="album-chip" onclick="filterAlbum('pe')">體育運動會</button>
+          <button class="album-chip" onclick="filterAlbum('course')">特色課程</button>
+          <button class="album-chip" onclick="filterAlbum('daily')">日常學習</button>
+          <button class="album-chip" onclick="filterAlbum('cleaning')">掃除打掃</button>
+        </div>
+        <div class="gallery-grid" id="albumGallery">
+          <div class="gallery-item" data-cat="pe">
+            <div style="height:120px; background:#e0f2fe; display:flex; align-items:center; justify-content:center; color:#0369a1;"><i class="fa-solid fa-person-running fa-2x"></i></div>
+            <div class="desc"><strong>大隊接力練習</strong><br><span style="color:#64748b; font-size:0.75rem;">體育運動會</span></div>
+          </div>
+          <div class="gallery-item" data-cat="course">
+            <div style="height:120px; background:#fef3c7; display:flex; align-items:center; justify-content:center; color:#b45309;"><i class="fa-solid fa-shapes fa-2x"></i></div>
+            <div class="desc"><strong>數學分數實作</strong><br><span style="color:#64748b; font-size:0.75rem;">特色課程</span></div>
+          </div>
+          <div class="gallery-item" data-cat="daily">
+            <div style="height:120px; background:#f3e8ff; display:flex; align-items:center; justify-content:center; color:#7e22ce;"><i class="fa-solid fa-book-reader fa-2x"></i></div>
+            <div class="desc"><strong>晨光早讀時光</strong><br><span style="color:#64748b; font-size:0.75rem;">日常學習</span></div>
+          </div>
+          <div class="gallery-item" data-cat="cleaning">
+            <div style="height:120px; background:#dcfce7; display:flex; align-items:center; justify-content:center; color:#15803d;"><i class="fa-solid fa-broom fa-2x"></i></div>
+            <div class="desc"><strong>外掃區清掃落葉</strong><br><span style="color:#64748b; font-size:0.75rem;">掃除打掃</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 第五部分：師生互動版 -->
+    <section id="tab-interactive" class="page-section">
+      <div style="display:flex; gap:8px; margin-bottom:12px; overflow-x:auto;">
+        <button class="album-chip active" id="btn-sub-hw" onclick="switchInteractiveMode('hw')">1. 作業繳交</button>
+        <button class="album-chip" id="btn-sub-clean" onclick="switchInteractiveMode('clean')">2. 打掃工作</button>
+        <button class="album-chip" id="btn-sub-teeth" onclick="switchInteractiveMode('teeth')">3. 潔牙高手</button>
+        <button class="album-chip" id="btn-sub-mouthwash" onclick="switchInteractiveMode('mouthwash')">4. 漱口水</button>
+      </div>
+
+      <div class="card">
+        <div class="card-title" id="interactiveTitle">
+          <i class="fa-solid fa-hand-pointer"></i> 師生互動看板
+        </div>
+
+        <div class="action-bar">
+          <span style="font-size:0.85rem; font-weight:600;" id="currentInteractiveTitleDisplay">目前項目：作業繳交</span>
+          <div class="action-group">
+            <button class="btn-reset" onclick="resetCurrentInteractive()">
+              <i class="fa-solid fa-arrow-rotate-left"></i> 重整本項登記
+            </button>
+            <button class="btn-upload" onclick="uploadInteractiveBatch()">
+              <i class="fa-solid fa-cloud-arrow-up"></i> 彙整上傳本項資料
+            </button>
+          </div>
+        </div>
+
+        <p style="font-size:0.8rem; color:var(--text-sub); margin-bottom:14px;" id="interactiveSubDesc">
+          點擊姓名挑選 5 色狀態；若按錯可「連續點兩下名字」直接恢復未繳交！
+        </p>
+        <div class="student-grid" id="interactiveGrid"></div>
+      </div>
+    </section>
+
+    <!-- 第七部分：校園公告專區 -->
+    <section id="tab-bulletin" class="page-section">
+      <div class="card">
+        <div class="card-title" style="justify-content:space-between;">
+          <span><i class="fa-solid fa-bullhorn text-danger"></i> 校園重要公告專區</span>
+          <button onclick="switchTab('tab-settings')" style="font-size:0.8rem; padding:4px 10px; background:#f1f5f9; border:1px solid var(--border); border-radius:6px; cursor:pointer; color:var(--primary);">
+            <i class="fa-solid fa-pen-to-square"></i> 編輯/新增公告
+          </button>
+        </div>
+        <p style="font-size:0.85rem; color:var(--text-sub); margin-bottom:12px;">直接點擊下方公告標題，即可查看詳細說明。</p>
+        <ul class="bulletin-list" id="bulletinListContainer">
+        </ul>
+      </div>
+    </section>
+
+    <!-- 設定頁面 -->
+    <section id="tab-settings" class="page-section">
+      <!-- 公告管理專區 -->
+      <div class="card">
+        <div class="card-title"><i class="fa-solid fa-bullhorn text-danger"></i> 校園公告管理（新增與刪除）</div>
+        
+        <form onsubmit="handleCreateAnnouncement(event)" style="background:#f8fafc; padding:14px; border-radius:8px; border:1px solid var(--border); margin-bottom:16px;">
+          <div style="font-weight:700; font-size:0.9rem; margin-bottom:10px; color:#1e3a8a;">＋ 發佈新公告</div>
+          <div class="form-group">
+            <label>處室或類別標籤</label>
+            <input type="text" id="newAnnoDept" class="form-control" placeholder="例如：學務處、教務處、健康中心、三年九班導師" required>
+          </div>
+          <div class="form-group">
+            <label>公告重要標題</label>
+            <input type="text" id="newAnnoTitle" class="form-control" placeholder="輸入公告標題" required>
+          </div>
+          <div class="form-group">
+            <label>公告詳細內容</label>
+            <textarea id="newAnnoContent" class="form-control" rows="3" placeholder="輸入詳細公告文字內容與宣導事項..." required></textarea>
+          </div>
+          <button type="submit" class="btn-submit" style="background:#2563eb;">
+            <i class="fa-solid fa-plus"></i> 發佈公告到主頁
+          </button>
+        </form>
+
+        <div style="font-weight:700; font-size:0.9rem; margin-bottom:10px;">目前已發佈公告列表：</div>
+        <div id="manageBulletinList"></div>
+      </div>
+
+      <!-- 學生名單管理 -->
+      <div class="card">
+        <div class="card-title"><i class="fa-solid fa-users-gear"></i> 學生名單管理設定</div>
+        <p style="font-size:0.85rem; color:var(--text-sub); margin-bottom:12px;">每行一個名字，按照座號依序由 1 號開始編排：</p>
+        <textarea id="studentRosterInput" class="form-control" rows="10" placeholder="王小明&#10;李小華..."></textarea>
+        <button class="btn-submit" style="margin-top:12px;" onclick="saveStudentRoster()"><i class="fa-solid fa-floppy-disk"></i> 儲存名單設定</button>
+      </div>
+
+      <!-- Google 試算表連線設定 -->
+      <div class="card">
+        <div class="card-title"><i class="fa-solid fa-link"></i> Google 試算表 Webhook 整合設定</div>
+        <p style="font-size:0.85rem; color:var(--text-sub); margin-bottom:12px;">填入 Google Apps Script 部署之 Web App 網址：</p>
+        <input type="url" id="sheetsApiUrlInput" class="form-control" placeholder="https://script.google.com/macros/s/AKfycb.../exec">
+        <button class="btn-submit" style="margin-top:12px; background:#059669;" onclick="saveSheetsUrl()"><i class="fa-solid fa-check"></i> 儲存試算表連結</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 點名假別挑選彈跳視窗 -->
+  <div id="attendanceModal" class="modal-overlay">
+    <div class="modal-box">
+      <h3 id="attModalTitle">點選到校狀態</h3>
+      <div class="modal-options">
+        <button class="opt-btn" onclick="applyAttendanceStatus('出席')">
+          <span style="color:#065f46;"><i class="fa-solid fa-circle-check" style="color:#10b981;"></i> 出席 (正常到校)</span>
+        </button>
+        <button class="opt-btn" onclick="applyAttendanceStatus('病假')">
+          <span style="color:#92400e;"><i class="fa-solid fa-head-side-cough" style="color:#f59e0b;"></i> 病假</span>
+        </button>
+        <button class="opt-btn" onclick="applyAttendanceStatus('事假')">
+          <span style="color:#991b1b;"><i class="fa-solid fa-plane-departure" style="color:#ef4444;"></i> 事假</span>
+        </button>
+        <button class="opt-btn" onclick="applyAttendanceStatus('遲到')">
+          <span style="color:#5b21b6;"><i class="fa-solid fa-clock" style="color:#8b5cf6;"></i> 遲到</span>
+        </button>
+      </div>
+      <button class="btn-submit" style="margin-top:14px; background:#94a3b8;" onclick="closeAttModal()">取消</button>
+    </div>
+  </div>
+
+  <!-- 作業繳交狀態選擇彈跳視窗 -->
+  <div id="hwStatusModal" class="modal-overlay">
+    <div class="modal-box">
+      <h3 id="hwModalTitle">學生作業狀態切換</h3>
+      <div class="modal-options">
+        <button class="opt-btn" onclick="applyHwStatus('已繳交', 'hw-green')">
+          <span style="color:#16a34a;"><i class="fa-solid fa-circle" style="color:#16a34a;"></i> 1. 已繳交（亮綠燈）</span>
+        </button>
+        <button class="opt-btn" onclick="applyHwStatus('要訂正', 'hw-purple')">
+          <span style="color:#9333ea;"><i class="fa-solid fa-circle" style="color:#9333ea;"></i> 2. 要訂正（亮紫燈）</span>
+        </button>
+        <button class="opt-btn" onclick="applyHwStatus('訂正完成', 'hw-yellow')">
+          <span style="color:#ca8a04;"><i class="fa-solid fa-circle" style="color:#eab308;"></i> 3. 訂正完成（亮黃燈）</span>
+        </button>
+        <button class="opt-btn" onclick="applyHwStatus('忘記帶回家', 'hw-blue')">
+          <span style="color:#2563eb;"><i class="fa-solid fa-circle" style="color:#2563eb;"></i> 4. 忘記帶回家（亮藍燈）</span>
+        </button>
+        <button class="opt-btn" onclick="applyHwStatus('未完成', 'hw-red')">
+          <span style="color:#dc2626;"><i class="fa-solid fa-circle" style="color:#dc2626;"></i> 5. 未完成（亮紅燈）</span>
+        </button>
+        <!-- 視窗內快速重設為未繳交 -->
+        <button class="opt-btn" onclick="resetSingleStudentHw()" style="border-style:dashed; border-color:#94a3b8; background:#f8fafc;">
+          <span style="color:#64748b;"><i class="fa-solid fa-rotate-left" style="color:#64748b;"></i> ↺ 清除並重設為「未繳交」</span>
+        </button>
+      </div>
+      <button class="btn-submit" style="margin-top:14px; background:#94a3b8;" onclick="closeHwModal()">取消</button>
+    </div>
+  </div>
+
+  <!-- 公告詳情彈跳視窗 -->
+  <div id="announcementModal" class="modal-overlay">
+    <div class="modal-box">
+      <h3 id="annoTitle">公告標題</h3>
+      <p id="annoContent" style="margin:14px 0; font-size:0.95rem; line-height:1.6; color:#475569; white-space:pre-wrap;"></p>
+      <button class="btn-submit" onclick="closeAnnouncementModal()">了解關閉</button>
+    </div>
+  </div>
+
+  <script>
+    const DEFAULT_STUDENTS = [
+      "林品妍", "張宇帆", "陳柏宇", "黃子軒", "李承恩", 
+      "王羽涵", "趙晨曦", "孫立恩", "周子涵", "吳秉諺",
+      "蔡宗翰", "許庭瑋", "鄭晴文", "謝名翔", "洪詠晴"
+    ];
+
+    const DEFAULT_ANNOUNCEMENTS = [
+      { id: 1, dept: "學務處", title: "友善校園與品格教育宣導", content: "落實反霸凌宣導與班級常規輔導，請各班加強宣導同理心與健康同儕人際關係。" },
+      { id: 2, dept: "體育組", title: "校園運動會賽程與接力選拔準備", content: "請各班級體育股長與導師於週五前確認接力名單及號碼布領取事宜。" },
+      { id: 3, dept: "健康中心", title: "含氟漱口水與校園潔牙每週行程", content: "每週二晨光時間統一發放含氟漱口水，請各組長配合確認潔牙完成狀況。" },
+      { id: 4, dept: "教務處", title: "親師座談會注意事項", content: "各班教室請提早備妥學生個人作品集、班級經營計畫與家長簽到表。" }
+    ];
+
+    let students = JSON.parse(localStorage.getItem('cm309_students')) || DEFAULT_STUDENTS;
+    let announcements = JSON.parse(localStorage.getItem('cm309_announcements')) || DEFAULT_ANNOUNCEMENTS;
+    let sheetsWebhookUrl = localStorage.getItem('cm309_sheets_url') || "";
+    
+    let attendanceState = {}; 
+    let interactiveHwState = {}; 
+    let cleanLampState = {};  
+    let teethLampState = {};  
+    let mouthwashLampState = {}; 
+
+    let currentSelectedStudent = null;
+    let currentInteractiveMode = 'hw';
+
+    // 支援手機與電腦雙擊判斷的變數
+    let clickTimeout = null;
+    let lastClickedSeat = null;
+
+    window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('currentDateDisplay').textContent = '紀錄日期：' + new Date().toLocaleDateString('zh-TW');
+      updateCloudBadge();
+      loadRosterToSettings();
+      renderAllGrids();
+      renderBulletins();
+      renderManageBulletins();
+    });
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      
+      const activeBtn = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.getAttribute('onclick').includes(tabId));
+      if (activeBtn) activeBtn.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderAllGrids() {
+      renderAttendanceGrid();
+      renderInteractiveGrid();
+      populateStudentSelect();
+    }
+
+    /* ================= 第一部分：到校點名 ================= */
+    function renderAttendanceGrid() {
+      const container = document.getElementById('attendanceGrid');
+      container.innerHTML = '';
+      students.forEach((name, i) => {
+        const id = i + 1;
+        const status = attendanceState[id] || '出席';
+        const div = document.createElement('div');
+        div.className = `student-btn ${getAttColorClass(status)}`;
+        div.innerHTML = `
+          <span class="seat">${id} 號</span>
+          <span class="name">${name}</span>
+          <span class="status">${status}</span>
+        `;
+        div.onclick = () => openAttModal(id, name);
+        container.appendChild(div);
+      });
+    }
+
+    function openAttModal(seat, name) {
+      currentSelectedStudent = { seat, name };
+      document.getElementById('attModalTitle').textContent = `${seat}號 ${name} - 點選到校狀態`;
+      document.getElementById('attendanceModal').classList.add('active');
+    }
+
+    function closeAttModal() {
+      document.getElementById('attendanceModal').classList.remove('active');
+    }
+
+    function applyAttendanceStatus(status) {
+      if (!currentSelectedStudent) return;
+      attendanceState[currentSelectedStudent.seat] = status;
+      closeAttModal();
+      renderAttendanceGrid();
+    }
+
+    function getAttColorClass(status) {
+      if (status === '出席') return 'att-present';
+      if (status === '病假') return 'att-sick';
+      if (status === '事假') return 'att-absent';
+      if (status === '遲到') return 'att-late';
+      return '';
+    }
+
+    function resetAttendance() {
+      if (confirm("確定要重整點名表嗎？這會將全班狀態恢復為「全數出席」。")) {
+        attendanceState = {};
+        renderAttendanceGrid();
+      }
+    }
+
+    function uploadAttendanceBatch() {
+      let abnormalList = [];
+      let presentCount = 0;
+
+      students.forEach((name, i) => {
+        const id = i + 1;
+        const st = attendanceState[id] || '出席';
+        if (st === '出席') {
+          presentCount++;
+        } else {
+          abnormalList.push(`${id}號 ${name} (${st})`);
+        }
+      });
+
+      const summaryText = `應到 ${students.length} 人，實到 ${presentCount} 人。${abnormalList.length > 0 ? '假別名單：' + abnormalList.join('、') : '全班到齊！'}`;
+
+      sendToSheets({
+        category: "每日到校點名(彙整總表)",
+        student: "全班",
+        detail: summaryText,
+        followup: ""
+      });
+
+      alert(`點名紀錄已彙整上傳！\n${summaryText}`);
+    }
+
+    /* ================= 第三部分：傷病與親師紀錄 ================= */
+    function populateStudentSelect() {
+      const select = document.getElementById('recordStudentSelect');
+      select.innerHTML = '';
+      students.forEach((name, i) => {
+        const opt = document.createElement('option');
+        opt.value = `${i + 1}號 ${name}`;
+        opt.textContent = `${i + 1}號 ${name}`;
+        select.appendChild(opt);
+      });
+    }
+
+    function handleRecordSubmit(e) {
+      e.preventDefault();
+      const type = document.getElementById('recordType').value;
+      const student = document.getElementById('recordStudentSelect').value;
+      const detail = document.getElementById('recordDetail').value;
+      const followup = document.getElementById('recordFollowup').value;
+
+      sendToSheets({
+        category: type,
+        student: student,
+        detail: detail,
+        followup: followup
+      });
+
+      alert(`已成功儲存【${student}】的${type}並上傳試算表！`);
+      document.getElementById('recordDetail').value = '';
+      document.getElementById('recordFollowup').value = '';
+    }
+
+    /* ================= 第四部分：學生相簿 ================= */
+    function filterAlbum(category) {
+      document.querySelectorAll('.album-category-list .album-chip').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+      const items = document.querySelectorAll('.gallery-item');
+      items.forEach(item => {
+        if (category === 'all' || item.getAttribute('data-cat') === category) {
+          item.style.display = 'flex';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    }
+
+    /* ================= 第五部分：師生互動版 ================= */
+    function switchInteractiveMode(mode) {
+      currentInteractiveMode = mode;
+      document.querySelectorAll('#tab-interactive .album-chip').forEach(btn => btn.classList.remove('active'));
+      if (mode === 'hw') document.getElementById('btn-sub-hw').classList.add('active');
+      if (mode === 'clean') document.getElementById('btn-sub-clean').classList.add('active');
+      if (mode === 'teeth') document.getElementById('btn-sub-teeth').classList.add('active');
+      if (mode === 'mouthwash') document.getElementById('btn-sub-mouthwash').classList.add('active');
+
+      const desc = document.getElementById('interactiveSubDesc');
+      const titleDisplay = document.getElementById('currentInteractiveTitleDisplay');
+
+      if (mode === 'hw') {
+        titleDisplay.textContent = '目前項目：作業繳交';
+        desc.textContent = '點擊姓名挑選 5 色狀態；若按錯可「連續點兩下名字」直接恢復未繳交！';
+      }
+      if (mode === 'clean') {
+        titleDisplay.textContent = '目前項目：打掃工作';
+        desc.textContent = '預設未亮燈，點擊姓名後亮綠燈（代表已打掃完成）';
+      }
+      if (mode === 'teeth') {
+        titleDisplay.textContent = '目前項目：潔牙高手';
+        desc.textContent = '預設未亮燈，點擊姓名後亮綠燈（代表已潔牙完成）';
+      }
+      if (mode === 'mouthwash') {
+        titleDisplay.textContent = '目前項目：漱口水';
+        desc.textContent = '預設未亮燈，點擊姓名後亮綠燈（代表已漱口完成）';
+      }
+
+      renderInteractiveGrid();
+    }
+
+    function renderInteractiveGrid() {
+      const container = document.getElementById('interactiveGrid');
+      container.innerHTML = '';
+
+      students.forEach((name, i) => {
+        const id = i + 1;
+        const div = document.createElement('div');
+        div.className = 'student-btn';
+
+        if (currentInteractiveMode === 'hw') {
+          const hwData = interactiveHwState[id];
+          const hasRecord = !!hwData;
+          const statusText = hasRecord ? hwData.status : '未登記';
+          const lightClass = hasRecord ? hwData.lightClass : '';
+
+          if (lightClass) div.classList.add(lightClass);
+
+          div.innerHTML = `
+            <div class="indicator-lamp"></div>
+            <span class="seat">${id} 號</span>
+            <span class="name">${name}</span>
+            <span class="status">${statusText}</span>
+          `;
+          // 支援單擊挑選與雙擊恢復未繳交
+          div.onclick = () => handleHwStudentClick(id, name);
+        } else {
+          let isLit = false;
+          if (currentInteractiveMode === 'clean') isLit = !!cleanLampState[id];
+          if (currentInteractiveMode === 'teeth') isLit = !!teethLampState[id];
+          if (currentInteractiveMode === 'mouthwash') isLit = !!mouthwashLampState[id];
+
+          if (isLit) div.classList.add('is-lit');
+
+          div.innerHTML = `
+            <div class="indicator-lamp"></div>
+            <span class="seat">${id} 號</span>
+            <span class="name">${name}</span>
+            <span class="status">${isLit ? '已完成' : '未完成'}</span>
+          `;
+          div.onclick = () => toggleLamp(id);
+        }
+        container.appendChild(div);
+      });
+    }
+
+    // 處理作業繳交：單擊開選單、雙擊直接清空恢復「未繳交」
+    function handleHwStudentClick(seat, name) {
+      if (clickTimeout && lastClickedSeat === seat) {
+        // 觸發雙擊 (Double Click)：清除狀態回到未繳交
+        clearTimeout(clickTimeout);
+        clickTimeout = null;
+        lastClickedSeat = null;
+        delete interactiveHwState[seat];
+        renderInteractiveGrid();
+        return;
+      }
+
+      lastClickedSeat = seat;
+      // 設定 250ms 的雙擊偵測延遲
+      clickTimeout = setTimeout(() => {
+        clickTimeout = null;
+        lastClickedSeat = null;
+        openHwModal(seat, name);
+      }, 250);
+    }
+
+    function openHwModal(seat, name) {
+      currentSelectedStudent = { seat, name };
+      document.getElementById('hwModalTitle').textContent = `${seat}號 ${name} - 挑選作業狀態`;
+      document.getElementById('hwStatusModal').classList.add('active');
+    }
+
+    function closeHwModal() {
+      document.getElementById('hwStatusModal').classList.remove('active');
+    }
+
+    function applyHwStatus(status, lightClass) {
+      if (!currentSelectedStudent) return;
+      interactiveHwState[currentSelectedStudent.seat] = { status, lightClass };
+      closeHwModal();
+      renderInteractiveGrid();
+    }
+
+    // 視窗內單獨重設此學生為未繳交
+    function resetSingleStudentHw() {
+      if (!currentSelectedStudent) return;
+      delete interactiveHwState[currentSelectedStudent.seat];
+      closeHwModal();
+      renderInteractiveGrid();
+    }
+
+    function toggleLamp(seat) {
+      if (currentInteractiveMode === 'clean') cleanLampState[seat] = !cleanLampState[seat];
+      if (currentInteractiveMode === 'teeth') teethLampState[seat] = !teethLampState[seat];
+      if (currentInteractiveMode === 'mouthwash') mouthwashLampState[seat] = !mouthwashLampState[seat];
+      renderInteractiveGrid();
+    }
+
+    // 重整當前項目的登記
+    function resetCurrentInteractive() {
+      const modeNames = {
+        hw: "作業繳交狀態",
+        clean: "打掃亮燈狀態",
+        teeth: "潔牙亮燈狀態",
+        mouthwash: "漱口水亮燈狀態"
+      };
+
+      const currentName = modeNames[currentInteractiveMode];
+      if (confirm(`確定要重整【${currentName}】嗎？這會清除目前的畫面登記與亮燈記錄。`)) {
+        if (currentInteractiveMode === 'hw') {
+          interactiveHwState = {};
+        } else if (currentInteractiveMode === 'clean') {
+          cleanLampState = {};
+        } else if (currentInteractiveMode === 'teeth') {
+          teethLampState = {};
+        } else if (currentInteractiveMode === 'mouthwash') {
+          mouthwashLampState = {};
+        }
+        renderInteractiveGrid();
+      }
+    }
+
+    function uploadInteractiveBatch() {
+      let modeName = "";
+      let detailText = "";
+
+      if (currentInteractiveMode === 'hw') {
+        modeName = "師生互動-作業繳交(彙整總表)";
+        let statCounts = { "已繳交": 0, "要訂正": 0, "訂正完成": 0, "忘記帶回家": 0, "未完成": 0, "未登記": 0 };
+        let needAttention = [];
+
+        students.forEach((name, i) => {
+          const id = i + 1;
+          const st = interactiveHwState[id] ? interactiveHwState[id].status : "未登記";
+          statCounts[st] = (statCounts[st] || 0) + 1;
+          if (st === "要訂正" || st === "忘記帶回家" || st === "未完成") {
+            needAttention.push(`${id}號 ${name}(${st})`);
+          }
+        });
+
+        detailText = `已繳交:${statCounts["已繳交"]}人、訂正完成:${statCounts["訂正完成"]}人、要訂正:${statCounts["要訂正"]}人、忘記帶:${statCounts["忘記帶回家"]}人、未完成:${statCounts["未完成"]}人。` + 
+                     (needAttention.length > 0 ? ` 需追蹤：${needAttention.join('、')}` : ' 全部繳交良好！');
+      } else {
+        let lampObj = (currentInteractiveMode === 'clean') ? cleanLampState : (currentInteractiveMode === 'teeth' ? teethLampState : mouthwashLampState);
+        let actionMap = { clean: "打掃工作", teeth: "潔牙高手", mouthwash: "漱口水" };
+        modeName = `師生互動-${actionMap[currentInteractiveMode]}(彙整總表)`;
+
+        let completed = [];
+        let notCompleted = [];
+
+        students.forEach((name, i) => {
+          const id = i + 1;
+          if (lampObj[id]) {
+            completed.push(`${id}號 ${name}`);
+          } else {
+            notCompleted.push(`${id}號 ${name}`);
+          }
+        });
+
+        detailText = `完成人數：${completed.length} / ${students.length} 人。` + 
+                     (notCompleted.length > 0 ? ` 未完成名單：${notCompleted.join('、')}` : ' 全員完成亮燈！');
+      }
+
+      sendToSheets({
+        category: modeName,
+        student: "全班",
+        detail: detailText,
+        followup: ""
+      });
+
+      alert(`已成功彙整上傳！\n項目：${modeName}\n內容：${detailText}`);
+    }
+
+    /* ================= 第七部分：校園公告專區渲染 ================= */
+    function renderBulletins() {
+      const container = document.getElementById('bulletinListContainer');
+      container.innerHTML = '';
+
+      if (announcements.length === 0) {
+        container.innerHTML = '<li style="padding:16px; color:var(--text-sub); text-align:center;">目前尚無公告，可至「設定後台」新增！</li>';
+        return;
+      }
+
+      announcements.forEach((anno) => {
+        const li = document.createElement('li');
+        li.className = 'bulletin-item';
+        li.onclick = () => viewAnnouncement(anno.title, anno.content);
+        li.innerHTML = `
+          <div>
+            <span class="bulletin-badge">${anno.dept}</span>
+            <strong>${anno.title}</strong>
+          </div>
+          <i class="fa-solid fa-chevron-right" style="color:#94a3b8;"></i>
+        `;
+        container.appendChild(li);
+      });
+    }
+
+    function viewAnnouncement(title, content) {
+      document.getElementById('annoTitle').textContent = title;
+      document.getElementById('annoContent').textContent = content;
+      document.getElementById('announcementModal').classList.add('active');
+    }
+
+    function closeAnnouncementModal() {
+      document.getElementById('announcementModal').classList.remove('active');
+    }
+
+    /* ================= 設定頁面：公告管理功能 ================= */
+    function renderManageBulletins() {
+      const list = document.getElementById('manageBulletinList');
+      list.innerHTML = '';
+
+      if (announcements.length === 0) {
+        list.innerHTML = '<p style="color:var(--text-sub); font-size:0.85rem;">暫無公告</p>';
+        return;
+      }
+
+      announcements.forEach((anno, index) => {
+        const item = document.createElement('div');
+        item.className = 'manage-bulletin-item';
+        item.innerHTML = `
+          <div>
+            <span class="bulletin-badge">${anno.dept}</span>
+            <strong style="font-size:0.9rem;">${anno.title}</strong>
+          </div>
+          <button class="btn-del" onclick="deleteAnnouncement(${index})">
+            <i class="fa-solid fa-trash-can"></i> 刪除
+          </button>
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    function handleCreateAnnouncement(e) {
+      e.preventDefault();
+      const dept = document.getElementById('newAnnoDept').value.trim();
+      const title = document.getElementById('newAnnoTitle').value.trim();
+      const content = document.getElementById('newAnnoContent').value.trim();
+
+      const newAnno = {
+        id: Date.now(),
+        dept: dept,
+        title: title,
+        content: content
+      };
+
+      announcements.unshift(newAnno);
+      localStorage.setItem('cm309_announcements', JSON.stringify(announcements));
+
+      document.getElementById('newAnnoDept').value = '';
+      document.getElementById('newAnnoTitle').value = '';
+      document.getElementById('newAnnoContent').value = '';
+
+      renderBulletins();
+      renderManageBulletins();
+      alert(`已成功發佈公告：【${title}】！`);
+    }
+
+    function deleteAnnouncement(index) {
+      if (confirm(`確定要刪除「${announcements[index].title}」這則公告嗎？`)) {
+        announcements.splice(index, 1);
+        localStorage.setItem('cm309_announcements', JSON.stringify(announcements));
+        renderBulletins();
+        renderManageBulletins();
+      }
+    }
+
+    /* ================= 設定與名單保存 ================= */
+    function loadRosterToSettings() {
+      document.getElementById('studentRosterInput').value = students.join('\n');
+      document.getElementById('sheetsApiUrlInput').value = sheetsWebhookUrl;
+    }
+
+    function saveStudentRoster() {
+      const txt = document.getElementById('studentRosterInput').value.trim();
+      if (!txt) return alert('名單不可為空！');
+      students = txt.split('\n').map(s => s.trim()).filter(s => s.length > 0);
+      localStorage.setItem('cm309_students', JSON.stringify(students));
+      renderAllGrids();
+      alert(`已成功更新名單，全班共 ${students.length} 位學生！`);
+    }
+
+    function saveSheetsUrl() {
+      const url = document.getElementById('sheetsApiUrlInput').value.trim();
+      sheetsWebhookUrl = url;
+      localStorage.setItem('cm309_sheets_url', url);
+      updateCloudBadge();
+      alert('已更新 Google 試算表 Webhook 網址！');
+    }
+
+    function updateCloudBadge() {
+      const badge = document.getElementById('cloudStatus');
+      const text = document.getElementById('cloudStatusText');
+      if (sheetsWebhookUrl) {
+        badge.classList.add('active');
+        text.textContent = '雲端已連線';
+      } else {
+        badge.classList.remove('active');
+        text.textContent = '雲端未連線 (點我設定)';
+      }
+    }
+
+    function openSettingsModal() {
+      switchTab('tab-settings');
+    }
+
+    /* ================= Google 試算表雲端傳輸核心 ================= */
+    function sendToSheets(payload) {
+      if (!sheetsWebhookUrl) {
+        console.log("未設定 Google 試算表 URL，僅在本機運行：", payload);
+        return;
+      }
+      const data = {
+        timestamp: new Date().toISOString(),
+        timeDisplay: new Date().toLocaleString('zh-TW'),
+        className: "三年九班",
+        ...payload
+      };
+
+      fetch(sheetsWebhookUrl, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      }).then(() => {
+        console.log("雲端同步成功:", data);
+      }).catch(err => {
+        console.error("雲端同步失敗:", err);
+      });
+    }
+  </script>
+</body>
+</html>
