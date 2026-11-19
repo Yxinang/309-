@@ -38,7 +38,7 @@
                     309
                 </div>
                 <div>
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-2 flex-wrap">
                         <h1 class="text-base md:text-lg font-bold text-slate-800 leading-tight">崇明國小 309班</h1>
                         <span id="syncIndicator" class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
                             <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
@@ -76,6 +76,7 @@
                 </button>
             </div>
 
+            <!-- 家長登入表單 -->
             <div id="parentLoginForm" class="space-y-4">
                 <div>
                     <label for="loginSeatInput" class="block text-xs font-bold text-slate-600 mb-1.5">孩子座號（兩位數，例如 14）</label>
@@ -94,6 +95,7 @@
                 </p>
             </div>
 
+            <!-- 老師登入表單 -->
             <div id="teacherLoginForm" class="hidden space-y-4">
                 <div>
                     <label for="loginTeacherPwdInput" class="block text-xs font-bold text-slate-600 mb-1.5">班級導師管理密碼</label>
@@ -331,12 +333,12 @@
         提示訊息
     </div>
 
-    <!-- ==================== Firebase Realtime Database 雲端同步腳本 ==================== -->
+    <!-- ==================== Firebase Realtime Database 雲端即時同步腳本 ==================== -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-        // 你的 Firebase 專案設定（contactbook-cc97e）
+        // ★ 請確認 databaseURL 與你的 Firebase Realtime Database 主控台顯示網址完全一致 ★
         const firebaseConfig = {
             apiKey: "AIzaSyDNB7pvbY5i2Xfzr1SWD2WteBaSRqOMpLI",
             authDomain: "contactbook-cc97e.firebaseapp.com",
@@ -493,14 +495,15 @@
                     localStorage.setItem('class309_tracker_cache', JSON.stringify(state));
                     refreshActiveViewFromCloud();
                 }, (error) => {
-                    console.error("Firebase 讀取失敗:", error);
+                    console.error("Firebase 同步錯誤:", error);
                     indicator.className = "inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200";
-                    indicator.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> 連線異常`;
+                    indicator.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> 同步失敗（請檢查規則或網址）`;
+                    showToast("無法連線至雲端資料庫，請檢查 Firebase 規則與 databaseURL");
                 });
             } catch (err) {
                 console.error("Firebase 初始化錯誤:", err);
                 indicator.className = "inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200";
-                indicator.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> 設定待確認`;
+                indicator.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> 設定錯誤`;
             }
         }
 
@@ -508,9 +511,11 @@
             localStorage.setItem('class309_tracker_cache', JSON.stringify(state));
             if (dbRef && isCloudReady) {
                 set(dbRef, state).catch(err => {
-                    console.error("雲端儲存失敗:", err);
-                    showToast("雲端同步失敗，請檢查網路或資料庫規則");
+                    console.error("雲端寫入失敗:", err);
+                    showToast("寫入雲端失敗，請檢查 Firebase 資料庫規則");
                 });
+            } else {
+                showToast("目前尚未連上雲端，僅暫存於本機");
             }
         }
 
@@ -538,7 +543,7 @@
             const toast = document.getElementById('toast');
             toast.innerText = msg;
             toast.classList.remove('opacity-0');
-            setTimeout(() => toast.classList.add('opacity-0'), 2400);
+            setTimeout(() => toast.classList.add('opacity-0'), 2500);
         }
 
         window.onload = function() {
@@ -547,7 +552,7 @@
             document.getElementById('headerDate').innerText = `${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()} (週${days[now.getDay()]})`;
 
             initFirebaseSync();
-            window.routeBySession();
+            routeBySession();
             lucide.createIcons();
         };
 
