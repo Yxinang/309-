@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>崇明國小 309班 親師聯絡與追蹤系統</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        html, body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #F4F7F9;
+            overflow-x: hidden;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .card-shadow {
+            box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
+        }
+        @keyframes popIn {
+            0% { transform: scale(0.96); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-pop {
+            animation: popIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    </style>
+</head>
+<body class="text-slate-700 min-h-screen pb-28 md:pb-12">
+
+    <!-- 頂部導覽列 -->
+    <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/80 px-4 py-3">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-xl bg-teal-600 text-white flex items-center justify-center font-bold shadow-sm">
+                    309
+                </div>
+                <div>
+                    <h1 class="text-base md:text-lg font-bold text-slate-800 leading-tight">崇明國小 309班 親師聯絡簿</h1>
+                    <p id="headerDate" class="text-xs text-slate-400">載入日期中...</p>
+                </div>
+            </div>
+            
+            <!-- 登入後顯示登出按鈕 -->
+            <button id="logoutBtn" onclick="logout()" class="hidden flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 hover:bg-rose-50 hover:text-rose-600 text-slate-600 transition">
+                <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+                <span>登出帳號</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- ==================== 1. 專屬登入驗證介面 ==================== -->
+    <main id="loginView" class="max-w-md mx-auto px-4 pt-8 md:pt-14 animate-pop">
+        <div class="bg-white rounded-3xl p-6 md:p-8 card-shadow border border-slate-100 space-y-6">
+            <div class="text-center space-y-1.5">
+                <div class="w-12 h-12 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center mx-auto mb-2">
+                    <i data-lucide="shield-check" class="w-6 h-6"></i>
+                </div>
+                <h2 class="text-xl font-bold text-slate-800">歡迎使用班級追蹤系統</h2>
+                <p class="text-xs text-slate-400">為保護學生隱私，請輸入專屬帳號密碼登入</p>
+            </div>
+
+            <!-- 登入身分切換 Tab -->
+            <div class="grid grid-cols-2 gap-1.5 bg-slate-100 p-1 rounded-xl">
+                <button id="loginTabParent" onclick="switchLoginRole('parent')" class="py-2 text-xs font-bold rounded-lg bg-white text-teal-700 shadow-xs transition">
+                    家長登入
+                </button>
+                <button id="loginTabTeacher" onclick="switchLoginRole('teacher')" class="py-2 text-xs font-bold rounded-lg text-slate-500 hover:text-slate-700 transition">
+                    導師管理登入
+                </button>
+            </div>
+
+            <!-- 家長登入表單 -->
+            <div id="parentLoginForm" class="space-y-4">
+                <div>
+                    <label for="loginSeatInput" class="block text-xs font-bold text-slate-600 mb-1.5">孩子座號（兩位數，例如 14）</label>
+                    <input type="text" id="loginSeatInput" inputmode="numeric" maxlength="2" placeholder="請輸入座號（測試可用 14）" class="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500">
+                </div>
+                <div>
+                    <label for="loginParentPwdInput" class="block text-xs font-bold text-slate-600 mb-1.5">家長專屬密碼</label>
+                    <input type="password" id="loginParentPwdInput" inputmode="numeric" placeholder="請輸入密碼（14號測試密碼 1414）" onkeydown="if(event.key==='Enter') handleParentLogin()" class="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500">
+                </div>
+                <button onclick="handleParentLogin()" class="w-full py-3.5 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-bold text-sm shadow-lg shadow-teal-600/20 transition flex items-center justify-center gap-2">
+                    <i data-lucide="log-in" class="w-4 h-4"></i>
+                    登入查看孩子狀況
+                </button>
+                <p class="text-[11px] text-center text-slate-400">
+                    測試帳號：座號 <span class="font-bold text-slate-600">14</span> / 密碼 <span class="font-bold text-slate-600">1414</span>（或 01 / 0101）
+                </p>
+            </div>
+
+            <!-- 老師登入表單 -->
+            <div id="teacherLoginForm" class="hidden space-y-4">
+                <div>
+                    <label for="loginTeacherPwdInput" class="block text-xs font-bold text-slate-600 mb-1.5">班級導師管理密碼</label>
+                    <input type="password" id="loginTeacherPwdInput" inputmode="numeric" placeholder="請輸入管理密碼（預設 309）" onkeydown="if(event.key==='Enter') handleTeacherLogin()" class="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <button onclick="handleTeacherLogin()" class="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-sm shadow-lg shadow-indigo-600/20 transition flex items-center justify-center gap-2">
+                    <i data-lucide="settings" class="w-4 h-4"></i>
+                    進入導師管理後台
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- ==================== 2. 家長專屬視角（手機單欄 / 電腦雙欄自適應） ==================== -->
+    <main id="parentView" class="hidden max-w-4xl mx-auto p-4 md:p-6 animate-pop">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6 items-start">
+            
+            <!-- 左欄（電腦版佔 5 欄）：學生專屬資訊 + 聯絡簿 + 電腦版確認按鈕 -->
+            <div class="md:col-span-5 space-y-4">
+                <section class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-slate-100">
+                    <div class="flex justify-between items-center gap-3">
+                        <div class="flex items-center gap-3">
+                            <div id="parentStudentSeatBadge" class="w-12 h-12 rounded-2xl bg-teal-50 text-teal-700 font-bold text-lg flex items-center justify-center border border-teal-100">
+                                14
+                            </div>
+                            <div>
+                                <span class="text-[11px] font-medium text-slate-400">崇明國小 309 班學生</span>
+                                <h2 id="parentStudentName" class="text-lg md:text-xl font-bold text-slate-800">王小明</h2>
+                            </div>
+                        </div>
+                        <div id="parentStatusBadge" class="text-right"></div>
+                    </div>
+                </section>
+
+                <section class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-slate-100 space-y-2.5">
+                    <div class="flex items-center gap-2 text-teal-700 font-bold text-sm">
+                        <div class="p-1.5 bg-teal-50 rounded-lg"><i data-lucide="book-open" class="w-4 h-4"></i></div>
+                        <span>今日聯絡事項與叮嚀</span>
+                    </div>
+                    <div id="parentDailyNote" class="text-sm text-slate-600 leading-relaxed bg-slate-50/80 p-3.5 rounded-xl whitespace-pre-line">
+                    </div>
+                </section>
+
+                <div class="hidden md:block">
+                    <button id="confirmBtnDesktop" onclick="confirmByParent()" class="w-full py-3.5 rounded-xl font-bold text-base shadow-lg transition flex items-center justify-center gap-2">
+                    </button>
+                </div>
+            </div>
+
+            <!-- 右欄（電腦版佔 7 欄）：作業繳交與訂正統計 + 科任課 + 傷病通知 -->
+            <div class="md:col-span-7 space-y-4">
+                <section class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-slate-100 space-y-3">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center gap-2 text-indigo-700 font-bold text-sm">
+                            <div class="p-1.5 bg-indigo-50 rounded-lg"><i data-lucide="clipboard-check" class="w-4 h-4"></i></div>
+                            <span>今日作業繳交狀況</span>
+                        </div>
+                        <span id="hwSummaryTag" class="text-xs font-medium px-2.5 py-0.5 rounded-full"></span>
+                    </div>
+                    <div id="parentHomeworkList" class="divide-y divide-slate-100"></div>
+
+                    <!-- 訂正統計區域 -->
+                    <div id="parentCorrectionStats" class="pt-3 border-t border-slate-100 space-y-2"></div>
+                </section>
+
+                <section class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-slate-100 space-y-2.5">
+                    <div class="flex items-center gap-2 text-amber-700 font-bold text-sm">
+                        <div class="p-1.5 bg-amber-50 rounded-lg"><i data-lucide="sparkles" class="w-4 h-4"></i></div>
+                        <span>科任課表現紀錄</span>
+                    </div>
+                    <div id="parentSpecialClass" class="text-sm text-slate-600 bg-amber-50/40 border border-amber-100/60 p-3.5 rounded-xl leading-relaxed">
+                    </div>
+                </section>
+
+                <section id="parentHealthCard" class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-slate-100 space-y-2.5">
+                    <div class="flex items-center gap-2 text-rose-700 font-bold text-sm">
+                        <div class="p-1.5 bg-rose-50 rounded-lg"><i data-lucide="heart-pulse" class="w-4 h-4"></i></div>
+                        <span>在校健康與傷病通知</span>
+                    </div>
+                    <div id="parentHealthNote" class="text-sm text-slate-600 bg-rose-50/40 border border-rose-100/60 p-3.5 rounded-xl leading-relaxed">
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <!-- 手機版底部固定確認區 -->
+        <div class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200 p-3.5 z-20">
+            <div class="max-w-lg mx-auto">
+                <button id="confirmBtnMobile" onclick="confirmByParent()" class="w-full py-3.5 rounded-xl font-bold text-base shadow-lg transition flex items-center justify-center gap-2">
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- ==================== 3. 老師管理區介面（手機/電腦自適應） ==================== -->
+    <main id="teacherView" class="hidden max-w-4xl mx-auto p-4 md:p-6 space-y-4 animate-pop">
+        
+        <div class="grid grid-cols-4 gap-1.5 bg-slate-200/70 p-1 rounded-xl max-w-2xl mx-auto">
+            <button onclick="switchTeacherTab('overview')" id="tab-overview" class="py-2.5 text-xs md:text-sm font-bold rounded-lg bg-white text-teal-700 shadow-sm transition">
+                簽章總覽
+            </button>
+            <button onclick="switchTeacherTab('batchHw')" id="tab-batchHw" class="py-2.5 text-xs md:text-sm font-bold rounded-lg text-slate-600 hover:text-slate-800 transition">
+                批次作業
+            </button>
+            <button onclick="switchTeacherTab('classNote')" id="tab-classNote" class="py-2.5 text-xs md:text-sm font-bold rounded-lg text-slate-600 hover:text-slate-800 transition">
+                聯絡/作業
+            </button>
+            <button onclick="switchTeacherTab('studentDetail')" id="tab-studentDetail" class="py-2.5 text-xs md:text-sm font-bold rounded-lg text-slate-600 hover:text-slate-800 transition">
+                個別紀錄
+            </button>
+        </div>
+
+        <!-- TAB 1: 全班簽章總覽 -->
+        <div id="panel-overview" class="space-y-4">
+            <div class="bg-white rounded-2xl p-4 md:p-6 card-shadow border border-slate-100 space-y-4">
+                <div class="flex justify-between items-center">
+                    <h2 class="font-bold text-slate-800 text-sm md:text-base">家長簽章同步進度</h2>
+                    <span id="overviewCount" class="text-xs font-bold text-teal-700 bg-teal-50 px-3 py-1 rounded-full">0 / 0 已確認</span>
+                </div>
+                <div id="overviewGrid" class="grid grid-cols-2 md:grid-cols-4 gap-2.5 md:gap-3"></div>
+                <div class="pt-2 flex flex-col sm:flex-row gap-2">
+                    <button onclick="copyUnconfirmedList()" class="flex-1 py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition">
+                        <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                        複製未確認名單
+                    </button>
+                    <button onclick="resetAllConfirmations()" class="py-2.5 px-4 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition">
+                        <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                        重設今日簽章
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: 批次作業快速點名 -->
+        <div id="panel-batchHw" class="hidden space-y-4">
+            <div class="bg-white rounded-2xl p-4 md:p-6 card-shadow border border-slate-100 space-y-4">
+                <div class="flex justify-between items-center">
+                    <h2 class="font-bold text-slate-800 text-sm md:text-base flex items-center gap-1.5">
+                        <i data-lucide="zap" class="w-4 h-4 text-indigo-600"></i>
+                        全班作業一鍵快速點名
+                    </h2>
+                    <span id="batchHwStats" class="text-xs font-bold text-indigo-700 bg-indigo-50 px-3 py-1 rounded-full"></span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="batchHwSelect" class="block text-xs font-medium text-slate-400 mb-1">1. 選擇作業項目</label>
+                        <select id="batchHwSelect" onchange="renderBatchHomeworkGrid()" class="w-full bg-slate-50 border border-slate-200 text-slate-800 font-bold text-sm rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </select>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-medium text-slate-400">2. 選擇點擊學生時要套用的狀態（蓋章模式）</label>
+                        <div id="stampPalette" class="flex flex-wrap gap-1.5"></div>
+                    </div>
+                </div>
+
+                <div class="pt-2 flex gap-2 border-t border-slate-100">
+                    <button onclick="setAllHomeworkStatus('submitted')" class="flex-1 py-2 px-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-xl text-xs font-bold transition">
+                        全班設為「已繳交」
+                    </button>
+                    <button onclick="setAllHomeworkStatus('unsubmitted')" class="flex-1 py-2 px-3 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-xl text-xs font-bold transition">
+                        全班設為「未繳交」
+                    </button>
+                </div>
+
+                <div id="batchHwGrid" class="grid grid-cols-2 md:grid-cols-4 gap-2.5 pt-1"></div>
+            </div>
+        </div>
+
+        <!-- TAB 3: 全班聯絡簿與今日作業設定 -->
+        <div id="panel-classNote" class="hidden">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-white rounded-2xl p-4 md:p-6 card-shadow border border-slate-100 space-y-3">
+                    <h2 class="font-bold text-slate-800 text-sm md:text-base flex items-center gap-1.5">
+                        <i data-lucide="edit-3" class="w-4 h-4 text-teal-600"></i>
+                        編輯今日全班聯絡事項
+                    </h2>
+                    <textarea id="editGlobalNote" rows="5" class="w-full p-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500" placeholder="輸入今日聯絡簿內容..."></textarea>
+                    <button onclick="saveGlobalNote()" class="w-full py-2.5 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-sm font-bold shadow-sm transition">
+                        儲存聯絡事項
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-2xl p-4 md:p-6 card-shadow border border-slate-100 space-y-3">
+                    <h2 class="font-bold text-slate-800 text-sm md:text-base flex items-center gap-1.5">
+                        <i data-lucide="list-plus" class="w-4 h-4 text-indigo-600"></i>
+                        管理今日作業項目
+                    </h2>
+                    <div class="flex gap-2">
+                        <input type="text" id="newHomeworkInput" placeholder="例如：國語習作 P.20-21" class="flex-1 px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <button onclick="addHomeworkItem()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold">
+                            新增
+                        </button>
+                    </div>
+                    <div id="teacherHomeworkList" class="divide-y divide-slate-100"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: 個別學生紀錄與家長密碼設定 -->
+        <div id="panel-studentDetail" class="hidden max-w-2xl mx-auto">
+            <div class="bg-white rounded-2xl p-4 md:p-6 card-shadow border border-slate-100 space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1">選擇要編輯的學生</label>
+                        <select id="teacherStudentSelect" onchange="loadTeacherStudentForm(this.value)" class="w-full bg-slate-50 border border-slate-200 text-slate-800 font-bold text-sm rounded-xl px-3 py-2.5">
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1">該生家長專屬登入密碼</label>
+                        <input type="text" id="editStudentPassword" class="w-full bg-slate-50 border border-slate-200 text-slate-800 font-bold text-sm rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-teal-500">
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-xs font-bold text-indigo-700">各項作業狀態（下拉可直接選擇）</label>
+                    <div id="teacherStudentHwToggles" class="space-y-2"></div>
+                </div>
+
+                <div class="space-y-1.5">
+                    <label class="block text-xs font-bold text-amber-700">科任課表現紀錄</label>
+                    <textarea id="editStudentSpecial" rows="2" class="w-full p-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500"></textarea>
+                </div>
+
+                <div class="space-y-1.5">
+                    <label class="block text-xs font-bold text-rose-700">傷病通知單</label>
+                    <textarea id="editStudentHealth" rows="2" class="w-full p-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-500"></textarea>
+                </div>
+
+                <button onclick="saveStudentDetail()" class="w-full py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-sm font-bold shadow-md transition">
+                    儲存此學生資料與密碼設定
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- 輕量提示訊息 Toast -->
+    <div id="toast" class="fixed top-16 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-xs font-medium px-4 py-2.5 rounded-full shadow-lg opacity-0 pointer-events-none transition-opacity duration-300 z-50">
+        提示訊息
+    </div>
+
+    <script>
+        // ==================== 7 種作業狀態設定（已繳交：翡翠綠 / 已補交：天空藍） ====================
+        const HW_STATUS_CONFIG = {
+            submitted: {
+                label: '已繳交',
+                isCompleted: true,
+                badgeClass: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
+                solidClass: 'bg-emerald-600 text-white',
+                cardClass: 'bg-emerald-50/75 border-emerald-200',
+                icon: 'check'
+            },
+            madeup: {
+                label: '已補交',
+                isCompleted: true,
+                badgeClass: 'bg-sky-50 text-sky-700 border border-sky-200',
+                solidClass: 'bg-sky-600 text-white',
+                cardClass: 'bg-sky-50/80 border-sky-200',
+                icon: 'check-check'
+            },
+            correction: {
+                label: '需訂正',
+                isCompleted: false,
+                badgeClass: 'bg-amber-50 text-amber-700 border border-amber-200',
+                solidClass: 'bg-amber-500 text-white',
+                cardClass: 'bg-amber-50/70 border-amber-200',
+                icon: 'edit-2'
+            },
+            unsubmitted: {
+                label: '未繳交',
+                isCompleted: false,
+                badgeClass: 'bg-rose-50 text-rose-700 border border-rose-200',
+                solidClass: 'bg-rose-600 text-white',
+                cardClass: 'bg-rose-50/70 border-rose-200',
+                icon: 'x-circle'
+            },
+            not_brought_home: {
+                label: '未帶回家',
+                isCompleted: false,
+                badgeClass: 'bg-purple-50 text-purple-700 border border-purple-200',
+                solidClass: 'bg-purple-600 text-white',
+                cardClass: 'bg-purple-50/70 border-purple-200',
+                icon: 'home'
+            },
+            not_brought_school: {
+                label: '未帶來學校',
+                isCompleted: false,
+                badgeClass: 'bg-indigo-50 text-indigo-700 border border-indigo-200',
+                solidClass: 'bg-indigo-600 text-white',
+                cardClass: 'bg-indigo-50/70 border-indigo-200',
+                icon: 'backpack'
+            },
+            missing: {
+                label: '缺失',
+                isCompleted: false,
+                badgeClass: 'bg-pink-50 text-pink-700 border border-pink-200',
+                solidClass: 'bg-pink-600 text-white',
+                cardClass: 'bg-pink-50/70 border-pink-200',
+                icon: 'alert-triangle'
+            }
+        };
+
+        const STATUS_KEYS = Object.keys(HW_STATUS_CONFIG);
+
+        function normalizeStatus(val) {
+            if (val === true) return 'submitted';
+            if (val === false || !val) return 'unsubmitted';
+            return HW_STATUS_CONFIG[val] ? val : 'unsubmitted';
+        }
+
+        const DEFAULT_DATA = {
+            teacherPassword: "309",
+            dailyNote: "1. 明日攜帶跳繩與水壺，準備體育課測驗。\n2. 週五進行國語第五課聽寫，請在家複習生字。\n3. 戶外教育同意書請於本週五前交回。",
+            homeworkList: [
+                { id: "hw1", title: "數學習作 P.32-33" },
+                { id: "hw2", title: "國語生字簿 L.5" },
+                { id: "hw3", title: "閱讀心得單一張" }
+            ],
+            students: [
+                {
+                    id: "s01", seat: "01", name: "林宇軒", password: "0101",
+                    hwStatus: { hw1: "submitted", hw2: "madeup", hw3: "submitted" },
+                    specialClass: "音樂課直笛吹奏音準穩定，能協助指導鄰座同學。",
+                    healthNote: "今日在校活動正常，無傷病紀錄。",
+                    confirmed: true, confirmedTime: "18:20"
+                },
+                {
+                    id: "s02", seat: "02", name: "陳品妍", password: "0202",
+                    hwStatus: { hw1: "correction", hw2: "correction", hw3: "not_brought_home" },
+                    specialClass: "美勞課作品構圖用心，色彩搭配豐富，獲得老師讚賞。",
+                    healthNote: "今日在校活動正常，無傷病紀錄。",
+                    confirmed: false, confirmedTime: ""
+                },
+                {
+                    id: "s14", seat: "14", name: "王小明", password: "1414",
+                    hwStatus: { hw1: "madeup", hw2: "correction", hw3: "missing" },
+                    specialClass: "體育課表現積極，接力跑傳接棒動作流暢，並主動協助收拾器材。",
+                    healthNote: "今日下午下課時右膝輕微擦傷，已至健康中心擦藥並貼上OK繃，目前無大礙，請家長回家後留意傷口乾燥。",
+                    confirmed: false, confirmedTime: ""
+                },
+                {
+                    id: "s15", seat: "15", name: "張語彤", password: "1515",
+                    hwStatus: { hw1: "submitted", hw2: "submitted", hw3: "submitted" },
+                    specialClass: "英語課分組競賽表現優異，勇敢開口回答問題。",
+                    healthNote: "今日在校活動正常，無傷病紀錄。",
+                    confirmed: true, confirmedTime: "19:05"
+                }
+            ]
+        };
+
+        let state = JSON.parse(localStorage.getItem('class309_tracker_v7')) || DEFAULT_DATA;
+        let authSession = JSON.parse(localStorage.getItem('class309_auth_session')) || null;
+        let activeStampMode = 'cycle';
+
+        function saveState() {
+            localStorage.setItem('class309_tracker_v7', JSON.stringify(state));
+        }
+
+        function saveSession(session) {
+            authSession = session;
+            if (session) {
+                localStorage.setItem('class309_auth_session', JSON.stringify(session));
+            } else {
+                localStorage.removeItem('class309_auth_session');
+            }
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg;
+            toast.classList.remove('opacity-0');
+            setTimeout(() => toast.classList.add('opacity-0'), 2400);
+        }
+
+        window.onload = function() {
+            const now = new Date();
+            const days = ['日', '一', '二', '三', '四', '五', '六'];
+            document.getElementById('headerDate').innerText = `${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()} (週${days[now.getDay()]})`;
+
+            routeBySession();
+            lucide.createIcons();
+        };
+
+        function routeBySession() {
+            const loginView = document.getElementById('loginView');
+            const parentView = document.getElementById('parentView');
+            const teacherView = document.getElementById('teacherView');
+            const logoutBtn = document.getElementById('logoutBtn');
+
+            loginView.classList.add('hidden');
+            parentView.classList.add('hidden');
+            teacherView.classList.add('hidden');
+
+            if (!authSession) {
+                loginView.classList.remove('hidden');
+                logoutBtn.classList.add('hidden');
+                return;
+            }
+
+            logoutBtn.classList.remove('hidden');
+
+            if (authSession.role === 'parent') {
+                const student = state.students.find(s => s.id === authSession.studentId);
+                if (!student) {
+                    logout();
+                    return;
+                }
+                parentView.classList.remove('hidden');
+                renderParentView(student);
+            } else if (authSession.role === 'teacher') {
+                teacherView.classList.remove('hidden');
+                populateTeacherStudentSelect();
+                switchTeacherTab('overview');
+            }
+        }
+
+        function switchLoginRole(role) {
+            const tabParent = document.getElementById('loginTabParent');
+            const tabTeacher = document.getElementById('loginTabTeacher');
+            const formParent = document.getElementById('parentLoginForm');
+            const formTeacher = document.getElementById('teacherLoginForm');
+
+            if (role === 'parent') {
+                tabParent.className = "py-2 text-xs font-bold rounded-lg bg-white text-teal-700 shadow-xs transition";
+                tabTeacher.className = "py-2 text-xs font-bold rounded-lg text-slate-500 hover:text-slate-700 transition";
+                formParent.classList.remove('hidden');
+                formTeacher.classList.add('hidden');
+            } else {
+                tabTeacher.className = "py-2 text-xs font-bold rounded-lg bg-white text-indigo-700 shadow-xs transition";
+                tabParent.className = "py-2 text-xs font-bold rounded-lg text-slate-500 hover:text-slate-700 transition";
+                formTeacher.classList.remove('hidden');
+                formParent.classList.add('hidden');
+            }
+        }
+
+        function handleParentLogin() {
+            const rawSeat = document.getElementById('loginSeatInput').value.trim();
+            const pwd = document.getElementById('loginParentPwdInput').value.trim();
+            if (!rawSeat || !pwd) {
+                showToast("請輸入座號與家長專屬密碼");
+                return;
+            }
+            const paddedSeat = rawSeat.padStart(2, '0');
+            const matchedStudent = state.students.find(s => s.seat === paddedSeat && s.password === pwd);
+
+            if (!matchedStudent) {
+                showToast("座號或密碼錯誤，請重新確認！");
+                return;
+            }
+
+            saveSession({ role: 'parent', studentId: matchedStudent.id });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            routeBySession();
+            showToast(`歡迎回來，${matchedStudent.name} 家長！`);
+        }
+
+        function handleTeacherLogin() {
+            const pwd = document.getElementById('loginTeacherPwdInput').value.trim();
+            if (pwd !== (state.teacherPassword || "309")) {
+                showToast("導師管理密碼錯誤（預設 309）");
+                return;
+            }
+            saveSession({ role: 'teacher' });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            routeBySession();
+            showToast("已進入導師管理後台");
+        }
+
+        function logout() {
+            saveSession(null);
+            document.getElementById('loginSeatInput').value = '';
+            document.getElementById('loginParentPwdInput').value = '';
+            document.getElementById('loginTeacherPwdInput').value = '';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            routeBySession();
+            showToast("已安全登出");
+        }
+
+        function renderParentView(student) {
+            document.getElementById('parentStudentSeatBadge').innerText = student.seat;
+            document.getElementById('parentStudentName').innerText = student.name;
+
+            const badge = document.getElementById('parentStatusBadge');
+            if (student.confirmed) {
+                badge.innerHTML = `
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> 已確認
+                    </span>
+                    <div class="text-[11px] text-slate-400 mt-0.5">${student.confirmedTime} 簽章</div>
+                `;
+            } else {
+                badge.innerHTML = `
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                        <i data-lucide="clock" class="w-3.5 h-3.5"></i> 待確認
+                    </span>
+                `;
+            }
+
+            document.getElementById('parentDailyNote').innerText = state.dailyNote || "今日無特別聯絡事項。";
+
+            const hwContainer = document.getElementById('parentHomeworkList');
+            hwContainer.innerHTML = '';
+            let attentionCount = 0;
+            const correctionItems = [];
+
+            state.homeworkList.forEach(hw => {
+                const statusKey = normalizeStatus(student.hwStatus[hw.id]);
+                const cfg = HW_STATUS_CONFIG[statusKey];
+                if (!cfg.isCompleted) attentionCount++;
+                if (statusKey === 'correction') correctionItems.push(hw.title);
+
+                hwContainer.innerHTML += `
+                    <div class="py-2.5 flex justify-between items-center gap-2">
+                        <span class="text-sm font-medium text-slate-700">${hw.title}</span>
+                        <span class="shrink-0 inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-lg ${cfg.badgeClass}">
+                            <i data-lucide="${cfg.icon}" class="w-3.5 h-3.5"></i>${cfg.label}
+                        </span>
+                    </div>
+                `;
+            });
+
+            const corrStatsEl = document.getElementById('parentCorrectionStats');
+            if (correctionItems.length > 0) {
+                corrStatsEl.innerHTML = `
+                    <div class="bg-amber-50/80 border border-amber-200/80 rounded-xl p-3 space-y-1.5">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-amber-800 flex items-center gap-1.5">
+                                <i data-lucide="file-edit" class="w-3.5 h-3.5"></i>
+                                訂正統計：共 ${correctionItems.length} 項需訂正
+                            </span>
+                            <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-200/70 text-amber-900">
+                                ${correctionItems.length} 項
+                            </span>
+                        </div>
+                        <div class="flex flex-wrap gap-1.5 pt-0.5">
+                            ${correctionItems.map(title => `<span class="text-xs font-medium bg-white text-amber-800 border border-amber-200 px-2 py-0.5 rounded-md">${title}</span>`).join('')}
+                        </div>
+                    </div>
+                `;
+            } else {
+                corrStatsEl.innerHTML = `
+                    <div class="bg-slate-50 border border-slate-100 rounded-xl px-3 py-2 flex items-center justify-between text-xs text-slate-500">
+                        <span class="flex items-center gap-1.5 font-medium">
+                            <i data-lucide="file-check-2" class="w-3.5 h-3.5 text-emerald-600"></i>
+                            訂正統計：目前無需訂正項目
+                        </span>
+                        <span class="font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">0 項</span>
+                    </div>
+                `;
+            }
+
+            const summaryTag = document.getElementById('hwSummaryTag');
+            if (state.homeworkList.length === 0) {
+                summaryTag.className = "text-xs font-medium px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-500";
+                summaryTag.innerText = "今日無作業";
+            } else if (attentionCount === 0) {
+                summaryTag.className = "text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700";
+                summaryTag.innerText = "全數完成";
+            } else {
+                summaryTag.className = "text-xs font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-700";
+                summaryTag.innerText = `${attentionCount} 項需留意`;
+            }
+
+            document.getElementById('parentSpecialClass').innerText = student.specialClass || "今日科任課表現良好。";
+            document.getElementById('parentHealthNote').innerText = student.healthNote || "今日在校健康狀況良好，無傷病紀錄。";
+
+            ['confirmBtnMobile', 'confirmBtnDesktop'].forEach(btnId => {
+                const btn = document.getElementById(btnId);
+                if (!btn) return;
+                if (student.confirmed) {
+                    btn.className = "w-full py-3.5 rounded-xl font-bold text-base bg-emerald-50 text-emerald-700 border-2 border-emerald-500 flex items-center justify-center gap-2";
+                    btn.innerHTML = `<i data-lucide="check-circle" class="w-5 h-5"></i> 家長已完成確認 (${student.confirmedTime})`;
+                } else {
+                    btn.className = "w-full py-3.5 rounded-xl font-bold text-base bg-teal-600 hover:bg-teal-700 active:scale-[0.99] text-white shadow-lg shadow-teal-600/20 transition flex items-center justify-center gap-2";
+                    btn.innerHTML = `<i data-lucide="check-square" class="w-5 h-5"></i> 我已閱讀並確認孩子狀況`;
+                }
+            });
+
+            lucide.createIcons();
+        }
+
+        function confirmByParent() {
+            if (!authSession || authSession.role !== 'parent') return;
+            const student = state.students.find(s => s.id === authSession.studentId);
+            if (!student) return;
+
+            if (student.confirmed) {
+                showToast("您已經完成確認囉！");
+                return;
+            }
+            const now = new Date();
+            student.confirmed = true;
+            student.confirmedTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+            saveState();
+            renderParentView(student);
+            showToast(`已同步回報給導師：${student.name}家長已確認`);
+        }
+
+        function populateTeacherStudentSelect() {
+            const teacherSel = document.getElementById('teacherStudentSelect');
+            teacherSel.innerHTML = '';
+            state.students.forEach(st => {
+                teacherSel.add(new Option(`${st.seat}號 － ${st.name}`, st.id));
+            });
+        }
+
+        function switchTeacherTab(tabName) {
+            ['overview', 'batchHw', 'classNote', 'studentDetail'].forEach(t => {
+                const btn = document.getElementById(`tab-${t}`);
+                const panel = document.getElementById(`panel-${t}`);
+                if (t === tabName) {
+                    btn.className = "py-2.5 text-xs md:text-sm font-bold rounded-lg bg-white text-teal-700 shadow-sm transition";
+                    panel.classList.remove('hidden');
+                } else {
+                    btn.className = "py-2.5 text-xs md:text-sm font-bold rounded-lg text-slate-600 hover:text-slate-800 transition";
+                    panel.classList.add('hidden');
+                }
+            });
+
+            if (tabName === 'overview') renderTeacherOverview();
+            if (tabName === 'batchHw') {
+                renderStampPalette();
+                populateBatchHomeworkSelect();
+            }
+            if (tabName === 'classNote') loadTeacherClassNote();
+            if (tabName === 'studentDetail') loadTeacherStudentForm(document.getElementById('teacherStudentSelect').value);
+        }
+
+        function renderTeacherOverview() {
+            const grid = document.getElementById('overviewGrid');
+            grid.innerHTML = '';
+            let confirmedCount = 0;
+
+            state.students.forEach(st => {
+                if (st.confirmed) confirmedCount++;
+                const pendingHw = state.homeworkList.filter(hw => !HW_STATUS_CONFIG[normalizeStatus(st.hwStatus[hw.id])].isCompleted).length;
+
+                grid.innerHTML += `
+                    <div onclick="jumpToStudentEdit('${st.id}')" class="cursor-pointer p-3 rounded-xl border transition ${st.confirmed ? 'bg-emerald-50/50 border-emerald-200' : 'bg-slate-50 border-slate-200 hover:border-teal-400'}">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-bold text-sm text-slate-800">${st.seat} ${st.name}</span>
+                            ${st.confirmed 
+                                ? `<span class="text-[11px] font-bold text-emerald-600 bg-emerald-100 px-1.5 py-0.5 rounded">已簽 ${st.confirmedTime}</span>`
+                                : `<span class="text-[11px] font-bold text-amber-600 bg-amber-100 px-1.5 py-0.5 rounded">未確認</span>`
+                            }
+                        </div>
+                        <div class="text-xs text-slate-500">
+                            作業：${pendingHw === 0 ? '<span class="text-emerald-600">全數完成</span>' : `<span class="text-amber-600 font-bold">${pendingHw} 項待處理</span>`}
+                        </div>
+                        <div class="text-[11px] text-slate-400 mt-1">家長密碼：${st.password}</div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('overviewCount').innerText = `${confirmedCount} / ${state.students.length} 已確認`;
+        }
+
+        function jumpToStudentEdit(studentId) {
+            document.getElementById('teacherStudentSelect').value = studentId;
+            switchTeacherTab('studentDetail');
+        }
+
+        function copyUnconfirmedList() {
+            const unconfirmed = state.students.filter(s => !s.confirmed).map(s => `${s.seat}號 ${s.name}`);
+            if (unconfirmed.length === 0) {
+                showToast("全班家長皆已確認完畢！");
+                return;
+            }
+            const text = `【309班今日聯絡簿尚未確認名單】\n${unconfirmed.join('、')}\n再請家長撥冗點擊確認，謝謝您！`;
+            navigator.clipboard.writeText(text).then(() => {
+                showToast("已複製未確認名單！");
+            });
+        }
+
+        function resetAllConfirmations() {
+            if (!confirm("確定要將全班家長的確認狀態重設為「未確認」嗎？")) return;
+            state.students.forEach(s => {
+                s.confirmed = false;
+                s.confirmedTime = "";
+            });
+            saveState();
+            renderTeacherOverview();
+            showToast("已重設全班今日簽章狀態");
+        }
+
+        function renderStampPalette() {
+            const palette = document.getElementById('stampPalette');
+            palette.innerHTML = '';
+
+            const isCycle = activeStampMode === 'cycle';
+            palette.innerHTML += `
+                <button onclick="selectStampMode('cycle')" class="px-2.5 py-1 rounded-lg text-xs font-bold border transition ${isCycle ? 'bg-slate-800 text-white border-slate-800 shadow-xs' : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'}">
+                    🔄 依序切換
+                </button>
+            `;
+
+            STATUS_KEYS.forEach(key => {
+                const cfg = HW_STATUS_CONFIG[key];
+                const isSelected = activeStampMode === key;
+                palette.innerHTML += `
+                    <button onclick="selectStampMode('${key}')" class="px-2.5 py-1 rounded-lg text-xs font-bold transition ${isSelected ? cfg.solidClass + ' ring-2 ring-offset-1 ring-slate-400 shadow-xs' : cfg.badgeClass + ' opacity-85 hover:opacity-100'}">
+                        ${cfg.label}
+                    </button>
+                `;
+            });
+        }
+
+        function selectStampMode(mode) {
+            activeStampMode = mode;
+            renderStampPalette();
+        }
+
+        function populateBatchHomeworkSelect() {
+            const sel = document.getElementById('batchHwSelect');
+            const prevVal = sel.value;
+            sel.innerHTML = '';
+
+            if (state.homeworkList.length === 0) {
+                sel.add(new Option("尚未建立今日作業項目", ""));
+                document.getElementById('batchHwGrid').innerHTML = `<p class="col-span-full text-xs text-slate-400 text-center py-4">請先至「聯絡/作業」分頁新增作業項目</p>`;
+                document.getElementById('batchHwStats').innerText = "0 項作業";
+                return;
+            }
+
+            state.homeworkList.forEach(hw => {
+                sel.add(new Option(hw.title, hw.id));
+            });
+
+            if (prevVal && state.homeworkList.some(h => h.id === prevVal)) {
+                sel.value = prevVal;
+            }
+            renderBatchHomeworkGrid();
+        }
+
+        function renderBatchHomeworkGrid() {
+            const hwId = document.getElementById('batchHwSelect').value;
+            const grid = document.getElementById('batchHwGrid');
+            if (!hwId) return;
+
+            grid.innerHTML = '';
+            let completedCount = 0;
+
+            state.students.forEach(st => {
+                const statusKey = normalizeStatus(st.hwStatus[hwId]);
+                const cfg = HW_STATUS_CONFIG[statusKey];
+                if (cfg.isCompleted) completedCount++;
+
+                grid.innerHTML += `
+                    <button onclick="applyBatchStudentHw('${st.id}', '${hwId}')" class="flex items-center justify-between p-3 rounded-xl border text-left transition active:scale-[0.97] ${cfg.cardClass}">
+                        <div class="min-w-0 pr-1">
+                            <div class="text-xs text-slate-500">${st.seat}號</div>
+                            <div class="font-bold text-sm text-slate-800 truncate">${st.name}</div>
+                        </div>
+                        <span class="shrink-0 text-xs font-bold px-2 py-1 rounded-lg ${cfg.solidClass}">
+                            ${cfg.label}
+                        </span>
+                    </button>
+                `;
+            });
+
+            document.getElementById('batchHwStats').innerText = `完成 ${completedCount} / ${state.students.length}`;
+        }
+
+        function applyBatchStudentHw(studentId, hwId) {
+            const student = state.students.find(s => s.id === studentId);
+            if (!student) return;
+
+            if (activeStampMode === 'cycle') {
+                const currentKey = normalizeStatus(student.hwStatus[hwId]);
+                const nextIdx = (STATUS_KEYS.indexOf(currentKey) + 1) % STATUS_KEYS.length;
+                student.hwStatus[hwId] = STATUS_KEYS[nextIdx];
+            } else {
+                const currentKey = normalizeStatus(student.hwStatus[hwId]);
+                student.hwStatus[hwId] = (currentKey === activeStampMode) ? 'submitted' : activeStampMode;
+            }
+
+            saveState();
+            renderBatchHomeworkGrid();
+        }
+
+        function setAllHomeworkStatus(statusKey) {
+            const hwId = document.getElementById('batchHwSelect').value;
+            if (!hwId) return;
+            state.students.forEach(st => {
+                st.hwStatus[hwId] = statusKey;
+            });
+            saveState();
+            renderBatchHomeworkGrid();
+            showToast(`已將全班設為「${HW_STATUS_CONFIG[statusKey].label}」`);
+        }
+
+        function loadTeacherClassNote() {
+            document.getElementById('editGlobalNote').value = state.dailyNote;
+            const listEl = document.getElementById('teacherHomeworkList');
+            listEl.innerHTML = '';
+
+            state.homeworkList.forEach(hw => {
+                listEl.innerHTML += `
+                    <div class="py-2.5 flex justify-between items-center">
+                        <span class="text-sm text-slate-700">${hw.title}</span>
+                        <button onclick="deleteHomeworkItem('${hw.id}')" class="text-rose-500 hover:bg-rose-50 p-1.5 rounded-lg transition">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                `;
+            });
+            lucide.createIcons();
+        }
+
+        function saveGlobalNote() {
+            state.dailyNote = document.getElementById('editGlobalNote').value;
+            saveState();
+            showToast("今日全班聯絡事項已儲存！");
+        }
+
+        function addHomeworkItem() {
+            const input = document.getElementById('newHomeworkInput');
+            const title = input.value.trim();
+            if (!title) return;
+
+            const newId = 'hw_' + Date.now();
+            state.homeworkList.push({ id: newId, title: title });
+            state.students.forEach(s => s.hwStatus[newId] = 'submitted');
+            
+            input.value = '';
+            saveState();
+            loadTeacherClassNote();
+            showToast("已新增作業項目（預設全班已繳交）");
+        }
+
+        function deleteHomeworkItem(hwId) {
+            state.homeworkList = state.homeworkList.filter(h => h.id !== hwId);
+            state.students.forEach(s => delete s.hwStatus[hwId]);
+            saveState();
+            loadTeacherClassNote();
+            showToast("已刪除該項作業");
+        }
+
+        function loadTeacherStudentForm(studentId) {
+            const student = state.students.find(s => s.id === studentId);
+            if (!student) return;
+
+            document.getElementById('editStudentPassword').value = student.password || "";
+
+            const toggleContainer = document.getElementById('teacherStudentHwToggles');
+            toggleContainer.innerHTML = '';
+
+            state.homeworkList.forEach(hw => {
+                const currentKey = normalizeStatus(student.hwStatus[hw.id]);
+                const cfg = HW_STATUS_CONFIG[currentKey];
+
+                const optionsHtml = STATUS_KEYS.map(k => 
+                    `<option value="${k}" ${k === currentKey ? 'selected' : ''}>${HW_STATUS_CONFIG[k].label}</option>`
+                ).join('');
+
+                toggleContainer.innerHTML += `
+                    <div class="flex justify-between items-center p-2.5 rounded-xl border ${cfg.cardClass}">
+                        <span class="text-sm font-medium text-slate-700 pr-2">${hw.title}</span>
+                        <select onchange="changeSingleStudentHw('${student.id}', '${hw.id}', this.value)" class="text-xs font-bold px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            ${optionsHtml}
+                        </select>
+                    </div>
+                `;
+            });
+
+            document.getElementById('editStudentSpecial').value = student.specialClass;
+            document.getElementById('editStudentHealth').value = student.healthNote;
+        }
+
+        function changeSingleStudentHw(studentId, hwId, newStatusKey) {
+            const student = state.students.find(s => s.id === studentId);
+            if (!student) return;
+            student.hwStatus[hwId] = newStatusKey;
+            saveState();
+            loadTeacherStudentForm(studentId);
+        }
+
+        function saveStudentDetail() {
+            const studentId = document.getElementById('teacherStudentSelect').value;
+            const student = state.students.find(s => s.id === studentId);
+            if (!student) return;
+
+            const newPwd = document.getElementById('editStudentPassword').value.trim();
+            if (!newPwd) {
+                showToast("家長專屬密碼不可為空！");
+                return;
+            }
+
+            student.password = newPwd;
+            student.specialClass = document.getElementById('editStudentSpecial').value;
+            student.healthNote = document.getElementById('editStudentHealth').value;
+            saveState();
+            showToast(`已儲存 ${student.name} 的個別紀錄與密碼！`);
+        }
+    </script>
+</body>
+</html>
