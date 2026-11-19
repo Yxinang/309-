@@ -32,21 +32,26 @@
 
     <!-- 頂部導覽列 -->
     <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/80 px-4 py-3">
-        <div class="max-w-4xl mx-auto flex justify-between items-center">
+        <div class="max-w-4xl mx-auto flex justify-between items-center gap-2">
             <div class="flex items-center gap-2.5">
-                <div class="w-9 h-9 rounded-xl bg-teal-600 text-white flex items-center justify-center font-bold shadow-sm">
+                <div class="w-9 h-9 rounded-xl bg-teal-600 text-white flex items-center justify-center font-bold shadow-sm shrink-0">
                     309
                 </div>
                 <div>
-                    <h1 class="text-base md:text-lg font-bold text-slate-800 leading-tight">崇明國小 309班 親師聯絡簿</h1>
+                    <div class="flex items-center gap-2">
+                        <h1 class="text-base md:text-lg font-bold text-slate-800 leading-tight">崇明國小 309班</h1>
+                        <span id="syncIndicator" class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
+                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                            連線中
+                        </span>
+                    </div>
                     <p id="headerDate" class="text-xs text-slate-400">載入日期中...</p>
                 </div>
             </div>
             
-            <!-- 登入後顯示登出按鈕 -->
-            <button id="logoutBtn" onclick="logout()" class="hidden flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 hover:bg-rose-50 hover:text-rose-600 text-slate-600 transition">
+            <button id="logoutBtn" onclick="logout()" class="hidden shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 hover:bg-rose-50 hover:text-rose-600 text-slate-600 transition">
                 <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
-                <span>登出帳號</span>
+                <span>登出</span>
             </button>
         </div>
     </header>
@@ -59,10 +64,9 @@
                     <i data-lucide="shield-check" class="w-6 h-6"></i>
                 </div>
                 <h2 class="text-xl font-bold text-slate-800">歡迎使用班級追蹤系統</h2>
-                <p class="text-xs text-slate-400">為保護學生隱私，請輸入專屬帳號密碼登入</p>
+                <p class="text-xs text-slate-400">手機與電腦雲端即時同步，請輸入專屬帳號登入</p>
             </div>
 
-            <!-- 登入身分切換 Tab -->
             <div class="grid grid-cols-2 gap-1.5 bg-slate-100 p-1 rounded-xl">
                 <button id="loginTabParent" onclick="switchLoginRole('parent')" class="py-2 text-xs font-bold rounded-lg bg-white text-teal-700 shadow-xs transition">
                     家長登入
@@ -72,7 +76,6 @@
                 </button>
             </div>
 
-            <!-- 家長登入表單 -->
             <div id="parentLoginForm" class="space-y-4">
                 <div>
                     <label for="loginSeatInput" class="block text-xs font-bold text-slate-600 mb-1.5">孩子座號（兩位數，例如 14）</label>
@@ -91,7 +94,6 @@
                 </p>
             </div>
 
-            <!-- 老師登入表單 -->
             <div id="teacherLoginForm" class="hidden space-y-4">
                 <div>
                     <label for="loginTeacherPwdInput" class="block text-xs font-bold text-slate-600 mb-1.5">班級導師管理密碼</label>
@@ -105,11 +107,10 @@
         </div>
     </main>
 
-    <!-- ==================== 2. 家長專屬視角（手機單欄 / 電腦雙欄自適應） ==================== -->
+    <!-- ==================== 2. 家長專屬視角 ==================== -->
     <main id="parentView" class="hidden max-w-4xl mx-auto p-4 md:p-6 animate-pop">
         <div class="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6 items-start">
             
-            <!-- 左欄（電腦版佔 5 欄）：學生專屬資訊 + 聯絡簿 + 電腦版確認按鈕 -->
             <div class="md:col-span-5 space-y-4">
                 <section class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-slate-100">
                     <div class="flex justify-between items-center gap-3">
@@ -141,7 +142,6 @@
                 </div>
             </div>
 
-            <!-- 右欄（電腦版佔 7 欄）：作業繳交與訂正統計 + 科任課 + 傷病通知 -->
             <div class="md:col-span-7 space-y-4">
                 <section class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-slate-100 space-y-3">
                     <div class="flex justify-between items-center">
@@ -152,8 +152,6 @@
                         <span id="hwSummaryTag" class="text-xs font-medium px-2.5 py-0.5 rounded-full"></span>
                     </div>
                     <div id="parentHomeworkList" class="divide-y divide-slate-100"></div>
-
-                    <!-- 訂正統計區域 -->
                     <div id="parentCorrectionStats" class="pt-3 border-t border-slate-100 space-y-2"></div>
                 </section>
 
@@ -177,7 +175,6 @@
             </div>
         </div>
 
-        <!-- 手機版底部固定確認區 -->
         <div class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200 p-3.5 z-20">
             <div class="max-w-lg mx-auto">
                 <button id="confirmBtnMobile" onclick="confirmByParent()" class="w-full py-3.5 rounded-xl font-bold text-base shadow-lg transition flex items-center justify-center gap-2">
@@ -186,7 +183,7 @@
         </div>
     </main>
 
-    <!-- ==================== 3. 老師管理區介面（手機/電腦自適應） ==================== -->
+    <!-- ==================== 3. 老師管理區介面 ==================== -->
     <main id="teacherView" class="hidden max-w-4xl mx-auto p-4 md:p-6 space-y-4 animate-pop">
         
         <div class="grid grid-cols-4 gap-1.5 bg-slate-200/70 p-1 rounded-xl max-w-2xl mx-auto">
@@ -208,7 +205,7 @@
         <div id="panel-overview" class="space-y-4">
             <div class="bg-white rounded-2xl p-4 md:p-6 card-shadow border border-slate-100 space-y-4">
                 <div class="flex justify-between items-center">
-                    <h2 class="font-bold text-slate-800 text-sm md:text-base">家長簽章同步進度</h2>
+                    <h2 class="font-bold text-slate-800 text-sm md:text-base">家長簽章同步進度（即時更新）</h2>
                     <span id="overviewCount" class="text-xs font-bold text-teal-700 bg-teal-50 px-3 py-1 rounded-full">0 / 0 已確認</span>
                 </div>
                 <div id="overviewGrid" class="grid grid-cols-2 md:grid-cols-4 gap-2.5 md:gap-3"></div>
@@ -272,7 +269,7 @@
                     </h2>
                     <textarea id="editGlobalNote" rows="5" class="w-full p-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500" placeholder="輸入今日聯絡簿內容..."></textarea>
                     <button onclick="saveGlobalNote()" class="w-full py-2.5 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-sm font-bold shadow-sm transition">
-                        儲存聯絡事項
+                        儲存並同步聯絡事項
                     </button>
                 </div>
 
@@ -323,7 +320,7 @@
                 </div>
 
                 <button onclick="saveStudentDetail()" class="w-full py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-sm font-bold shadow-md transition">
-                    儲存此學生資料與密碼設定
+                    儲存此學生資料並同步雲端
                 </button>
             </div>
         </div>
@@ -334,8 +331,23 @@
         提示訊息
     </div>
 
-    <script>
-        // ==================== 7 種作業狀態設定（已繳交：翡翠綠 / 已補交：天空藍） ====================
+    <!-- ==================== Firebase Realtime Database 雲端同步腳本 ==================== -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+        // 你的 Firebase 專案設定（contactbook-cc97e）
+        const firebaseConfig = {
+            apiKey: "AIzaSyDNB7pvbY5i2Xfzr1SWD2WteBaSRqOMpLI",
+            authDomain: "contactbook-cc97e.firebaseapp.com",
+            databaseURL: "https://contactbook-cc97e-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "contactbook-cc97e",
+            storageBucket: "contactbook-cc97e.firebasestorage.app",
+            messagingSenderId: "938516601923",
+            appId: "1:938516601923:web:28052c1495f87bfb8448f6",
+            measurementId: "G-5S34F53DZJ"
+        };
+
         const HW_STATUS_CONFIG = {
             submitted: {
                 label: '已繳交',
@@ -443,12 +455,74 @@
             ]
         };
 
-        let state = JSON.parse(localStorage.getItem('class309_tracker_v7')) || DEFAULT_DATA;
+        let state = JSON.parse(localStorage.getItem('class309_tracker_cache')) || DEFAULT_DATA;
         let authSession = JSON.parse(localStorage.getItem('class309_auth_session')) || null;
         let activeStampMode = 'cycle';
+        let currentTeacherTab = 'overview';
+        let dbRef = null;
+        let isCloudReady = false;
+
+        function initFirebaseSync() {
+            const indicator = document.getElementById('syncIndicator');
+            try {
+                const app = initializeApp(firebaseConfig);
+                const db = getDatabase(app);
+                dbRef = ref(db, 'class309_data');
+
+                onValue(dbRef, (snapshot) => {
+                    const cloudData = snapshot.val();
+                    isCloudReady = true;
+
+                    indicator.className = "inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200";
+                    indicator.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> 雲端同步中`;
+
+                    if (!cloudData) {
+                        set(dbRef, state);
+                        return;
+                    }
+
+                    state = {
+                        ...DEFAULT_DATA,
+                        ...cloudData,
+                        homeworkList: cloudData.homeworkList || [],
+                        students: (cloudData.students || []).map(st => ({
+                            ...st,
+                            hwStatus: st.hwStatus || {}
+                        }))
+                    };
+                    localStorage.setItem('class309_tracker_cache', JSON.stringify(state));
+                    refreshActiveViewFromCloud();
+                }, (error) => {
+                    console.error("Firebase 讀取失敗:", error);
+                    indicator.className = "inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200";
+                    indicator.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> 連線異常`;
+                });
+            } catch (err) {
+                console.error("Firebase 初始化錯誤:", err);
+                indicator.className = "inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200";
+                indicator.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> 設定待確認`;
+            }
+        }
 
         function saveState() {
-            localStorage.setItem('class309_tracker_v7', JSON.stringify(state));
+            localStorage.setItem('class309_tracker_cache', JSON.stringify(state));
+            if (dbRef && isCloudReady) {
+                set(dbRef, state).catch(err => {
+                    console.error("雲端儲存失敗:", err);
+                    showToast("雲端同步失敗，請檢查網路或資料庫規則");
+                });
+            }
+        }
+
+        function refreshActiveViewFromCloud() {
+            if (!authSession) return;
+            if (authSession.role === 'parent') {
+                const student = state.students.find(s => s.id === authSession.studentId);
+                if (student) renderParentView(student);
+            } else if (authSession.role === 'teacher') {
+                if (currentTeacherTab === 'overview') renderTeacherOverview();
+                if (currentTeacherTab === 'batchHw') populateBatchHomeworkSelect();
+            }
         }
 
         function saveSession(session) {
@@ -472,11 +546,12 @@
             const days = ['日', '一', '二', '三', '四', '五', '六'];
             document.getElementById('headerDate').innerText = `${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()} (週${days[now.getDay()]})`;
 
-            routeBySession();
+            initFirebaseSync();
+            window.routeBySession();
             lucide.createIcons();
         };
 
-        function routeBySession() {
+        window.routeBySession = function() {
             const loginView = document.getElementById('loginView');
             const parentView = document.getElementById('parentView');
             const teacherView = document.getElementById('teacherView');
@@ -497,7 +572,7 @@
             if (authSession.role === 'parent') {
                 const student = state.students.find(s => s.id === authSession.studentId);
                 if (!student) {
-                    logout();
+                    window.logout();
                     return;
                 }
                 parentView.classList.remove('hidden');
@@ -505,11 +580,11 @@
             } else if (authSession.role === 'teacher') {
                 teacherView.classList.remove('hidden');
                 populateTeacherStudentSelect();
-                switchTeacherTab('overview');
+                window.switchTeacherTab(currentTeacherTab);
             }
-        }
+        };
 
-        function switchLoginRole(role) {
+        window.switchLoginRole = function(role) {
             const tabParent = document.getElementById('loginTabParent');
             const tabTeacher = document.getElementById('loginTabTeacher');
             const formParent = document.getElementById('parentLoginForm');
@@ -526,9 +601,9 @@
                 formTeacher.classList.remove('hidden');
                 formParent.classList.add('hidden');
             }
-        }
+        };
 
-        function handleParentLogin() {
+        window.handleParentLogin = function() {
             const rawSeat = document.getElementById('loginSeatInput').value.trim();
             const pwd = document.getElementById('loginParentPwdInput').value.trim();
             if (!rawSeat || !pwd) {
@@ -545,11 +620,11 @@
 
             saveSession({ role: 'parent', studentId: matchedStudent.id });
             window.scrollTo({ top: 0, behavior: 'smooth' });
-            routeBySession();
+            window.routeBySession();
             showToast(`歡迎回來，${matchedStudent.name} 家長！`);
-        }
+        };
 
-        function handleTeacherLogin() {
+        window.handleTeacherLogin = function() {
             const pwd = document.getElementById('loginTeacherPwdInput').value.trim();
             if (pwd !== (state.teacherPassword || "309")) {
                 showToast("導師管理密碼錯誤（預設 309）");
@@ -557,19 +632,19 @@
             }
             saveSession({ role: 'teacher' });
             window.scrollTo({ top: 0, behavior: 'smooth' });
-            routeBySession();
+            window.routeBySession();
             showToast("已進入導師管理後台");
-        }
+        };
 
-        function logout() {
+        window.logout = function() {
             saveSession(null);
             document.getElementById('loginSeatInput').value = '';
             document.getElementById('loginParentPwdInput').value = '';
             document.getElementById('loginTeacherPwdInput').value = '';
             window.scrollTo({ top: 0, behavior: 'smooth' });
-            routeBySession();
+            window.routeBySession();
             showToast("已安全登出");
-        }
+        };
 
         function renderParentView(student) {
             document.getElementById('parentStudentSeatBadge').innerText = student.seat;
@@ -674,7 +749,7 @@
             lucide.createIcons();
         }
 
-        function confirmByParent() {
+        window.confirmByParent = function() {
             if (!authSession || authSession.role !== 'parent') return;
             const student = state.students.find(s => s.id === authSession.studentId);
             if (!student) return;
@@ -689,17 +764,22 @@
             saveState();
             renderParentView(student);
             showToast(`已同步回報給導師：${student.name}家長已確認`);
-        }
+        };
 
         function populateTeacherStudentSelect() {
             const teacherSel = document.getElementById('teacherStudentSelect');
+            const prevVal = teacherSel.value;
             teacherSel.innerHTML = '';
             state.students.forEach(st => {
                 teacherSel.add(new Option(`${st.seat}號 － ${st.name}`, st.id));
             });
+            if (prevVal && state.students.some(s => s.id === prevVal)) {
+                teacherSel.value = prevVal;
+            }
         }
 
-        function switchTeacherTab(tabName) {
+        window.switchTeacherTab = function(tabName) {
+            currentTeacherTab = tabName;
             ['overview', 'batchHw', 'classNote', 'studentDetail'].forEach(t => {
                 const btn = document.getElementById(`tab-${t}`);
                 const panel = document.getElementById(`panel-${t}`);
@@ -718,8 +798,8 @@
                 populateBatchHomeworkSelect();
             }
             if (tabName === 'classNote') loadTeacherClassNote();
-            if (tabName === 'studentDetail') loadTeacherStudentForm(document.getElementById('teacherStudentSelect').value);
-        }
+            if (tabName === 'studentDetail') window.loadTeacherStudentForm(document.getElementById('teacherStudentSelect').value);
+        };
 
         function renderTeacherOverview() {
             const grid = document.getElementById('overviewGrid');
@@ -750,12 +830,12 @@
             document.getElementById('overviewCount').innerText = `${confirmedCount} / ${state.students.length} 已確認`;
         }
 
-        function jumpToStudentEdit(studentId) {
+        window.jumpToStudentEdit = function(studentId) {
             document.getElementById('teacherStudentSelect').value = studentId;
-            switchTeacherTab('studentDetail');
-        }
+            window.switchTeacherTab('studentDetail');
+        };
 
-        function copyUnconfirmedList() {
+        window.copyUnconfirmedList = function() {
             const unconfirmed = state.students.filter(s => !s.confirmed).map(s => `${s.seat}號 ${s.name}`);
             if (unconfirmed.length === 0) {
                 showToast("全班家長皆已確認完畢！");
@@ -765,9 +845,9 @@
             navigator.clipboard.writeText(text).then(() => {
                 showToast("已複製未確認名單！");
             });
-        }
+        };
 
-        function resetAllConfirmations() {
+        window.resetAllConfirmations = function() {
             if (!confirm("確定要將全班家長的確認狀態重設為「未確認」嗎？")) return;
             state.students.forEach(s => {
                 s.confirmed = false;
@@ -775,8 +855,8 @@
             });
             saveState();
             renderTeacherOverview();
-            showToast("已重設全班今日簽章狀態");
-        }
+            showToast("已重設並同步全班簽章狀態");
+        };
 
         function renderStampPalette() {
             const palette = document.getElementById('stampPalette');
@@ -800,10 +880,10 @@
             });
         }
 
-        function selectStampMode(mode) {
+        window.selectStampMode = function(mode) {
             activeStampMode = mode;
             renderStampPalette();
-        }
+        };
 
         function populateBatchHomeworkSelect() {
             const sel = document.getElementById('batchHwSelect');
@@ -824,10 +904,10 @@
             if (prevVal && state.homeworkList.some(h => h.id === prevVal)) {
                 sel.value = prevVal;
             }
-            renderBatchHomeworkGrid();
+            window.renderBatchHomeworkGrid();
         }
 
-        function renderBatchHomeworkGrid() {
+        window.renderBatchHomeworkGrid = function() {
             const hwId = document.getElementById('batchHwSelect').value;
             const grid = document.getElementById('batchHwGrid');
             if (!hwId) return;
@@ -854,9 +934,9 @@
             });
 
             document.getElementById('batchHwStats').innerText = `完成 ${completedCount} / ${state.students.length}`;
-        }
+        };
 
-        function applyBatchStudentHw(studentId, hwId) {
+        window.applyBatchStudentHw = function(studentId, hwId) {
             const student = state.students.find(s => s.id === studentId);
             if (!student) return;
 
@@ -870,19 +950,19 @@
             }
 
             saveState();
-            renderBatchHomeworkGrid();
-        }
+            window.renderBatchHomeworkGrid();
+        };
 
-        function setAllHomeworkStatus(statusKey) {
+        window.setAllHomeworkStatus = function(statusKey) {
             const hwId = document.getElementById('batchHwSelect').value;
             if (!hwId) return;
             state.students.forEach(st => {
                 st.hwStatus[hwId] = statusKey;
             });
             saveState();
-            renderBatchHomeworkGrid();
-            showToast(`已將全班設為「${HW_STATUS_CONFIG[statusKey].label}」`);
-        }
+            window.renderBatchHomeworkGrid();
+            showToast(`已將全班設為「${HW_STATUS_CONFIG[statusKey].label}」並同步`);
+        };
 
         function loadTeacherClassNote() {
             document.getElementById('editGlobalNote').value = state.dailyNote;
@@ -902,13 +982,13 @@
             lucide.createIcons();
         }
 
-        function saveGlobalNote() {
+        window.saveGlobalNote = function() {
             state.dailyNote = document.getElementById('editGlobalNote').value;
             saveState();
-            showToast("今日全班聯絡事項已儲存！");
-        }
+            showToast("今日全班聯絡事項已儲存並同步雲端！");
+        };
 
-        function addHomeworkItem() {
+        window.addHomeworkItem = function() {
             const input = document.getElementById('newHomeworkInput');
             const title = input.value.trim();
             if (!title) return;
@@ -920,18 +1000,18 @@
             input.value = '';
             saveState();
             loadTeacherClassNote();
-            showToast("已新增作業項目（預設全班已繳交）");
-        }
+            showToast("已新增作業項目並同步雲端");
+        };
 
-        function deleteHomeworkItem(hwId) {
+        window.deleteHomeworkItem = function(hwId) {
             state.homeworkList = state.homeworkList.filter(h => h.id !== hwId);
             state.students.forEach(s => delete s.hwStatus[hwId]);
             saveState();
             loadTeacherClassNote();
-            showToast("已刪除該項作業");
-        }
+            showToast("已刪除該項作業並同步");
+        };
 
-        function loadTeacherStudentForm(studentId) {
+        window.loadTeacherStudentForm = function(studentId) {
             const student = state.students.find(s => s.id === studentId);
             if (!student) return;
 
@@ -960,17 +1040,17 @@
 
             document.getElementById('editStudentSpecial').value = student.specialClass;
             document.getElementById('editStudentHealth').value = student.healthNote;
-        }
+        };
 
-        function changeSingleStudentHw(studentId, hwId, newStatusKey) {
+        window.changeSingleStudentHw = function(studentId, hwId, newStatusKey) {
             const student = state.students.find(s => s.id === studentId);
             if (!student) return;
             student.hwStatus[hwId] = newStatusKey;
             saveState();
-            loadTeacherStudentForm(studentId);
-        }
+            window.loadTeacherStudentForm(studentId);
+        };
 
-        function saveStudentDetail() {
+        window.saveStudentDetail = function() {
             const studentId = document.getElementById('teacherStudentSelect').value;
             const student = state.students.find(s => s.id === studentId);
             if (!student) return;
@@ -985,8 +1065,8 @@
             student.specialClass = document.getElementById('editStudentSpecial').value;
             student.healthNote = document.getElementById('editStudentHealth').value;
             saveState();
-            showToast(`已儲存 ${student.name} 的個別紀錄與密碼！`);
-        }
+            showToast(`已儲存 ${student.name} 的資料並同步雲端！`);
+        };
     </script>
 </body>
 </html>
