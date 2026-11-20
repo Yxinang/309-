@@ -2,18 +2,24 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>崇明國小 309班 親師聯絡與追蹤系統</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        html, body {
+        html {
             font-family: 'Noto Sans TC', sans-serif;
             background-color: #F4F7F9;
-            overflow-x: hidden;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
+            overflow-x: clip;
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #F4F7F9;
+            overflow-x: clip;
+            overflow-y: visible;
+            touch-action: pan-y;
             -webkit-tap-highlight-color: transparent;
         }
         .card-shadow {
@@ -28,7 +34,7 @@
         }
     </style>
 </head>
-<body class="text-slate-700 min-h-screen pb-28 md:pb-12">
+<body class="text-slate-700 min-h-screen pb-36 md:pb-12">
 
     <!-- 頂部導覽列 -->
     <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/80 px-4 py-3">
@@ -105,7 +111,6 @@
     <!-- ==================== 2. 家長專屬視角（含每日聯絡簿保留區切換） ==================== -->
     <main id="parentView" class="hidden max-w-4xl mx-auto p-4 md:p-6 space-y-4 animate-pop">
         
-        <!-- 每日聯絡簿保留區（日期切換列） -->
         <section class="bg-white rounded-2xl p-3.5 md:p-4 card-shadow border border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div class="flex items-center gap-2 text-teal-700 font-bold text-sm">
                 <div class="p-1.5 bg-teal-50 rounded-lg"><i data-lucide="calendar-days" class="w-4 h-4"></i></div>
@@ -189,7 +194,7 @@
             </div>
         </div>
 
-        <div class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200 p-3.5 z-20">
+        <div class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200 p-3.5 z-20" style="padding-bottom: calc(0.875rem + env(safe-area-inset-bottom));">
             <div class="max-w-lg mx-auto">
                 <button id="confirmBtnMobile" onclick="confirmByParent()" class="w-full py-3.5 rounded-xl font-bold text-base shadow-lg transition flex items-center justify-center gap-2">
                 </button>
@@ -197,10 +202,9 @@
         </div>
     </main>
 
-    <!-- ==================== 3. 老師管理區介面（支援歷史日期編輯與保留區管理） ==================== -->
+    <!-- ==================== 3. 老師管理區介面 ==================== -->
     <main id="teacherView" class="hidden max-w-4xl mx-auto p-4 md:p-6 space-y-4 animate-pop">
         
-        <!-- 老師端：每日聯絡簿保留區選擇與新增日期 -->
         <section class="bg-white rounded-2xl p-3.5 md:p-4 card-shadow border border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div class="flex items-center gap-2 text-indigo-700 font-bold text-sm">
                 <div class="p-1.5 bg-indigo-50 rounded-lg"><i data-lucide="archive" class="w-4 h-4"></i></div>
@@ -214,7 +218,6 @@
             </div>
         </section>
 
-        <!-- 導師功能分頁 Tabs -->
         <div class="grid grid-cols-4 gap-1.5 bg-slate-200/70 p-1 rounded-xl max-w-2xl mx-auto">
             <button onclick="switchTeacherTab('overview')" id="tab-overview" class="py-2.5 text-xs md:text-sm font-bold rounded-lg bg-white text-teal-700 shadow-sm transition">
                 簽章總覽
@@ -290,7 +293,7 @@
             </div>
         </div>
 
-        <!-- TAB 3: 當日聯絡簿與作業設定（含保留區所有日期總覽） -->
+        <!-- TAB 3: 當日聯絡簿與保留區清單 -->
         <div id="panel-classNote" class="hidden space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="bg-white rounded-2xl p-4 md:p-6 card-shadow border border-slate-100 space-y-3">
@@ -319,7 +322,6 @@
                 </div>
             </div>
 
-            <!-- 聯絡簿歷史保留區清單 -->
             <div class="bg-white rounded-2xl p-4 md:p-6 card-shadow border border-slate-100 space-y-3">
                 <h2 class="font-bold text-slate-800 text-sm md:text-base flex items-center gap-1.5">
                     <i data-lucide="folder-clock" class="w-4 h-4 text-teal-600"></i>
@@ -387,10 +389,8 @@
             measurementId: "G-5S34F53DZJ"
         };
 
-        // 導師登入密碼（不顯示於介面）
         const TEACHER_ACCESS_CODE = "ni99";
 
-        // 全班 1～25 號學生姓名與學號順序精準配對
         const STUDENT_NAMES = [
             "黃琨翔", "陳秉軒", "杜晨翔", "劉景碩", "王宇童",
             "吳立翔", "陳宇恩", "林楷諾", "李柏衡", "林晉翰",
@@ -489,7 +489,6 @@
             return `${y}-${m}-${d}`;
         }
 
-        // 建立指定日期的預設聯絡簿紀錄（全班 25 人預設皆為已繳交）
         function createDefaultDayRecord(dateStr) {
             const defaultHw = [
                 { id: "hw1", title: "數學習作" },
@@ -530,7 +529,6 @@
         let isCloudReady = false;
         let lastSyncDiagnostic = "正在嘗試連線至 Firebase Realtime Database...";
 
-        // 確保選取的日期一定存在於 state.recordsByDate 並補齊 25 位學生結構
         function ensureDateRecord(dateStr) {
             if (!state.recordsByDate) state.recordsByDate = {};
             if (!state.recordsByDate[dateStr]) {
@@ -654,12 +652,10 @@
             lucide.createIcons();
         };
 
-        // ==================== 日期保留區切換 ====================
         window.changeSelectedDate = function(newDateStr) {
             if (!newDateStr) return;
             selectedDate = newDateStr;
             ensureDateRecord(selectedDate);
-            // 若老師切換到全新的日期，立即存一份進保留區
             if (authSession && authSession.role === 'teacher') {
                 saveState();
             }
@@ -671,7 +667,6 @@
             window.changeSelectedDate(getTodayStr());
         };
 
-        // ==================== 登入與路由控制 ====================
         window.routeBySession = function() {
             const loginView = document.getElementById('loginView');
             const parentView = document.getElementById('parentView');
@@ -725,7 +720,6 @@
             }
         };
 
-        // 家長登入（只需輸入學號）
         window.handleParentLogin = function() {
             const codeInput = document.getElementById('loginStudentIdInput').value.trim();
             if (!codeInput) {
@@ -746,7 +740,6 @@
             showToast(`歡迎回來，${matchedStudent.seat}號 ${matchedStudent.name} 家長！`);
         };
 
-        // 老師登入（密碼為 ni99，不顯示於畫面）
         window.handleTeacherLogin = function() {
             const pwd = document.getElementById('loginTeacherPwdInput').value.trim();
             if (pwd !== TEACHER_ACCESS_CODE) {
@@ -770,12 +763,10 @@
             showToast("已安全登出");
         };
 
-        // ==================== 家長視角渲染（含保留區日期切換） ====================
         function renderParentView(student) {
             const dayRec = ensureDateRecord(selectedDate);
             const stRec = dayRec.studentRecords[student.id];
 
-            // 填入保留區所有日期下拉選單（由新到舊排序）
             const dateSel = document.getElementById('parentDateSelect');
             const allDates = Object.keys(state.recordsByDate).sort((a, b) => b.localeCompare(a));
             dateSel.innerHTML = '';
@@ -909,7 +900,6 @@
             showToast(`已同步回報給導師：${student.name}家長已確認 (${selectedDate})`);
         };
 
-        // ==================== 老師管理區邏輯 ====================
         function populateTeacherStudentSelect() {
             const teacherSel = document.getElementById('teacherStudentSelect');
             const prevVal = teacherSel.value;
@@ -1118,7 +1108,6 @@
             showToast(`已將全班設為「${HW_STATUS_CONFIG[statusKey].label}」並同步`);
         };
 
-        // TAB 3: 當日聯絡簿與保留區清單
         function loadTeacherClassNote() {
             const dayRec = ensureDateRecord(selectedDate);
             document.getElementById('editNoteDateTitle').innerText = selectedDate;
@@ -1138,7 +1127,6 @@
                 `;
             });
 
-            // 渲染聯絡簿歷史保留區清單
             const archiveEl = document.getElementById('savedDatesArchiveList');
             archiveEl.innerHTML = '';
             const allDates = Object.keys(state.recordsByDate).sort((a, b) => b.localeCompare(a));
@@ -1197,7 +1185,6 @@
             showToast("已刪除該項作業並同步");
         };
 
-        // TAB 4: 個別學生紀錄編輯
         window.loadTeacherStudentForm = function(studentId) {
             const student = CLASS_STUDENTS.find(s => s.id === studentId);
             if (!student) return;
