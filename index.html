@@ -141,7 +141,6 @@
     <!-- ==================== 2. 家長專屬視角 ==================== -->
     <main id="parentView" class="hidden max-w-4xl mx-auto p-4 md:p-6 space-y-4 animate-pop">
         
-        <!-- 每日聯絡簿保留區切換列 -->
         <section class="bg-white rounded-2xl p-3.5 md:p-4 card-shadow border border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div class="flex items-center gap-2 text-teal-700 font-bold text-sm">
                 <div class="p-1.5 bg-teal-50 rounded-lg"><i data-lucide="calendar-days" class="w-4 h-4"></i></div>
@@ -158,7 +157,6 @@
 
         <div class="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6 items-start">
             
-            <!-- 左欄：學生資訊 + 當日聯絡簿 + 親師留言板 -->
             <div class="md:col-span-5 space-y-4">
                 <section class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-slate-100">
                     <div class="flex justify-between items-center gap-3">
@@ -187,7 +185,6 @@
                     </div>
                 </section>
 
-                <!-- 親師交流留言板 -->
                 <section class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-slate-100 space-y-3">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center gap-2 text-cyan-700 font-bold text-sm">
@@ -210,10 +207,8 @@
                 </section>
             </div>
 
-            <!-- 右欄：欠缺作業區 + 平日回家作業 + 其他作業紀錄 + 科任課 + 健康傷病 + 確認/取消 -->
             <div class="md:col-span-7 space-y-4">
 
-                <!-- 欠缺作業區（平日回家作業之欠缺／遺失提醒） -->
                 <section id="parentMissingHomeworkCard" class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-rose-100 space-y-3">
                     <div class="flex items-center justify-between gap-2">
                         <div class="flex items-center gap-2 text-rose-700 font-bold text-sm">
@@ -228,7 +223,6 @@
                     </div>
                 </section>
 
-                <!-- 平日回家作業 -->
                 <section class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-slate-100 space-y-3">
                     <div class="flex justify-between items-center">
                         <div class="flex items-center gap-2 text-indigo-700 font-bold text-sm">
@@ -241,12 +235,11 @@
                     <div id="parentCorrectionStats" class="pt-3 border-t border-slate-100 space-y-2"></div>
                 </section>
 
-                <!-- 其他作業紀錄區（與平日回家作業分開） -->
                 <section class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-violet-100 space-y-3">
                     <div class="flex items-center justify-between gap-2">
                         <div class="flex items-center gap-2 text-violet-700 font-bold text-sm">
                             <div class="p-1.5 bg-violet-50 rounded-lg"><i data-lucide="layers" class="w-4 h-4"></i></div>
-                            <span>其他作業紀錄（訂正／回條／額外練習）</span>
+                            <span>其他作業紀錄</span>
                         </div>
                         <span id="parentExtraHwBadge" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-violet-50 text-violet-700 border border-violet-200">
                             0 項需處理
@@ -302,7 +295,6 @@
             </div>
         </section>
 
-        <!-- 導師功能分頁 Tabs -->
         <div class="grid grid-cols-3 sm:grid-cols-6 gap-1 bg-slate-200/70 p-1 rounded-xl max-w-4xl mx-auto">
             <button type="button" onclick="switchTeacherTab('overview')" id="tab-overview" class="py-2.5 text-[11px] md:text-xs font-bold rounded-lg bg-white text-teal-700 shadow-sm transition">
                 簽章總覽
@@ -348,18 +340,18 @@
             </div>
         </div>
 
-        <!-- TAB 2: 其他作業圖卡設計 + 拖移／勾選快速登記區（與平日回家作業分開） -->
+        <!-- TAB 2: 其他作業圖卡區（平時全空，新增後持續保留直到刪除） -->
         <div id="panel-extraBoard" class="hidden space-y-4">
             <div class="bg-white rounded-2xl p-4 md:p-6 card-shadow border border-violet-100 space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                     <div>
                         <h2 class="font-bold text-slate-800 text-sm md:text-base flex items-center gap-1.5">
                             <i data-lucide="layers" class="w-4 h-4 text-violet-600"></i>
-                            1. 其他作業固定圖卡區（獨立於平日回家作業）
+                            1. 其他作業圖卡區（平時全空；新增後持續保留直到刪除）
                         </h2>
-                        <p class="text-xs text-slate-400 mt-0.5">將其他作業圖卡拖曳到學生卡片上，或直接勾選方塊記錄，免打字</p>
+                        <p class="text-xs text-slate-400 mt-0.5">有需要時新增圖卡，拖曳到學生卡片或直接勾選方塊記錄，免打字</p>
                     </div>
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-2 flex-wrap">
                         <label for="extraDragStatusSelect" class="text-xs font-bold text-slate-600 shrink-0">登記狀態：</label>
                         <select id="extraDragStatusSelect" class="bg-slate-50 border border-slate-200 text-slate-800 font-bold text-xs rounded-xl px-2.5 py-1.5">
                             <option value="correction">需訂正</option>
@@ -369,23 +361,27 @@
                             <option value="not_brought_school">未帶來學校</option>
                             <option value="madeup">已補交</option>
                         </select>
+                        <button type="button" onclick="clearAllExtraHomeworkCards()" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 transition">
+                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                            <span>全部清空</span>
+                        </button>
                     </div>
                 </div>
 
-                <!-- 可拖曳的其他作業圖卡 -->
+                <!-- 可拖曳的其他作業圖卡列（預設全空） -->
                 <div id="draggableExtraCards" class="flex flex-wrap gap-2 p-3 rounded-xl bg-violet-50/50 border border-violet-200/70 min-h-[54px]">
                 </div>
 
-                <!-- 新增固定其他作業圖卡 -->
+                <!-- 新增其他作業圖卡 -->
                 <div class="flex gap-2">
-                    <input type="text" id="newExtraCardInput" placeholder="新增其他作業圖卡（例如：考卷訂正、回條、補交作業）" onkeydown="if(event.key==='Enter') addExtraHomeworkCard()" class="flex-1 px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500">
+                    <input type="text" id="newExtraCardInput" placeholder="輸入有需要的其他作業圖卡名稱後按新增..." onkeydown="if(event.key==='Enter') addExtraHomeworkCard()" class="flex-1 px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500">
                     <button type="button" onclick="addExtraHomeworkCard()" class="shrink-0 px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-xl text-xs font-bold transition">
                         新增其他圖卡
                     </button>
                 </div>
             </div>
 
-            <!-- 學生拖曳放置與勾選區（其他作業） -->
+            <!-- 學生拖曳放置與勾選區 -->
             <div class="bg-white rounded-2xl p-4 md:p-6 card-shadow border border-slate-100 space-y-4">
                 <div class="flex justify-between items-center flex-wrap gap-2">
                     <h2 class="font-bold text-slate-800 text-sm md:text-base flex items-center gap-1.5">
@@ -693,16 +689,11 @@
                 { id: "hw1", title: "國語習作" },
                 { id: "hw2", title: "數學習作" }
             ];
-            const defaultExtraCards = [
-                { id: "ex1", title: "考卷訂正" },
-                { id: "ex2", title: "回條／同意書" },
-                { id: "ex3", title: "補交作業" }
-            ];
             const studentRecords = {};
             CLASS_STUDENTS.forEach(st => {
                 studentRecords[st.id] = {
                     hwStatus: { hw1: "submitted", hw2: "submitted" },
-                    extraHwStatus: { ex1: "submitted", ex2: "submitted", ex3: "submitted" },
+                    extraHwStatus: {},
                     specialClass: "今日科任課表現良好。",
                     healthNote: "今日在校健康狀況良好，無傷病紀錄。",
                     confirmed: false,
@@ -713,7 +704,6 @@
                 date: dateStr,
                 dailyNote: "1. 明日準時到校，攜帶水壺與學用品。\n2. 回家請確實完成今日作業並請家長簽名。",
                 homeworkList: defaultHw,
-                extraHomeworkCards: defaultExtraCards,
                 studentRecords: studentRecords
             };
         }
@@ -743,6 +733,7 @@
         const TODAY_STR = getTodayStr();
         const DEFAULT_STATE = {
             students: CLASS_STUDENTS,
+            extraCards: [],
             recordsByDate: {
                 [TODAY_STR]: createDefaultDayRecord(TODAY_STR)
             },
@@ -750,6 +741,8 @@
         };
 
         let state = JSON.parse(localStorage.getItem('class309_archive_cache')) || DEFAULT_STATE;
+        if (!Array.isArray(state.extraCards)) state.extraCards = [];
+
         let authSession = loadSavedSession();
         let selectedDate = TODAY_STR;
         let activeStampMode = 'cycle';
@@ -763,29 +756,21 @@
         function ensureDateRecord(dateStr) {
             if (!state.recordsByDate) state.recordsByDate = {};
             if (!state.studentMessages) state.studentMessages = {};
+            if (!Array.isArray(state.extraCards)) state.extraCards = [];
             if (!state.recordsByDate[dateStr]) {
                 state.recordsByDate[dateStr] = createDefaultDayRecord(dateStr);
             }
             const rec = state.recordsByDate[dateStr];
             if (!rec.homeworkList) rec.homeworkList = [];
-            if (!rec.extraHomeworkCards) {
-                rec.extraHomeworkCards = [
-                    { id: "ex1", title: "考卷訂正" },
-                    { id: "ex2", title: "回條／同意書" },
-                    { id: "ex3", title: "補交作業" }
-                ];
-            }
             if (!rec.studentRecords) rec.studentRecords = {};
 
             CLASS_STUDENTS.forEach(st => {
                 if (!rec.studentRecords[st.id]) {
                     const defaultHwStatus = {};
                     rec.homeworkList.forEach(h => defaultHwStatus[h.id] = 'submitted');
-                    const defaultExtraStatus = {};
-                    rec.extraHomeworkCards.forEach(ex => defaultExtraStatus[ex.id] = 'submitted');
                     rec.studentRecords[st.id] = {
                         hwStatus: defaultHwStatus,
-                        extraHwStatus: defaultExtraStatus,
+                        extraHwStatus: {},
                         specialClass: "今日科任課表現良好。",
                         healthNote: "今日在校健康狀況良好，無傷病紀錄。",
                         confirmed: false,
@@ -827,6 +812,7 @@
 
                     if (!cloudData || !cloudData.recordsByDate) {
                         state.students = CLASS_STUDENTS;
+                        if (!Array.isArray(state.extraCards)) state.extraCards = [];
                         ensureDateRecord(selectedDate);
                         set(dbRef, state);
                         return;
@@ -834,6 +820,7 @@
 
                     state = {
                         students: CLASS_STUDENTS,
+                        extraCards: Array.isArray(cloudData.extraCards) ? cloudData.extraCards : [],
                         recordsByDate: cloudData.recordsByDate || {},
                         studentMessages: cloudData.studentMessages || {}
                     };
@@ -854,6 +841,7 @@
 
         function saveState() {
             state.students = CLASS_STUDENTS;
+            if (!Array.isArray(state.extraCards)) state.extraCards = [];
             localStorage.setItem('class309_archive_cache', JSON.stringify(state));
             if (dbRef && isCloudReady) {
                 set(dbRef, state).catch(err => {
@@ -1053,7 +1041,6 @@
 
             renderParentMessageHistory(student.id);
 
-            // 平日回家作業與欠缺作業區
             const hwContainer = document.getElementById('parentHomeworkList');
             hwContainer.innerHTML = '';
             let attentionCount = 0;
@@ -1113,11 +1100,12 @@
                 `).join('');
             }
 
-            // 其他作業紀錄區（獨立於平日回家作業）
+            // 其他作業紀錄區（顯示已新增圖卡中當日需處理的項目）
             const extraListEl = document.getElementById('parentExtraHomeworkList');
             const extraBadgeEl = document.getElementById('parentExtraHwBadge');
+            const extraCards = state.extraCards || [];
             const pendingExtra = [];
-            (dayRec.extraHomeworkCards || []).forEach(ex => {
+            extraCards.forEach(ex => {
                 const statusKey = normalizeStatus((stRec.extraHwStatus || {})[ex.id]);
                 const cfg = HW_STATUS_CONFIG[statusKey];
                 if (!cfg.isCompleted) {
@@ -1128,7 +1116,7 @@
             if (pendingExtra.length === 0) {
                 extraBadgeEl.className = "text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200";
                 extraBadgeEl.innerText = "無其他待辦";
-                extraListEl.innerHTML = `<p class="text-xs text-slate-400 bg-slate-50 p-3 rounded-xl">目前無其他作業（訂正／回條／補交）待處理項目。</p>`;
+                extraListEl.innerHTML = `<p class="text-xs text-slate-400 bg-slate-50 p-3 rounded-xl">目前無其他作業待處理項目。</p>`;
             } else {
                 extraBadgeEl.className = "text-xs font-bold px-2.5 py-0.5 rounded-full bg-violet-100 text-violet-700 border border-violet-200";
                 extraBadgeEl.innerText = `${pendingExtra.length} 項需處理`;
@@ -1298,7 +1286,6 @@
             showToast("已取消已確認狀態，還原為待確認");
         };
 
-        // ==================== 老師管理區邏輯 ====================
         function populateTeacherStudentSelect() {
             const teacherSel = document.getElementById('teacherStudentSelect');
             const prevVal = teacherSel.value;
@@ -1349,15 +1336,15 @@
             if (tabName === 'studentDetail') window.loadTeacherStudentForm(document.getElementById('teacherStudentSelect').value);
         };
 
-        // ==================== 其他作業圖卡設計與拖移／勾選（獨立於平日回家作業） ====================
+        // ==================== 其他作業圖卡區（平時全空，新增後持續保留直到刪除） ====================
         function renderExtraBoardPanel() {
             const dayRec = ensureDateRecord(selectedDate);
             const cardsContainer = document.getElementById('draggableExtraCards');
             cardsContainer.innerHTML = '';
 
-            const extraCards = dayRec.extraHomeworkCards || [];
+            const extraCards = Array.isArray(state.extraCards) ? state.extraCards : [];
             if (extraCards.length === 0) {
-                cardsContainer.innerHTML = `<span class="text-xs text-slate-400">尚未建立其他作業圖卡，請在下方輸入並新增圖卡。</span>`;
+                cardsContainer.innerHTML = `<span class="text-xs text-slate-400">平時無圖卡；有需要時在下方輸入名稱並按「新增其他圖卡」，新增後會持續保留直到你刪除。</span>`;
             } else {
                 extraCards.forEach(ex => {
                     cardsContainer.innerHTML += `
@@ -1367,7 +1354,7 @@
                              class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white border-2 border-violet-200 hover:border-violet-500 text-slate-800 shadow-2xs cursor-grab active:cursor-grabbing select-none transition">
                             <i data-lucide="grip-vertical" class="w-3.5 h-3.5 text-violet-400"></i>
                             <span class="text-xs md:text-sm font-bold">${escapeHtml(ex.title)}</span>
-                            <button type="button" onclick="event.stopPropagation(); deleteExtraHomeworkCard('${ex.id}')" class="ml-1 text-slate-300 hover:text-rose-500 transition" title="移除此其他作業圖卡">
+                            <button type="button" onclick="event.stopPropagation(); deleteExtraHomeworkCard('${ex.id}')" class="ml-1 text-slate-400 hover:text-rose-600 transition" title="刪除此其他作業圖卡">
                                 <i data-lucide="x" class="w-3.5 h-3.5"></i>
                             </button>
                         </div>
@@ -1418,7 +1405,7 @@
                             </span>
                         </div>
                         <div class="space-y-1.5">
-                            ${checkboxesHtml || '<p class="text-[11px] text-slate-400">上方尚未建立其他作業圖卡</p>'}
+                            ${checkboxesHtml || '<p class="text-[11px] text-slate-400">目前無其他作業圖卡</p>'}
                         </div>
                     </div>
                 `;
@@ -1432,9 +1419,11 @@
             const title = input.value.trim();
             if (!title) return;
 
-            const dayRec = ensureDateRecord(selectedDate);
+            if (!Array.isArray(state.extraCards)) state.extraCards = [];
             const newId = 'ex_' + Date.now();
-            dayRec.extraHomeworkCards.push({ id: newId, title: title });
+            state.extraCards.push({ id: newId, title: title });
+
+            const dayRec = ensureDateRecord(selectedDate);
             CLASS_STUDENTS.forEach(s => {
                 if (!dayRec.studentRecords[s.id].extraHwStatus) dayRec.studentRecords[s.id].extraHwStatus = {};
                 dayRec.studentRecords[s.id].extraHwStatus[newId] = 'submitted';
@@ -1443,20 +1432,48 @@
             input.value = '';
             saveState();
             renderExtraBoardPanel();
-            showToast(`已新增其他作業圖卡「${title}」`);
+            showToast(`已新增其他作業圖卡「${title}」，將持續保留直到刪除`);
         };
 
         window.deleteExtraHomeworkCard = function(exId) {
-            const dayRec = ensureDateRecord(selectedDate);
-            dayRec.extraHomeworkCards = (dayRec.extraHomeworkCards || []).filter(ex => ex.id !== exId);
-            CLASS_STUDENTS.forEach(s => {
-                if (dayRec.studentRecords[s.id].extraHwStatus) {
-                    delete dayRec.studentRecords[s.id].extraHwStatus[exId];
+            state.extraCards = (state.extraCards || []).filter(ex => ex.id !== exId);
+            Object.keys(state.recordsByDate || {}).forEach(d => {
+                const rec = state.recordsByDate[d];
+                if (rec && rec.studentRecords) {
+                    CLASS_STUDENTS.forEach(s => {
+                        if (rec.studentRecords[s.id] && rec.studentRecords[s.id].extraHwStatus) {
+                            delete rec.studentRecords[s.id].extraHwStatus[exId];
+                        }
+                    });
                 }
             });
             saveState();
             renderExtraBoardPanel();
-            showToast("已移除該項其他作業圖卡");
+            showToast("已刪除該項其他作業圖卡");
+        };
+
+        window.clearAllExtraHomeworkCards = function() {
+            if (!Array.isArray(state.extraCards) || state.extraCards.length === 0) {
+                showToast("目前已經沒有其他作業圖卡了");
+                return;
+            }
+            if (!confirm("確定要全部清空所有「其他作業圖卡」嗎？（清空後才會移除）")) return;
+
+            state.extraCards = [];
+            Object.keys(state.recordsByDate || {}).forEach(d => {
+                const rec = state.recordsByDate[d];
+                if (rec && rec.studentRecords) {
+                    CLASS_STUDENTS.forEach(s => {
+                        if (rec.studentRecords[s.id]) {
+                            rec.studentRecords[s.id].extraHwStatus = {};
+                        }
+                    });
+                }
+            });
+
+            saveState();
+            renderExtraBoardPanel();
+            showToast("已全部清空其他作業圖卡");
         };
 
         window.handleExtraCardDragStart = function(exId) {
@@ -1488,7 +1505,7 @@
             const dayRec = ensureDateRecord(selectedDate);
             const stRec = dayRec.studentRecords[studentId];
             const student = CLASS_STUDENTS.find(s => s.id === studentId);
-            const exCard = (dayRec.extraHomeworkCards || []).find(ex => ex.id === draggedExtraCardId);
+            const exCard = (state.extraCards || []).find(ex => ex.id === draggedExtraCardId);
 
             if (stRec && exCard) {
                 if (!stRec.extraHwStatus) stRec.extraHwStatus = {};
