@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>班級親師聯絡與追蹤系統</title>
+    <title>崇明國小 309班 親師聯絡與追蹤系統</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
@@ -39,7 +39,7 @@
                 </div>
                 <div>
                     <div class="flex items-center gap-2 flex-wrap">
-                        <h1 class="text-base md:text-lg font-bold text-slate-800 leading-tight">班級親師聯絡簿</h1>
+                        <h1 class="text-base md:text-lg font-bold text-slate-800 leading-tight">崇明國小 309班</h1>
                         <button type="button" onclick="showSyncDiagnostic()" id="syncIndicator" class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
                             <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
                             連線中
@@ -64,7 +64,7 @@
                     <i data-lucide="shield-check" class="w-6 h-6"></i>
                 </div>
                 <h2 class="text-xl font-bold text-slate-800">歡迎使用班級追蹤系統</h2>
-                <p class="text-xs text-slate-400">手機與電腦雲端即時同步，請輸入專屬帳號登入</p>
+                <p class="text-xs text-slate-400">請選擇身分並登入查看每日聯絡簿</p>
             </div>
 
             <div class="grid grid-cols-2 gap-1.5 bg-slate-100 p-1 rounded-xl">
@@ -76,30 +76,23 @@
                 </button>
             </div>
 
-            <!-- 家長登入表單 -->
+            <!-- 家長登入表單（僅需輸入學號） -->
             <div id="parentLoginForm" class="space-y-4">
                 <div>
-                    <label for="loginSeatInput" class="block text-xs font-bold text-slate-600 mb-1.5">孩子座號（兩位數，例如 14）</label>
-                    <input type="text" id="loginSeatInput" inputmode="numeric" maxlength="2" placeholder="請輸入座號（測試可用 14）" class="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500">
-                </div>
-                <div>
-                    <label for="loginParentPwdInput" class="block text-xs font-bold text-slate-600 mb-1.5">家長專屬密碼</label>
-                    <input type="password" id="loginParentPwdInput" inputmode="numeric" placeholder="請輸入密碼（14號測試密碼 1414）" onkeydown="if(event.key==='Enter') handleParentLogin()" class="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500">
+                    <label for="loginStudentIdInput" class="block text-xs font-bold text-slate-600 mb-1.5">請輸入孩子學號</label>
+                    <input type="text" id="loginStudentIdInput" inputmode="numeric" placeholder="請輸入 6 碼學號" onkeydown="if(event.key==='Enter') handleParentLogin()" class="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500">
                 </div>
                 <button onclick="handleParentLogin()" class="w-full py-3.5 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-bold text-sm shadow-lg shadow-teal-600/20 transition flex items-center justify-center gap-2">
                     <i data-lucide="log-in" class="w-4 h-4"></i>
-                    登入查看孩子狀況
+                    登入查看聯絡簿
                 </button>
-                <p class="text-[11px] text-center text-slate-400">
-                    測試帳號：座號 <span class="font-bold text-slate-600">14</span> / 密碼 <span class="font-bold text-slate-600">1414</span>（或 01 / 0101）
-                </p>
             </div>
 
-            <!-- 老師登入表單 -->
+            <!-- 老師登入表單（密碼不顯示於畫面） -->
             <div id="teacherLoginForm" class="hidden space-y-4">
                 <div>
-                    <label for="loginTeacherPwdInput" class="block text-xs font-bold text-slate-600 mb-1.5">班級導師管理密碼</label>
-                    <input type="password" id="loginTeacherPwdInput" inputmode="numeric" placeholder="請輸入管理密碼（預設 309）" onkeydown="if(event.key==='Enter') handleTeacherLogin()" class="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <label for="loginTeacherPwdInput" class="block text-xs font-bold text-slate-600 mb-1.5">導師管理密碼</label>
+                    <input type="password" id="loginTeacherPwdInput" placeholder="請輸入管理密碼" onkeydown="if(event.key==='Enter') handleTeacherLogin()" class="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 </div>
                 <button onclick="handleTeacherLogin()" class="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-sm shadow-lg shadow-indigo-600/20 transition flex items-center justify-center gap-2">
                     <i data-lucide="settings" class="w-4 h-4"></i>
@@ -109,8 +102,24 @@
         </div>
     </main>
 
-    <!-- ==================== 2. 家長專屬視角 ==================== -->
-    <main id="parentView" class="hidden max-w-4xl mx-auto p-4 md:p-6 animate-pop">
+    <!-- ==================== 2. 家長專屬視角（含每日聯絡簿保留區切換） ==================== -->
+    <main id="parentView" class="hidden max-w-4xl mx-auto p-4 md:p-6 space-y-4 animate-pop">
+        
+        <!-- 每日聯絡簿保留區（日期切換列） -->
+        <section class="bg-white rounded-2xl p-3.5 md:p-4 card-shadow border border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="flex items-center gap-2 text-teal-700 font-bold text-sm">
+                <div class="p-1.5 bg-teal-50 rounded-lg"><i data-lucide="calendar-days" class="w-4 h-4"></i></div>
+                <span>每日聯絡簿保留區</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <select id="parentDateSelect" onchange="changeSelectedDate(this.value)" class="flex-1 sm:w-52 bg-slate-50 border border-slate-200 text-slate-800 font-bold text-xs md:text-sm rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500">
+                </select>
+                <button onclick="jumpToToday()" class="shrink-0 px-3 py-2 bg-teal-50 hover:bg-teal-100 text-teal-700 rounded-xl text-xs font-bold transition">
+                    回到今日
+                </button>
+            </div>
+        </section>
+
         <div class="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6 items-start">
             
             <div class="md:col-span-5 space-y-4">
@@ -118,11 +127,11 @@
                     <div class="flex justify-between items-center gap-3">
                         <div class="flex items-center gap-3">
                             <div id="parentStudentSeatBadge" class="w-12 h-12 rounded-2xl bg-teal-50 text-teal-700 font-bold text-lg flex items-center justify-center border border-teal-100">
-                                14
+                                01
                             </div>
                             <div>
-                                <span class="text-[11px] font-medium text-slate-400">309 班學生</span>
-                                <h2 id="parentStudentName" class="text-lg md:text-xl font-bold text-slate-800">王小明</h2>
+                                <span id="parentStudentCodeLabel" class="text-[11px] font-medium text-slate-400">學號 113056</span>
+                                <h2 id="parentStudentName" class="text-lg md:text-xl font-bold text-slate-800">黃琨翔</h2>
                             </div>
                         </div>
                         <div id="parentStatusBadge" class="text-right"></div>
@@ -130,9 +139,12 @@
                 </section>
 
                 <section class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-slate-100 space-y-2.5">
-                    <div class="flex items-center gap-2 text-teal-700 font-bold text-sm">
-                        <div class="p-1.5 bg-teal-50 rounded-lg"><i data-lucide="book-open" class="w-4 h-4"></i></div>
-                        <span>今日聯絡事項與叮嚀</span>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2 text-teal-700 font-bold text-sm">
+                            <div class="p-1.5 bg-teal-50 rounded-lg"><i data-lucide="book-open" class="w-4 h-4"></i></div>
+                            <span>當日聯絡事項與叮嚀</span>
+                        </div>
+                        <span id="parentNoteDateBadge" class="text-[11px] font-bold text-slate-400"></span>
                     </div>
                     <div id="parentDailyNote" class="text-sm text-slate-600 leading-relaxed bg-slate-50/80 p-3.5 rounded-xl whitespace-pre-line">
                     </div>
@@ -149,7 +161,7 @@
                     <div class="flex justify-between items-center">
                         <div class="flex items-center gap-2 text-indigo-700 font-bold text-sm">
                             <div class="p-1.5 bg-indigo-50 rounded-lg"><i data-lucide="clipboard-check" class="w-4 h-4"></i></div>
-                            <span>今日作業繳交狀況</span>
+                            <span>當日作業繳交狀況</span>
                         </div>
                         <span id="hwSummaryTag" class="text-xs font-medium px-2.5 py-0.5 rounded-full"></span>
                     </div>
@@ -185,9 +197,24 @@
         </div>
     </main>
 
-    <!-- ==================== 3. 老師管理區介面 ==================== -->
+    <!-- ==================== 3. 老師管理區介面（支援歷史日期編輯與保留區管理） ==================== -->
     <main id="teacherView" class="hidden max-w-4xl mx-auto p-4 md:p-6 space-y-4 animate-pop">
         
+        <!-- 老師端：每日聯絡簿保留區選擇與新增日期 -->
+        <section class="bg-white rounded-2xl p-3.5 md:p-4 card-shadow border border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="flex items-center gap-2 text-indigo-700 font-bold text-sm">
+                <div class="p-1.5 bg-indigo-50 rounded-lg"><i data-lucide="archive" class="w-4 h-4"></i></div>
+                <span>聯絡簿保留區（選擇日期進行查看或修改）</span>
+            </div>
+            <div class="flex items-center gap-2 flex-wrap">
+                <input type="date" id="teacherDatePicker" onchange="changeSelectedDate(this.value)" class="bg-slate-50 border border-slate-200 text-slate-800 font-bold text-xs md:text-sm rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <button onclick="jumpToToday()" class="px-3 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-xl text-xs font-bold transition">
+                    今日
+                </button>
+            </div>
+        </section>
+
+        <!-- 導師功能分頁 Tabs -->
         <div class="grid grid-cols-4 gap-1.5 bg-slate-200/70 p-1 rounded-xl max-w-2xl mx-auto">
             <button onclick="switchTeacherTab('overview')" id="tab-overview" class="py-2.5 text-xs md:text-sm font-bold rounded-lg bg-white text-teal-700 shadow-sm transition">
                 簽章總覽
@@ -206,19 +233,21 @@
         <!-- TAB 1: 全班簽章總覽 -->
         <div id="panel-overview" class="space-y-4">
             <div class="bg-white rounded-2xl p-4 md:p-6 card-shadow border border-slate-100 space-y-4">
-                <div class="flex justify-between items-center">
-                    <h2 class="font-bold text-slate-800 text-sm md:text-base">家長簽章同步進度（即時更新）</h2>
-                    <span id="overviewCount" class="text-xs font-bold text-teal-700 bg-teal-50 px-3 py-1 rounded-full">0 / 0 已確認</span>
+                <div class="flex justify-between items-center flex-wrap gap-2">
+                    <h2 class="font-bold text-slate-800 text-sm md:text-base">
+                        <span id="overviewDateLabel" class="text-teal-700"></span> 家長簽章同步進度（全班 25 人）
+                    </h2>
+                    <span id="overviewCount" class="text-xs font-bold text-teal-700 bg-teal-50 px-3 py-1 rounded-full">0 / 25 已確認</span>
                 </div>
-                <div id="overviewGrid" class="grid grid-cols-2 md:grid-cols-4 gap-2.5 md:gap-3"></div>
+                <div id="overviewGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2.5"></div>
                 <div class="pt-2 flex flex-col sm:flex-row gap-2">
                     <button onclick="copyUnconfirmedList()" class="flex-1 py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition">
                         <i data-lucide="copy" class="w-3.5 h-3.5"></i>
-                        複製未確認名單
+                        複製當日未確認名單
                     </button>
                     <button onclick="resetAllConfirmations()" class="py-2.5 px-4 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition">
                         <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
-                        重設今日簽章
+                        重設當日簽章
                     </button>
                 </div>
             </div>
@@ -257,28 +286,28 @@
                     </button>
                 </div>
 
-                <div id="batchHwGrid" class="grid grid-cols-2 md:grid-cols-4 gap-2.5 pt-1"></div>
+                <div id="batchHwGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2.5 pt-1"></div>
             </div>
         </div>
 
-        <!-- TAB 3: 全班聯絡簿與今日作業設定 -->
-        <div id="panel-classNote" class="hidden">
+        <!-- TAB 3: 當日聯絡簿與作業設定（含保留區所有日期總覽） -->
+        <div id="panel-classNote" class="hidden space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="bg-white rounded-2xl p-4 md:p-6 card-shadow border border-slate-100 space-y-3">
                     <h2 class="font-bold text-slate-800 text-sm md:text-base flex items-center gap-1.5">
                         <i data-lucide="edit-3" class="w-4 h-4 text-teal-600"></i>
-                        編輯今日全班聯絡事項
+                        編輯 <span id="editNoteDateTitle" class="text-teal-700"></span> 聯絡事項
                     </h2>
-                    <textarea id="editGlobalNote" rows="5" class="w-full p-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500" placeholder="輸入今日聯絡簿內容..."></textarea>
+                    <textarea id="editGlobalNote" rows="5" class="w-full p-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500" placeholder="輸入當日聯絡簿內容..."></textarea>
                     <button onclick="saveGlobalNote()" class="w-full py-2.5 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-sm font-bold shadow-sm transition">
-                        儲存並同步聯絡事項
+                        儲存並同步此日聯絡事項
                     </button>
                 </div>
 
                 <div class="bg-white rounded-2xl p-4 md:p-6 card-shadow border border-slate-100 space-y-3">
                     <h2 class="font-bold text-slate-800 text-sm md:text-base flex items-center gap-1.5">
                         <i data-lucide="list-plus" class="w-4 h-4 text-indigo-600"></i>
-                        管理今日作業項目
+                        管理此日作業項目
                     </h2>
                     <div class="flex gap-2">
                         <input type="text" id="newHomeworkInput" placeholder="例如：國語習作 P.20-21" class="flex-1 px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500">
@@ -289,25 +318,34 @@
                     <div id="teacherHomeworkList" class="divide-y divide-slate-100"></div>
                 </div>
             </div>
+
+            <!-- 聯絡簿歷史保留區清單 -->
+            <div class="bg-white rounded-2xl p-4 md:p-6 card-shadow border border-slate-100 space-y-3">
+                <h2 class="font-bold text-slate-800 text-sm md:text-base flex items-center gap-1.5">
+                    <i data-lucide="folder-clock" class="w-4 h-4 text-teal-600"></i>
+                    已保留的每日聯絡簿存檔（點擊可直接切換修改）
+                </h2>
+                <div id="savedDatesArchiveList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5"></div>
+            </div>
         </div>
 
-        <!-- TAB 4: 個別學生紀錄與家長密碼設定 -->
+        <!-- TAB 4: 個別學生紀錄編輯 -->
         <div id="panel-studentDetail" class="hidden max-w-2xl mx-auto">
             <div class="bg-white rounded-2xl p-4 md:p-6 card-shadow border border-slate-100 space-y-4">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 mb-1">選擇要編輯的學生</label>
+                        <label class="block text-xs font-bold text-slate-500 mb-1">選擇要編輯的學生（1～25號）</label>
                         <select id="teacherStudentSelect" onchange="loadTeacherStudentForm(this.value)" class="w-full bg-slate-50 border border-slate-200 text-slate-800 font-bold text-sm rounded-xl px-3 py-2.5">
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 mb-1">該生家長專屬登入密碼</label>
-                        <input type="text" id="editStudentPassword" class="w-full bg-slate-50 border border-slate-200 text-slate-800 font-bold text-sm rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-teal-500">
+                        <label class="block text-xs font-bold text-slate-500 mb-1">該生家長登入學號（唯讀）</label>
+                        <input type="text" id="displayStudentCode" readonly class="w-full bg-slate-100 border border-slate-200 text-slate-500 font-bold text-sm rounded-xl px-3 py-2.5">
                     </div>
                 </div>
 
                 <div class="space-y-2">
-                    <label class="block text-xs font-bold text-indigo-700">各項作業狀態（下拉可直接選擇）</label>
+                    <label class="block text-xs font-bold text-indigo-700">當日各項作業狀態（下拉可直接選擇）</label>
                     <div id="teacherStudentHwToggles" class="space-y-2"></div>
                 </div>
 
@@ -322,7 +360,7 @@
                 </div>
 
                 <button onclick="saveStudentDetail()" class="w-full py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-sm font-bold shadow-md transition">
-                    儲存此學生資料並同步雲端
+                    儲存此學生當日紀錄並同步雲端
                 </button>
             </div>
         </div>
@@ -348,6 +386,33 @@
             appId: "1:938516601923:web:28052c1495f87bfb8448f6",
             measurementId: "G-5S34F53DZJ"
         };
+
+        // 導師登入密碼（不顯示於介面）
+        const TEACHER_ACCESS_CODE = "ni99";
+
+        // 全班 1～25 號學生姓名與學號順序精準配對
+        const STUDENT_NAMES = [
+            "黃琨翔", "陳秉軒", "杜晨翔", "劉景碩", "王宇童",
+            "吳立翔", "陳宇恩", "林楷諾", "李柏衡", "林晉翰",
+            "徐堉綸", "紀孟希", "徐晟瀚", "王知言", "蔡沛穎",
+            "鄭詠心", "郭聿芸", "楊茲甯", "王岑芝", "吳涵儒",
+            "洪楀晴", "林芷萱", "潘若穎", "焉語霓", "蘇唯心"
+        ];
+
+        const STUDENT_CODES = [
+            "113056", "113058", "113164", "113166", "113245",
+            "113140", "113248", "113010", "113037", "113279",
+            "113123", "113200", "113015", "113017", "113151",
+            "113284", "113178", "113204", "113021", "113205",
+            "113232", "113208", "113129", "113134", "113212"
+        ];
+
+        const CLASS_STUDENTS = STUDENT_NAMES.map((name, idx) => ({
+            id: `s${String(idx + 1).padStart(2, '0')}`,
+            seat: String(idx + 1).padStart(2, '0'),
+            name: name,
+            studentCode: STUDENT_CODES[idx]
+        }));
 
         const HW_STATUS_CONFIG = {
             submitted: {
@@ -416,53 +481,82 @@
             return HW_STATUS_CONFIG[val] ? val : 'unsubmitted';
         }
 
-        const DEFAULT_DATA = {
-            teacherPassword: "309",
-            dailyNote: "1. 明日攜帶跳繩與水壺，準備體育課測驗。\n2. 週五進行國語第五課聽寫，請在家複習生字。\n3. 戶外教育同意書請於本週五前交回。",
-            homeworkList: [
-                { id: "hw1", title: "數學習作 P.32-33" },
-                { id: "hw2", title: "國語生字簿 L.5" },
-                { id: "hw3", title: "閱讀心得單一張" }
-            ],
-            students: [
-                {
-                    id: "s01", seat: "01", name: "林宇軒", password: "0101",
-                    hwStatus: { hw1: "submitted", hw2: "madeup", hw3: "submitted" },
-                    specialClass: "音樂課直笛吹奏音準穩定，能協助指導鄰座同學。",
-                    healthNote: "今日在校活動正常，無傷病紀錄。",
-                    confirmed: true, confirmedTime: "18:20"
-                },
-                {
-                    id: "s02", seat: "02", name: "陳品妍", password: "0202",
-                    hwStatus: { hw1: "correction", hw2: "correction", hw3: "not_brought_home" },
-                    specialClass: "美勞課作品構圖用心，色彩搭配豐富，獲得老師讚賞。",
-                    healthNote: "今日在校活動正常，無傷病紀錄。",
-                    confirmed: false, confirmedTime: ""
-                },
-                {
-                    id: "s14", seat: "14", name: "王小明", password: "1414",
-                    hwStatus: { hw1: "madeup", hw2: "correction", hw3: "missing" },
-                    specialClass: "體育課表現積極，接力跑傳接棒動作流暢，並主動協助收拾器材。",
-                    healthNote: "今日下午下課時右膝輕微擦傷，已至健康中心擦藥並貼上OK繃，目前無大礙，請家長回家後留意傷口乾燥。",
-                    confirmed: false, confirmedTime: ""
-                },
-                {
-                    id: "s15", seat: "15", name: "張語彤", password: "1515",
-                    hwStatus: { hw1: "submitted", hw2: "submitted", hw3: "submitted" },
-                    specialClass: "英語課分組競賽表現優異，勇敢開口回答問題。",
-                    healthNote: "今日在校活動正常，無傷病紀錄。",
-                    confirmed: true, confirmedTime: "19:05"
-                }
-            ]
+        function getTodayStr() {
+            const now = new Date();
+            const y = now.getFullYear();
+            const m = String(now.getMonth() + 1).padStart(2, '0');
+            const d = String(now.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+        }
+
+        // 建立指定日期的預設聯絡簿紀錄（全班 25 人預設皆為已繳交）
+        function createDefaultDayRecord(dateStr) {
+            const defaultHw = [
+                { id: "hw1", title: "數學習作" },
+                { id: "hw2", title: "國語生字簿" }
+            ];
+            const studentRecords = {};
+            CLASS_STUDENTS.forEach(st => {
+                studentRecords[st.id] = {
+                    hwStatus: { hw1: "submitted", hw2: "submitted" },
+                    specialClass: "今日科任課表現良好。",
+                    healthNote: "今日在校健康狀況良好，無傷病紀錄。",
+                    confirmed: false,
+                    confirmedTime: ""
+                };
+            });
+            return {
+                date: dateStr,
+                dailyNote: "1. 明日準時到校，攜帶水壺與學用品。\n2. 回家請確實完成今日作業並請家長簽名。",
+                homeworkList: defaultHw,
+                studentRecords: studentRecords
+            };
+        }
+
+        const TODAY_STR = getTodayStr();
+        const DEFAULT_STATE = {
+            students: CLASS_STUDENTS,
+            recordsByDate: {
+                [TODAY_STR]: createDefaultDayRecord(TODAY_STR)
+            }
         };
 
-        let state = JSON.parse(localStorage.getItem('class309_tracker_cache')) || DEFAULT_DATA;
-        let authSession = JSON.parse(localStorage.getItem('class309_auth_session')) || null;
+        let state = JSON.parse(localStorage.getItem('class309_archive_cache')) || DEFAULT_STATE;
+        let authSession = JSON.parse(localStorage.getItem('class309_auth_session_v2')) || null;
+        let selectedDate = TODAY_STR;
         let activeStampMode = 'cycle';
         let currentTeacherTab = 'overview';
         let dbRef = null;
         let isCloudReady = false;
         let lastSyncDiagnostic = "正在嘗試連線至 Firebase Realtime Database...";
+
+        // 確保選取的日期一定存在於 state.recordsByDate 並補齊 25 位學生結構
+        function ensureDateRecord(dateStr) {
+            if (!state.recordsByDate) state.recordsByDate = {};
+            if (!state.recordsByDate[dateStr]) {
+                state.recordsByDate[dateStr] = createDefaultDayRecord(dateStr);
+            }
+            const rec = state.recordsByDate[dateStr];
+            if (!rec.homeworkList) rec.homeworkList = [];
+            if (!rec.studentRecords) rec.studentRecords = {};
+
+            CLASS_STUDENTS.forEach(st => {
+                if (!rec.studentRecords[st.id]) {
+                    const defaultHwStatus = {};
+                    rec.homeworkList.forEach(h => defaultHwStatus[h.id] = 'submitted');
+                    rec.studentRecords[st.id] = {
+                        hwStatus: defaultHwStatus,
+                        specialClass: "今日科任課表現良好。",
+                        healthNote: "今日在校健康狀況良好，無傷病紀錄。",
+                        confirmed: false,
+                        confirmedTime: ""
+                    };
+                } else if (!rec.studentRecords[st.id].hwStatus) {
+                    rec.studentRecords[st.id].hwStatus = {};
+                }
+            });
+            return rec;
+        }
 
         window.showSyncDiagnostic = function() {
             alert("【雲端同步狀態診斷】\n\n" + lastSyncDiagnostic + "\n\n資料庫網址：\n" + firebaseConfig.databaseURL);
@@ -473,48 +567,45 @@
             try {
                 const app = initializeApp(firebaseConfig);
                 const db = getDatabase(app);
-                dbRef = ref(db, 'class309_data');
+                dbRef = ref(db, 'class309_archive_data');
 
                 onValue(dbRef, (snapshot) => {
                     const cloudData = snapshot.val();
                     isCloudReady = true;
-                    lastSyncDiagnostic = "✅ 已成功連上 Firebase 雲端資料庫！手機與電腦資料同步運作中。";
+                    lastSyncDiagnostic = "✅ 已成功連上 Firebase 雲端資料庫！每日聯絡簿保留區與全班 25 人資料即時同步中。";
 
                     indicator.className = "inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200";
                     indicator.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> 雲端同步中`;
 
-                    if (!cloudData) {
+                    if (!cloudData || !cloudData.recordsByDate) {
+                        state.students = CLASS_STUDENTS;
+                        ensureDateRecord(selectedDate);
                         set(dbRef, state);
                         return;
                     }
 
                     state = {
-                        ...DEFAULT_DATA,
-                        ...cloudData,
-                        homeworkList: cloudData.homeworkList || [],
-                        students: (cloudData.students || []).map(st => ({
-                            ...st,
-                            hwStatus: st.hwStatus || {}
-                        }))
+                        students: CLASS_STUDENTS,
+                        recordsByDate: cloudData.recordsByDate || {}
                     };
-                    localStorage.setItem('class309_tracker_cache', JSON.stringify(state));
+                    ensureDateRecord(selectedDate);
+                    localStorage.setItem('class309_archive_cache', JSON.stringify(state));
                     refreshActiveViewFromCloud();
                 }, (error) => {
                     isCloudReady = false;
-                    lastSyncDiagnostic = "❌ 讀取雲端失敗：" + error.message + "\n（請檢查 Realtime Database 是否已建立，以及「規則」中的 .read 與 .write 是否設為 true）";
+                    lastSyncDiagnostic = "❌ 讀取雲端失敗：" + error.message;
                     indicator.className = "inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200";
                     indicator.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> 點我看連線原因`;
                 });
             } catch (err) {
                 isCloudReady = false;
                 lastSyncDiagnostic = "❌ 初始化錯誤：" + err.message;
-                indicator.className = "inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200";
-                indicator.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> 設定錯誤`;
             }
         }
 
         function saveState() {
-            localStorage.setItem('class309_tracker_cache', JSON.stringify(state));
+            state.students = CLASS_STUDENTS;
+            localStorage.setItem('class309_archive_cache', JSON.stringify(state));
             if (dbRef && isCloudReady) {
                 set(dbRef, state).catch(err => {
                     lastSyncDiagnostic = "❌ 寫入雲端失敗：" + err.message;
@@ -528,7 +619,7 @@
         function refreshActiveViewFromCloud() {
             if (!authSession) return;
             if (authSession.role === 'parent') {
-                const student = state.students.find(s => s.id === authSession.studentId);
+                const student = CLASS_STUDENTS.find(s => s.id === authSession.studentId);
                 if (student) renderParentView(student);
             } else if (authSession.role === 'teacher') {
                 if (currentTeacherTab === 'overview') renderTeacherOverview();
@@ -539,9 +630,9 @@
         function saveSession(session) {
             authSession = session;
             if (session) {
-                localStorage.setItem('class309_auth_session', JSON.stringify(session));
+                localStorage.setItem('class309_auth_session_v2', JSON.stringify(session));
             } else {
-                localStorage.removeItem('class309_auth_session');
+                localStorage.removeItem('class309_auth_session_v2');
             }
         }
 
@@ -549,19 +640,38 @@
             const toast = document.getElementById('toast');
             toast.innerText = msg;
             toast.classList.remove('opacity-0');
-            setTimeout(() => toast.classList.add('opacity-0'), 2500);
+            setTimeout(() => toast.classList.add('opacity-0'), 2400);
         }
 
         window.onload = function() {
             const now = new Date();
             const days = ['日', '一', '二', '三', '四', '五', '六'];
-            document.getElementById('headerDate').innerText = `${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()} (週${days[now.getDay()]})`;
+            document.getElementById('headerDate').innerText = `今日：${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()} (週${days[now.getDay()]})`;
 
+            ensureDateRecord(selectedDate);
             initFirebaseSync();
-            routeBySession();
+            window.routeBySession();
             lucide.createIcons();
         };
 
+        // ==================== 日期保留區切換 ====================
+        window.changeSelectedDate = function(newDateStr) {
+            if (!newDateStr) return;
+            selectedDate = newDateStr;
+            ensureDateRecord(selectedDate);
+            // 若老師切換到全新的日期，立即存一份進保留區
+            if (authSession && authSession.role === 'teacher') {
+                saveState();
+            }
+            window.routeBySession();
+            showToast(`已切換至 ${selectedDate} 聯絡簿`);
+        };
+
+        window.jumpToToday = function() {
+            window.changeSelectedDate(getTodayStr());
+        };
+
+        // ==================== 登入與路由控制 ====================
         window.routeBySession = function() {
             const loginView = document.getElementById('loginView');
             const parentView = document.getElementById('parentView');
@@ -581,7 +691,7 @@
             logoutBtn.classList.remove('hidden');
 
             if (authSession.role === 'parent') {
-                const student = state.students.find(s => s.id === authSession.studentId);
+                const student = CLASS_STUDENTS.find(s => s.id === authSession.studentId);
                 if (!student) {
                     window.logout();
                     return;
@@ -590,6 +700,7 @@
                 renderParentView(student);
             } else if (authSession.role === 'teacher') {
                 teacherView.classList.remove('hidden');
+                document.getElementById('teacherDatePicker').value = selectedDate;
                 populateTeacherStudentSelect();
                 window.switchTeacherTab(currentTeacherTab);
             }
@@ -614,33 +725,36 @@
             }
         };
 
+        // 家長登入（只需輸入學號）
         window.handleParentLogin = function() {
-            const rawSeat = document.getElementById('loginSeatInput').value.trim();
-            const pwd = document.getElementById('loginParentPwdInput').value.trim();
-            if (!rawSeat || !pwd) {
-                showToast("請輸入座號與家長專屬密碼");
+            const codeInput = document.getElementById('loginStudentIdInput').value.trim();
+            if (!codeInput) {
+                showToast("請輸入孩子的學號");
                 return;
             }
-            const paddedSeat = rawSeat.padStart(2, '0');
-            const matchedStudent = state.students.find(s => s.seat === paddedSeat && s.password === pwd);
-
+            const matchedStudent = CLASS_STUDENTS.find(s => s.studentCode === codeInput);
             if (!matchedStudent) {
-                showToast("座號或密碼錯誤，請重新確認！");
+                showToast("查無此學號，請重新確認！");
                 return;
             }
 
+            selectedDate = getTodayStr();
+            ensureDateRecord(selectedDate);
             saveSession({ role: 'parent', studentId: matchedStudent.id });
             window.scrollTo({ top: 0, behavior: 'smooth' });
             window.routeBySession();
-            showToast(`歡迎回來，${matchedStudent.name} 家長！`);
+            showToast(`歡迎回來，${matchedStudent.seat}號 ${matchedStudent.name} 家長！`);
         };
 
+        // 老師登入（密碼為 ni99，不顯示於畫面）
         window.handleTeacherLogin = function() {
             const pwd = document.getElementById('loginTeacherPwdInput').value.trim();
-            if (pwd !== (state.teacherPassword || "309")) {
-                showToast("導師管理密碼錯誤（預設 309）");
+            if (pwd !== TEACHER_ACCESS_CODE) {
+                showToast("導師管理密碼錯誤，請重新輸入");
                 return;
             }
+            selectedDate = getTodayStr();
+            ensureDateRecord(selectedDate);
             saveSession({ role: 'teacher' });
             window.scrollTo({ top: 0, behavior: 'smooth' });
             window.routeBySession();
@@ -649,25 +763,40 @@
 
         window.logout = function() {
             saveSession(null);
-            document.getElementById('loginSeatInput').value = '';
-            document.getElementById('loginParentPwdInput').value = '';
+            document.getElementById('loginStudentIdInput').value = '';
             document.getElementById('loginTeacherPwdInput').value = '';
             window.scrollTo({ top: 0, behavior: 'smooth' });
             window.routeBySession();
             showToast("已安全登出");
         };
 
+        // ==================== 家長視角渲染（含保留區日期切換） ====================
         function renderParentView(student) {
+            const dayRec = ensureDateRecord(selectedDate);
+            const stRec = dayRec.studentRecords[student.id];
+
+            // 填入保留區所有日期下拉選單（由新到舊排序）
+            const dateSel = document.getElementById('parentDateSelect');
+            const allDates = Object.keys(state.recordsByDate).sort((a, b) => b.localeCompare(a));
+            dateSel.innerHTML = '';
+            allDates.forEach(d => {
+                const label = d === getTodayStr() ? `${d}（今日）` : d;
+                dateSel.add(new Option(label, d));
+            });
+            dateSel.value = selectedDate;
+
             document.getElementById('parentStudentSeatBadge').innerText = student.seat;
+            document.getElementById('parentStudentCodeLabel').innerText = `309班 ｜ 學號 ${student.studentCode}`;
             document.getElementById('parentStudentName').innerText = student.name;
+            document.getElementById('parentNoteDateBadge').innerText = selectedDate;
 
             const badge = document.getElementById('parentStatusBadge');
-            if (student.confirmed) {
+            if (stRec.confirmed) {
                 badge.innerHTML = `
                     <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
                         <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> 已確認
                     </span>
-                    <div class="text-[11px] text-slate-400 mt-0.5">${student.confirmedTime} 簽章</div>
+                    <div class="text-[11px] text-slate-400 mt-0.5">${stRec.confirmedTime} 簽章</div>
                 `;
             } else {
                 badge.innerHTML = `
@@ -677,15 +806,15 @@
                 `;
             }
 
-            document.getElementById('parentDailyNote').innerText = state.dailyNote || "今日無特別聯絡事項。";
+            document.getElementById('parentDailyNote').innerText = dayRec.dailyNote || "當日無特別聯絡事項。";
 
             const hwContainer = document.getElementById('parentHomeworkList');
             hwContainer.innerHTML = '';
             let attentionCount = 0;
             const correctionItems = [];
 
-            state.homeworkList.forEach(hw => {
-                const statusKey = normalizeStatus(student.hwStatus[hw.id]);
+            dayRec.homeworkList.forEach(hw => {
+                const statusKey = normalizeStatus(stRec.hwStatus[hw.id]);
                 const cfg = HW_STATUS_CONFIG[statusKey];
                 if (!cfg.isCompleted) attentionCount++;
                 if (statusKey === 'correction') correctionItems.push(hw.title);
@@ -731,9 +860,9 @@
             }
 
             const summaryTag = document.getElementById('hwSummaryTag');
-            if (state.homeworkList.length === 0) {
+            if (dayRec.homeworkList.length === 0) {
                 summaryTag.className = "text-xs font-medium px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-500";
-                summaryTag.innerText = "今日無作業";
+                summaryTag.innerText = "當日無作業";
             } else if (attentionCount === 0) {
                 summaryTag.className = "text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700";
                 summaryTag.innerText = "全數完成";
@@ -742,18 +871,18 @@
                 summaryTag.innerText = `${attentionCount} 項需留意`;
             }
 
-            document.getElementById('parentSpecialClass').innerText = student.specialClass || "今日科任課表現良好。";
-            document.getElementById('parentHealthNote').innerText = student.healthNote || "今日在校健康狀況良好，無傷病紀錄。";
+            document.getElementById('parentSpecialClass').innerText = stRec.specialClass || "今日科任課表現良好。";
+            document.getElementById('parentHealthNote').innerText = stRec.healthNote || "今日在校健康狀況良好，無傷病紀錄。";
 
             ['confirmBtnMobile', 'confirmBtnDesktop'].forEach(btnId => {
                 const btn = document.getElementById(btnId);
                 if (!btn) return;
-                if (student.confirmed) {
+                if (stRec.confirmed) {
                     btn.className = "w-full py-3.5 rounded-xl font-bold text-base bg-emerald-50 text-emerald-700 border-2 border-emerald-500 flex items-center justify-center gap-2";
-                    btn.innerHTML = `<i data-lucide="check-circle" class="w-5 h-5"></i> 家長已完成確認 (${student.confirmedTime})`;
+                    btn.innerHTML = `<i data-lucide="check-circle" class="w-5 h-5"></i> 家長已完成確認 (${stRec.confirmedTime})`;
                 } else {
                     btn.className = "w-full py-3.5 rounded-xl font-bold text-base bg-teal-600 hover:bg-teal-700 active:scale-[0.99] text-white shadow-lg shadow-teal-600/20 transition flex items-center justify-center gap-2";
-                    btn.innerHTML = `<i data-lucide="check-square" class="w-5 h-5"></i> 我已閱讀並確認孩子狀況`;
+                    btn.innerHTML = `<i data-lucide="check-square" class="w-5 h-5"></i> 我已閱讀並確認 (${selectedDate})`;
                 }
             });
 
@@ -762,29 +891,33 @@
 
         window.confirmByParent = function() {
             if (!authSession || authSession.role !== 'parent') return;
-            const student = state.students.find(s => s.id === authSession.studentId);
+            const student = CLASS_STUDENTS.find(s => s.id === authSession.studentId);
             if (!student) return;
 
-            if (student.confirmed) {
-                showToast("您已經完成確認囉！");
+            const dayRec = ensureDateRecord(selectedDate);
+            const stRec = dayRec.studentRecords[student.id];
+
+            if (stRec.confirmed) {
+                showToast("此日期您已經完成確認囉！");
                 return;
             }
             const now = new Date();
-            student.confirmed = true;
-            student.confirmedTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+            stRec.confirmed = true;
+            stRec.confirmedTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
             saveState();
             renderParentView(student);
-            showToast(`已同步回報給導師：${student.name}家長已確認`);
+            showToast(`已同步回報給導師：${student.name}家長已確認 (${selectedDate})`);
         };
 
+        // ==================== 老師管理區邏輯 ====================
         function populateTeacherStudentSelect() {
             const teacherSel = document.getElementById('teacherStudentSelect');
             const prevVal = teacherSel.value;
             teacherSel.innerHTML = '';
-            state.students.forEach(st => {
-                teacherSel.add(new Option(`${st.seat}號 － ${st.name}`, st.id));
+            CLASS_STUDENTS.forEach(st => {
+                teacherSel.add(new Option(`${st.seat}號 － ${st.name} (${st.studentCode})`, st.id));
             });
-            if (prevVal && state.students.some(s => s.id === prevVal)) {
+            if (prevVal && CLASS_STUDENTS.some(s => s.id === prevVal)) {
                 teacherSel.value = prevVal;
             }
         }
@@ -813,32 +946,35 @@
         };
 
         function renderTeacherOverview() {
+            const dayRec = ensureDateRecord(selectedDate);
+            document.getElementById('overviewDateLabel').innerText = selectedDate;
             const grid = document.getElementById('overviewGrid');
             grid.innerHTML = '';
             let confirmedCount = 0;
 
-            state.students.forEach(st => {
-                if (st.confirmed) confirmedCount++;
-                const pendingHw = state.homeworkList.filter(hw => !HW_STATUS_CONFIG[normalizeStatus(st.hwStatus[hw.id])].isCompleted).length;
+            CLASS_STUDENTS.forEach(st => {
+                const stRec = dayRec.studentRecords[st.id];
+                if (stRec.confirmed) confirmedCount++;
+                const pendingHw = dayRec.homeworkList.filter(hw => !HW_STATUS_CONFIG[normalizeStatus(stRec.hwStatus[hw.id])].isCompleted).length;
 
                 grid.innerHTML += `
-                    <div onclick="jumpToStudentEdit('${st.id}')" class="cursor-pointer p-3 rounded-xl border transition ${st.confirmed ? 'bg-emerald-50/50 border-emerald-200' : 'bg-slate-50 border-slate-200 hover:border-teal-400'}">
-                        <div class="flex justify-between items-center mb-1">
-                            <span class="font-bold text-sm text-slate-800">${st.seat} ${st.name}</span>
-                            ${st.confirmed 
-                                ? `<span class="text-[11px] font-bold text-emerald-600 bg-emerald-100 px-1.5 py-0.5 rounded">已簽 ${st.confirmedTime}</span>`
-                                : `<span class="text-[11px] font-bold text-amber-600 bg-amber-100 px-1.5 py-0.5 rounded">未確認</span>`
+                    <div onclick="jumpToStudentEdit('${st.id}')" class="cursor-pointer p-2.5 rounded-xl border transition ${stRec.confirmed ? 'bg-emerald-50/50 border-emerald-200' : 'bg-slate-50 border-slate-200 hover:border-teal-400'}">
+                        <div class="flex justify-between items-center mb-1 gap-1">
+                            <span class="font-bold text-xs md:text-sm text-slate-800 truncate">${st.seat} ${st.name}</span>
+                            ${stRec.confirmed 
+                                ? `<span class="shrink-0 text-[10px] font-bold text-emerald-600 bg-emerald-100 px-1.5 py-0.5 rounded">${stRec.confirmedTime}</span>`
+                                : `<span class="shrink-0 text-[10px] font-bold text-amber-600 bg-amber-100 px-1.5 py-0.5 rounded">未簽</span>`
                             }
                         </div>
-                        <div class="text-xs text-slate-500">
-                            作業：${pendingHw === 0 ? '<span class="text-emerald-600">全數完成</span>' : `<span class="text-amber-600 font-bold">${pendingHw} 項待處理</span>`}
+                        <div class="text-[11px] text-slate-500">
+                            ${pendingHw === 0 ? '<span class="text-emerald-600">作業全完成</span>' : `<span class="text-amber-600 font-bold">${pendingHw} 項待處理</span>`}
                         </div>
-                        <div class="text-[11px] text-slate-400 mt-1">家長密碼：${st.password}</div>
+                        <div class="text-[10px] text-slate-400 mt-0.5">學號：${st.studentCode}</div>
                     </div>
                 `;
             });
 
-            document.getElementById('overviewCount').innerText = `${confirmedCount} / ${state.students.length} 已確認`;
+            document.getElementById('overviewCount').innerText = `${confirmedCount} / ${CLASS_STUDENTS.length} 已確認`;
         }
 
         window.jumpToStudentEdit = function(studentId) {
@@ -847,26 +983,28 @@
         };
 
         window.copyUnconfirmedList = function() {
-            const unconfirmed = state.students.filter(s => !s.confirmed).map(s => `${s.seat}號 ${s.name}`);
+            const dayRec = ensureDateRecord(selectedDate);
+            const unconfirmed = CLASS_STUDENTS.filter(s => !dayRec.studentRecords[s.id].confirmed).map(s => `${s.seat}號 ${s.name}`);
             if (unconfirmed.length === 0) {
                 showToast("全班家長皆已確認完畢！");
                 return;
             }
-            const text = `【309班今日聯絡簿尚未確認名單】\n${unconfirmed.join('、')}\n再請家長撥冗點擊確認，謝謝您！`;
+            const text = `【309班 ${selectedDate} 聯絡簿尚未確認名單】\n${unconfirmed.join('、')}\n再請家長撥冗點擊確認，謝謝您！`;
             navigator.clipboard.writeText(text).then(() => {
                 showToast("已複製未確認名單！");
             });
         };
 
         window.resetAllConfirmations = function() {
-            if (!confirm("確定要將全班家長的確認狀態重設為「未確認」嗎？")) return;
-            state.students.forEach(s => {
-                s.confirmed = false;
-                s.confirmedTime = "";
+            if (!confirm(`確定要將 ${selectedDate} 全班家長的確認狀態重設為「未確認」嗎？`)) return;
+            const dayRec = ensureDateRecord(selectedDate);
+            CLASS_STUDENTS.forEach(s => {
+                dayRec.studentRecords[s.id].confirmed = false;
+                dayRec.studentRecords[s.id].confirmedTime = "";
             });
             saveState();
             renderTeacherOverview();
-            showToast("已重設並同步全班簽章狀態");
+            showToast("已重設並同步當日簽章狀態");
         };
 
         function renderStampPalette() {
@@ -897,28 +1035,30 @@
         };
 
         function populateBatchHomeworkSelect() {
+            const dayRec = ensureDateRecord(selectedDate);
             const sel = document.getElementById('batchHwSelect');
             const prevVal = sel.value;
             sel.innerHTML = '';
 
-            if (state.homeworkList.length === 0) {
-                sel.add(new Option("尚未建立今日作業項目", ""));
+            if (dayRec.homeworkList.length === 0) {
+                sel.add(new Option("此日尚未建立作業項目", ""));
                 document.getElementById('batchHwGrid').innerHTML = `<p class="col-span-full text-xs text-slate-400 text-center py-4">請先至「聯絡/作業」分頁新增作業項目</p>`;
                 document.getElementById('batchHwStats').innerText = "0 項作業";
                 return;
             }
 
-            state.homeworkList.forEach(hw => {
+            dayRec.homeworkList.forEach(hw => {
                 sel.add(new Option(hw.title, hw.id));
             });
 
-            if (prevVal && state.homeworkList.some(h => h.id === prevVal)) {
+            if (prevVal && dayRec.homeworkList.some(h => h.id === prevVal)) {
                 sel.value = prevVal;
             }
             window.renderBatchHomeworkGrid();
         }
 
         window.renderBatchHomeworkGrid = function() {
+            const dayRec = ensureDateRecord(selectedDate);
             const hwId = document.getElementById('batchHwSelect').value;
             const grid = document.getElementById('batchHwGrid');
             if (!hwId) return;
@@ -926,38 +1066,40 @@
             grid.innerHTML = '';
             let completedCount = 0;
 
-            state.students.forEach(st => {
-                const statusKey = normalizeStatus(st.hwStatus[hwId]);
+            CLASS_STUDENTS.forEach(st => {
+                const stRec = dayRec.studentRecords[st.id];
+                const statusKey = normalizeStatus(stRec.hwStatus[hwId]);
                 const cfg = HW_STATUS_CONFIG[statusKey];
                 if (cfg.isCompleted) completedCount++;
 
                 grid.innerHTML += `
-                    <button onclick="applyBatchStudentHw('${st.id}', '${hwId}')" class="flex items-center justify-between p-3 rounded-xl border text-left transition active:scale-[0.97] ${cfg.cardClass}">
+                    <button onclick="applyBatchStudentHw('${st.id}', '${hwId}')" class="flex items-center justify-between p-2.5 rounded-xl border text-left transition active:scale-[0.97] ${cfg.cardClass}">
                         <div class="min-w-0 pr-1">
-                            <div class="text-xs text-slate-500">${st.seat}號</div>
-                            <div class="font-bold text-sm text-slate-800 truncate">${st.name}</div>
+                            <div class="text-[11px] text-slate-500">${st.seat}號</div>
+                            <div class="font-bold text-xs md:text-sm text-slate-800 truncate">${st.name}</div>
                         </div>
-                        <span class="shrink-0 text-xs font-bold px-2 py-1 rounded-lg ${cfg.solidClass}">
+                        <span class="shrink-0 text-[11px] font-bold px-2 py-1 rounded-lg ${cfg.solidClass}">
                             ${cfg.label}
                         </span>
                     </button>
                 `;
             });
 
-            document.getElementById('batchHwStats').innerText = `完成 ${completedCount} / ${state.students.length}`;
+            document.getElementById('batchHwStats').innerText = `完成 ${completedCount} / ${CLASS_STUDENTS.length}`;
         };
 
         window.applyBatchStudentHw = function(studentId, hwId) {
-            const student = state.students.find(s => s.id === studentId);
-            if (!student) return;
+            const dayRec = ensureDateRecord(selectedDate);
+            const stRec = dayRec.studentRecords[studentId];
+            if (!stRec) return;
 
             if (activeStampMode === 'cycle') {
-                const currentKey = normalizeStatus(student.hwStatus[hwId]);
+                const currentKey = normalizeStatus(stRec.hwStatus[hwId]);
                 const nextIdx = (STATUS_KEYS.indexOf(currentKey) + 1) % STATUS_KEYS.length;
-                student.hwStatus[hwId] = STATUS_KEYS[nextIdx];
+                stRec.hwStatus[hwId] = STATUS_KEYS[nextIdx];
             } else {
-                const currentKey = normalizeStatus(student.hwStatus[hwId]);
-                student.hwStatus[hwId] = (currentKey === activeStampMode) ? 'submitted' : activeStampMode;
+                const currentKey = normalizeStatus(stRec.hwStatus[hwId]);
+                stRec.hwStatus[hwId] = (currentKey === activeStampMode) ? 'submitted' : activeStampMode;
             }
 
             saveState();
@@ -965,22 +1107,27 @@
         };
 
         window.setAllHomeworkStatus = function(statusKey) {
+            const dayRec = ensureDateRecord(selectedDate);
             const hwId = document.getElementById('batchHwSelect').value;
             if (!hwId) return;
-            state.students.forEach(st => {
-                st.hwStatus[hwId] = statusKey;
+            CLASS_STUDENTS.forEach(st => {
+                dayRec.studentRecords[st.id].hwStatus[hwId] = statusKey;
             });
             saveState();
             window.renderBatchHomeworkGrid();
             showToast(`已將全班設為「${HW_STATUS_CONFIG[statusKey].label}」並同步`);
         };
 
+        // TAB 3: 當日聯絡簿與保留區清單
         function loadTeacherClassNote() {
-            document.getElementById('editGlobalNote').value = state.dailyNote;
+            const dayRec = ensureDateRecord(selectedDate);
+            document.getElementById('editNoteDateTitle').innerText = selectedDate;
+            document.getElementById('editGlobalNote').value = dayRec.dailyNote;
+            
             const listEl = document.getElementById('teacherHomeworkList');
             listEl.innerHTML = '';
 
-            state.homeworkList.forEach(hw => {
+            dayRec.homeworkList.forEach(hw => {
                 listEl.innerHTML += `
                     <div class="py-2.5 flex justify-between items-center">
                         <span class="text-sm text-slate-700">${hw.title}</span>
@@ -990,13 +1137,35 @@
                     </div>
                 `;
             });
+
+            // 渲染聯絡簿歷史保留區清單
+            const archiveEl = document.getElementById('savedDatesArchiveList');
+            archiveEl.innerHTML = '';
+            const allDates = Object.keys(state.recordsByDate).sort((a, b) => b.localeCompare(a));
+            allDates.forEach(d => {
+                const isSelected = d === selectedDate;
+                const rec = state.recordsByDate[d];
+                const confirmedNum = CLASS_STUDENTS.filter(s => rec.studentRecords && rec.studentRecords[s.id] && rec.studentRecords[s.id].confirmed).length;
+                archiveEl.innerHTML += `
+                    <button onclick="changeSelectedDate('${d}')" class="p-3 rounded-xl border text-left transition ${isSelected ? 'bg-teal-50/80 border-teal-400 ring-1 ring-teal-400' : 'bg-slate-50 border-slate-200 hover:border-teal-300'}">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-bold text-sm text-slate-800">${d} ${d === getTodayStr() ? '(今日)' : ''}</span>
+                            <span class="text-[11px] font-bold text-teal-700 bg-teal-100/80 px-2 py-0.5 rounded-full">已簽 ${confirmedNum}/25</span>
+                        </div>
+                        <p class="text-xs text-slate-500 truncate">${rec.dailyNote || '無聯絡事項'}</p>
+                    </button>
+                `;
+            });
+
             lucide.createIcons();
         }
 
         window.saveGlobalNote = function() {
-            state.dailyNote = document.getElementById('editGlobalNote').value;
+            const dayRec = ensureDateRecord(selectedDate);
+            dayRec.dailyNote = document.getElementById('editGlobalNote').value;
             saveState();
-            showToast("今日全班聯絡事項已儲存並同步雲端！");
+            loadTeacherClassNote();
+            showToast(`已儲存並同步 ${selectedDate} 聯絡事項！`);
         };
 
         window.addHomeworkItem = function() {
@@ -1004,9 +1173,12 @@
             const title = input.value.trim();
             if (!title) return;
 
+            const dayRec = ensureDateRecord(selectedDate);
             const newId = 'hw_' + Date.now();
-            state.homeworkList.push({ id: newId, title: title });
-            state.students.forEach(s => s.hwStatus[newId] = 'submitted');
+            dayRec.homeworkList.push({ id: newId, title: title });
+            CLASS_STUDENTS.forEach(s => {
+                dayRec.studentRecords[s.id].hwStatus[newId] = 'submitted';
+            });
             
             input.value = '';
             saveState();
@@ -1015,24 +1187,31 @@
         };
 
         window.deleteHomeworkItem = function(hwId) {
-            state.homeworkList = state.homeworkList.filter(h => h.id !== hwId);
-            state.students.forEach(s => delete s.hwStatus[hwId]);
+            const dayRec = ensureDateRecord(selectedDate);
+            dayRec.homeworkList = dayRec.homeworkList.filter(h => h.id !== hwId);
+            CLASS_STUDENTS.forEach(s => {
+                delete dayRec.studentRecords[s.id].hwStatus[hwId];
+            });
             saveState();
             loadTeacherClassNote();
             showToast("已刪除該項作業並同步");
         };
 
+        // TAB 4: 個別學生紀錄編輯
         window.loadTeacherStudentForm = function(studentId) {
-            const student = state.students.find(s => s.id === studentId);
+            const student = CLASS_STUDENTS.find(s => s.id === studentId);
             if (!student) return;
 
-            document.getElementById('editStudentPassword').value = student.password || "";
+            const dayRec = ensureDateRecord(selectedDate);
+            const stRec = dayRec.studentRecords[student.id];
+
+            document.getElementById('displayStudentCode').value = student.studentCode;
 
             const toggleContainer = document.getElementById('teacherStudentHwToggles');
             toggleContainer.innerHTML = '';
 
-            state.homeworkList.forEach(hw => {
-                const currentKey = normalizeStatus(student.hwStatus[hw.id]);
+            dayRec.homeworkList.forEach(hw => {
+                const currentKey = normalizeStatus(stRec.hwStatus[hw.id]);
                 const cfg = HW_STATUS_CONFIG[currentKey];
 
                 const optionsHtml = STATUS_KEYS.map(k => 
@@ -1049,34 +1228,31 @@
                 `;
             });
 
-            document.getElementById('editStudentSpecial').value = student.specialClass;
-            document.getElementById('editStudentHealth').value = student.healthNote;
+            document.getElementById('editStudentSpecial').value = stRec.specialClass;
+            document.getElementById('editStudentHealth').value = stRec.healthNote;
         };
 
         window.changeSingleStudentHw = function(studentId, hwId, newStatusKey) {
-            const student = state.students.find(s => s.id === studentId);
-            if (!student) return;
-            student.hwStatus[hwId] = newStatusKey;
+            const dayRec = ensureDateRecord(selectedDate);
+            const stRec = dayRec.studentRecords[studentId];
+            if (!stRec) return;
+            stRec.hwStatus[hwId] = newStatusKey;
             saveState();
             window.loadTeacherStudentForm(studentId);
         };
 
         window.saveStudentDetail = function() {
             const studentId = document.getElementById('teacherStudentSelect').value;
-            const student = state.students.find(s => s.id === studentId);
+            const student = CLASS_STUDENTS.find(s => s.id === studentId);
             if (!student) return;
 
-            const newPwd = document.getElementById('editStudentPassword').value.trim();
-            if (!newPwd) {
-                showToast("家長專屬密碼不可為空！");
-                return;
-            }
+            const dayRec = ensureDateRecord(selectedDate);
+            const stRec = dayRec.studentRecords[student.id];
 
-            student.password = newPwd;
-            student.specialClass = document.getElementById('editStudentSpecial').value;
-            student.healthNote = document.getElementById('editStudentHealth').value;
+            stRec.specialClass = document.getElementById('editStudentSpecial').value;
+            stRec.healthNote = document.getElementById('editStudentHealth').value;
             saveState();
-            showToast(`已儲存 ${student.name} 的資料並同步雲端！`);
+            showToast(`已儲存 ${student.name} (${selectedDate}) 的資料並同步雲端！`);
         };
     </script>
 </body>
