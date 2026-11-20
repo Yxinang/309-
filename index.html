@@ -17,10 +17,20 @@
         body {
             font-family: 'Noto Sans TC', sans-serif;
             background-color: #F4F7F9;
-            overflow-x: clip;
-            overflow-y: visible;
+            height: auto !important;
+            min-height: 100%;
+            overflow-x: clip !important;
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch;
             touch-action: pan-y;
             -webkit-tap-highlight-color: transparent;
+        }
+        #parentView,
+        #parentView > div,
+        #teacherView {
+            height: auto !important;
+            min-height: auto !important;
+            overflow: visible !important;
         }
         .card-shadow {
             box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
@@ -108,7 +118,7 @@
         </div>
     </main>
 
-    <!-- ==================== 2. 家長專屬視角（含每日聯絡簿保留區切換） ==================== -->
+    <!-- ==================== 2. 家長專屬視角（含每日保留區與親師留言板） ==================== -->
     <main id="parentView" class="hidden max-w-4xl mx-auto p-4 md:p-6 space-y-4 animate-pop">
         
         <section class="bg-white rounded-2xl p-3.5 md:p-4 card-shadow border border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -127,6 +137,7 @@
 
         <div class="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6 items-start">
             
+            <!-- 左欄：學生資訊 + 當日聯絡簿 + 親師留言板 -->
             <div class="md:col-span-5 space-y-4">
                 <section class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-slate-100">
                     <div class="flex justify-between items-center gap-3">
@@ -155,12 +166,38 @@
                     </div>
                 </section>
 
+                <!-- 新增：親師留言與回覆保留區（家長端） -->
+                <section class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-slate-100 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2 text-cyan-700 font-bold text-sm">
+                            <div class="p-1.5 bg-cyan-50 rounded-lg"><i data-lucide="message-square-heart" class="w-4 h-4"></i></div>
+                            <span>親師交流留言板</span>
+                        </div>
+                        <span id="parentMsgCountBadge" class="text-[11px] font-bold text-slate-400">0 則紀錄</span>
+                    </div>
+
+                    <!-- 歷史對話紀錄列表 -->
+                    <div id="parentMessageHistory" class="max-h-60 overflow-y-auto space-y-2.5 bg-slate-50/80 p-3 rounded-xl border border-slate-100">
+                        <!-- 動態生成對話氣泡 -->
+                    </div>
+
+                    <!-- 家長留言輸入區 -->
+                    <div class="space-y-2 pt-1">
+                        <textarea id="parentNewMessageInput" rows="2" placeholder="有什麼想告訴老師的嗎？（例如：請假、在家學習或傷口狀況，隨時可留言...）" class="w-full p-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500"></textarea>
+                        <button onclick="sendParentMessage()" class="w-full py-2.5 bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl text-xs md:text-sm font-bold shadow-sm transition flex items-center justify-center gap-1.5">
+                            <i data-lucide="send" class="w-3.5 h-3.5"></i>
+                            送出留言給導師
+                        </button>
+                    </div>
+                </section>
+
                 <div class="hidden md:block">
                     <button id="confirmBtnDesktop" onclick="confirmByParent()" class="w-full py-3.5 rounded-xl font-bold text-base shadow-lg transition flex items-center justify-center gap-2">
                     </button>
                 </div>
             </div>
 
+            <!-- 右欄：作業繳交與訂正統計 + 科任課 + 健康傷病 -->
             <div class="md:col-span-7 space-y-4">
                 <section class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-slate-100 space-y-3">
                     <div class="flex justify-between items-center">
@@ -194,6 +231,8 @@
             </div>
         </div>
 
+        <!-- 手機版底部占位與固定確認列 -->
+        <div class="h-36 md:hidden" aria-hidden="true"></div>
         <div class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200 p-3.5 z-20" style="padding-bottom: calc(0.875rem + env(safe-area-inset-bottom));">
             <div class="max-w-lg mx-auto">
                 <button id="confirmBtnMobile" onclick="confirmByParent()" class="w-full py-3.5 rounded-xl font-bold text-base shadow-lg transition flex items-center justify-center gap-2">
@@ -218,17 +257,22 @@
             </div>
         </section>
 
-        <div class="grid grid-cols-4 gap-1.5 bg-slate-200/70 p-1 rounded-xl max-w-2xl mx-auto">
-            <button onclick="switchTeacherTab('overview')" id="tab-overview" class="py-2.5 text-xs md:text-sm font-bold rounded-lg bg-white text-teal-700 shadow-sm transition">
+        <!-- 導師功能分頁 Tabs（擴充為 5 個分頁：新增「親師留言」） -->
+        <div class="grid grid-cols-5 gap-1 bg-slate-200/70 p-1 rounded-xl max-w-3xl mx-auto">
+            <button onclick="switchTeacherTab('overview')" id="tab-overview" class="py-2.5 text-[11px] md:text-sm font-bold rounded-lg bg-white text-teal-700 shadow-sm transition">
                 簽章總覽
             </button>
-            <button onclick="switchTeacherTab('batchHw')" id="tab-batchHw" class="py-2.5 text-xs md:text-sm font-bold rounded-lg text-slate-600 hover:text-slate-800 transition">
+            <button onclick="switchTeacherTab('batchHw')" id="tab-batchHw" class="py-2.5 text-[11px] md:text-sm font-bold rounded-lg text-slate-600 hover:text-slate-800 transition">
                 批次作業
             </button>
-            <button onclick="switchTeacherTab('classNote')" id="tab-classNote" class="py-2.5 text-xs md:text-sm font-bold rounded-lg text-slate-600 hover:text-slate-800 transition">
+            <button onclick="switchTeacherTab('messages')" id="tab-messages" class="relative py-2.5 text-[11px] md:text-sm font-bold rounded-lg text-slate-600 hover:text-slate-800 transition">
+                親師留言
+                <span id="unreadMsgDot" class="hidden absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-rose-500"></span>
+            </button>
+            <button onclick="switchTeacherTab('classNote')" id="tab-classNote" class="py-2.5 text-[11px] md:text-sm font-bold rounded-lg text-slate-600 hover:text-slate-800 transition">
                 聯絡/作業
             </button>
-            <button onclick="switchTeacherTab('studentDetail')" id="tab-studentDetail" class="py-2.5 text-xs md:text-sm font-bold rounded-lg text-slate-600 hover:text-slate-800 transition">
+            <button onclick="switchTeacherTab('studentDetail')" id="tab-studentDetail" class="py-2.5 text-[11px] md:text-sm font-bold rounded-lg text-slate-600 hover:text-slate-800 transition">
                 個別紀錄
             </button>
         </div>
@@ -293,7 +337,50 @@
             </div>
         </div>
 
-        <!-- TAB 3: 當日聯絡簿與保留區清單 -->
+        <!-- TAB 3: 新增「親師留言與回覆管理區」 -->
+        <div id="panel-messages" class="hidden">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
+                <!-- 左側：學生留言列表（待回覆置頂） -->
+                <div class="md:col-span-5 bg-white rounded-2xl p-4 card-shadow border border-slate-100 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h2 class="font-bold text-slate-800 text-sm flex items-center gap-1.5">
+                            <i data-lucide="messages-square" class="w-4 h-4 text-cyan-600"></i>
+                            全班親師留言列表
+                        </h2>
+                        <span id="teacherPendingReplyBadge" class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-600"></span>
+                    </div>
+                    <div id="teacherMsgStudentList" class="max-h-96 overflow-y-auto divide-y divide-slate-100">
+                        <!-- 動態生成學生留言摘要列 -->
+                    </div>
+                </div>
+
+                <!-- 右側：選中学生的完整對話保留區與老師回覆框 -->
+                <div class="md:col-span-7 bg-white rounded-2xl p-4 md:p-5 card-shadow border border-slate-100 space-y-3">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
+                        <div>
+                            <span class="text-[11px] text-slate-400">正在查看親師對話紀錄</span>
+                            <h3 id="teacherActiveMsgStudentTitle" class="font-bold text-base text-slate-800">01號 黃琨翔</h3>
+                        </div>
+                        <span id="teacherActiveMsgCount" class="text-xs font-bold text-cyan-700 bg-cyan-50 px-2.5 py-1 rounded-full">0 則</span>
+                    </div>
+
+                    <!-- 對話氣泡保留區 -->
+                    <div id="teacherMessageHistory" class="h-72 overflow-y-auto space-y-2.5 bg-slate-50/80 p-3.5 rounded-xl border border-slate-100">
+                    </div>
+
+                    <!-- 老師回覆輸入框 -->
+                    <div class="space-y-2 pt-1">
+                        <textarea id="teacherReplyInput" rows="2" placeholder="輸入老師回覆內容（送出後家長手機端會即時同步看到）..." class="w-full p-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                        <button onclick="sendTeacherReply()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs md:text-sm font-bold shadow-sm transition flex items-center justify-center gap-1.5">
+                            <i data-lucide="reply" class="w-4 h-4"></i>
+                            送出老師回覆並保留紀錄
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: 當日聯絡簿與保留區清單 -->
         <div id="panel-classNote" class="hidden space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="bg-white rounded-2xl p-4 md:p-6 card-shadow border border-slate-100 space-y-3">
@@ -331,7 +418,7 @@
             </div>
         </div>
 
-        <!-- TAB 4: 個別學生紀錄編輯 -->
+        <!-- TAB 5: 個別學生紀錄編輯 -->
         <div id="panel-studentDetail" class="hidden max-w-2xl mx-auto">
             <div class="bg-white rounded-2xl p-4 md:p-6 card-shadow border border-slate-100 space-y-4">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -489,6 +576,15 @@
             return `${y}-${m}-${d}`;
         }
 
+        function getNowTimestamp() {
+            const now = new Date();
+            const m = String(now.getMonth() + 1).padStart(2, '0');
+            const d = String(now.getDate()).padStart(2, '0');
+            const hh = String(now.getHours()).padStart(2, '0');
+            const mm = String(now.getMinutes()).padStart(2, '0');
+            return `${m}/${d} ${hh}:${mm}`;
+        }
+
         function createDefaultDayRecord(dateStr) {
             const defaultHw = [
                 { id: "hw1", title: "數學習作" },
@@ -517,7 +613,8 @@
             students: CLASS_STUDENTS,
             recordsByDate: {
                 [TODAY_STR]: createDefaultDayRecord(TODAY_STR)
-            }
+            },
+            studentMessages: {}
         };
 
         let state = JSON.parse(localStorage.getItem('class309_archive_cache')) || DEFAULT_STATE;
@@ -525,12 +622,14 @@
         let selectedDate = TODAY_STR;
         let activeStampMode = 'cycle';
         let currentTeacherTab = 'overview';
+        let selectedMsgStudentId = CLASS_STUDENTS[0].id;
         let dbRef = null;
         let isCloudReady = false;
         let lastSyncDiagnostic = "正在嘗試連線至 Firebase Realtime Database...";
 
         function ensureDateRecord(dateStr) {
             if (!state.recordsByDate) state.recordsByDate = {};
+            if (!state.studentMessages) state.studentMessages = {};
             if (!state.recordsByDate[dateStr]) {
                 state.recordsByDate[dateStr] = createDefaultDayRecord(dateStr);
             }
@@ -556,6 +655,13 @@
             return rec;
         }
 
+        function getStudentMessages(studentId) {
+            if (!state.studentMessages) state.studentMessages = {};
+            const raw = state.studentMessages[studentId];
+            if (!raw) return [];
+            return Array.isArray(raw) ? raw : Object.values(raw);
+        }
+
         window.showSyncDiagnostic = function() {
             alert("【雲端同步狀態診斷】\n\n" + lastSyncDiagnostic + "\n\n資料庫網址：\n" + firebaseConfig.databaseURL);
         };
@@ -570,7 +676,7 @@
                 onValue(dbRef, (snapshot) => {
                     const cloudData = snapshot.val();
                     isCloudReady = true;
-                    lastSyncDiagnostic = "✅ 已成功連上 Firebase 雲端資料庫！每日聯絡簿保留區與全班 25 人資料即時同步中。";
+                    lastSyncDiagnostic = "✅ 已成功連上 Firebase 雲端資料庫！每日聯絡簿、親師留言板與全班 25 人資料即時同步中。";
 
                     indicator.className = "inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200";
                     indicator.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> 雲端同步中`;
@@ -584,7 +690,8 @@
 
                     state = {
                         students: CLASS_STUDENTS,
-                        recordsByDate: cloudData.recordsByDate || {}
+                        recordsByDate: cloudData.recordsByDate || {},
+                        studentMessages: cloudData.studentMessages || {}
                     };
                     ensureDateRecord(selectedDate);
                     localStorage.setItem('class309_archive_cache', JSON.stringify(state));
@@ -620,8 +727,10 @@
                 const student = CLASS_STUDENTS.find(s => s.id === authSession.studentId);
                 if (student) renderParentView(student);
             } else if (authSession.role === 'teacher') {
+                updateUnreadMessageDot();
                 if (currentTeacherTab === 'overview') renderTeacherOverview();
                 if (currentTeacherTab === 'batchHw') populateBatchHomeworkSelect();
+                if (currentTeacherTab === 'messages') renderTeacherMessagesPanel();
             }
         }
 
@@ -697,6 +806,7 @@
                 teacherView.classList.remove('hidden');
                 document.getElementById('teacherDatePicker').value = selectedDate;
                 populateTeacherStudentSelect();
+                updateUnreadMessageDot();
                 window.switchTeacherTab(currentTeacherTab);
             }
         };
@@ -763,6 +873,7 @@
             showToast("已安全登出");
         };
 
+        // ==================== 家長視角渲染（含親師留言板） ====================
         function renderParentView(student) {
             const dayRec = ensureDateRecord(selectedDate);
             const stRec = dayRec.studentRecords[student.id];
@@ -798,6 +909,9 @@
             }
 
             document.getElementById('parentDailyNote').innerText = dayRec.dailyNote || "當日無特別聯絡事項。";
+
+            // 渲染親師留言紀錄（家長視角）
+            renderParentMessageHistory(student.id);
 
             const hwContainer = document.getElementById('parentHomeworkList');
             hwContainer.innerHTML = '';
@@ -880,6 +994,68 @@
             lucide.createIcons();
         }
 
+        function renderParentMessageHistory(studentId) {
+            const list = getStudentMessages(studentId);
+            const container = document.getElementById('parentMessageHistory');
+            document.getElementById('parentMsgCountBadge').innerText = `${list.length} 則紀錄`;
+
+            if (list.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">目前尚無留言紀錄，歡迎在下方輸入訊息與導師交流！</p>`;
+                return;
+            }
+
+            container.innerHTML = list.map(msg => {
+                const isParent = msg.sender === 'parent';
+                return `
+                    <div class="flex flex-col ${isParent ? 'items-end' : 'items-start'}">
+                        <div class="text-[10px] text-slate-400 mb-0.5 px-1">
+                            ${isParent ? '家長留言' : '👩‍🏫 班導師回覆'} ・ ${msg.timestamp}
+                        </div>
+                        <div class="max-w-[88%] px-3 py-2 rounded-2xl text-xs md:text-sm leading-relaxed whitespace-pre-line ${isParent 
+                            ? 'bg-teal-600 text-white rounded-tr-xs' 
+                            : 'bg-white text-slate-700 border border-indigo-100 shadow-2xs rounded-tl-xs'}">
+                            ${escapeHtml(msg.text)}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.scrollTop = container.scrollHeight;
+        }
+
+        window.sendParentMessage = function() {
+            if (!authSession || authSession.role !== 'parent') return;
+            const input = document.getElementById('parentNewMessageInput');
+            const text = input.value.trim();
+            if (!text) {
+                showToast("請先輸入留言內容");
+                return;
+            }
+
+            const studentId = authSession.studentId;
+            const list = getStudentMessages(studentId);
+            list.push({
+                id: 'msg_' + Date.now(),
+                sender: 'parent',
+                text: text,
+                timestamp: getNowTimestamp(),
+                date: getTodayStr()
+            });
+            state.studentMessages[studentId] = list;
+            input.value = '';
+            saveState();
+            renderParentMessageHistory(studentId);
+            showToast("留言已送出並同步通知導師！");
+        };
+
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;");
+        }
+
         window.confirmByParent = function() {
             if (!authSession || authSession.role !== 'parent') return;
             const student = CLASS_STUDENTS.find(s => s.id === authSession.studentId);
@@ -900,6 +1076,7 @@
             showToast(`已同步回報給導師：${student.name}家長已確認 (${selectedDate})`);
         };
 
+        // ==================== 老師管理區邏輯 ====================
         function populateTeacherStudentSelect() {
             const teacherSel = document.getElementById('teacherStudentSelect');
             const prevVal = teacherSel.value;
@@ -912,16 +1089,29 @@
             }
         }
 
+        function updateUnreadMessageDot() {
+            const pendingCount = CLASS_STUDENTS.filter(st => {
+                const msgs = getStudentMessages(st.id);
+                return msgs.length > 0 && msgs[msgs.length - 1].sender === 'parent';
+            }).length;
+
+            const dot = document.getElementById('unreadMsgDot');
+            if (dot) {
+                if (pendingCount > 0) dot.classList.remove('hidden');
+                else dot.classList.add('hidden');
+            }
+        }
+
         window.switchTeacherTab = function(tabName) {
             currentTeacherTab = tabName;
-            ['overview', 'batchHw', 'classNote', 'studentDetail'].forEach(t => {
+            ['overview', 'batchHw', 'messages', 'classNote', 'studentDetail'].forEach(t => {
                 const btn = document.getElementById(`tab-${t}`);
                 const panel = document.getElementById(`panel-${t}`);
                 if (t === tabName) {
-                    btn.className = "py-2.5 text-xs md:text-sm font-bold rounded-lg bg-white text-teal-700 shadow-sm transition";
+                    btn.className = "relative py-2.5 text-[11px] md:text-sm font-bold rounded-lg bg-white text-teal-700 shadow-sm transition";
                     panel.classList.remove('hidden');
                 } else {
-                    btn.className = "py-2.5 text-xs md:text-sm font-bold rounded-lg text-slate-600 hover:text-slate-800 transition";
+                    btn.className = "relative py-2.5 text-[11px] md:text-sm font-bold rounded-lg text-slate-600 hover:text-slate-800 transition";
                     panel.classList.add('hidden');
                 }
             });
@@ -931,8 +1121,121 @@
                 renderStampPalette();
                 populateBatchHomeworkSelect();
             }
+            if (tabName === 'messages') renderTeacherMessagesPanel();
             if (tabName === 'classNote') loadTeacherClassNote();
             if (tabName === 'studentDetail') window.loadTeacherStudentForm(document.getElementById('teacherStudentSelect').value);
+        };
+
+        // 渲染導師「親師留言」管理面板
+        function renderTeacherMessagesPanel() {
+            const listContainer = document.getElementById('teacherMsgStudentList');
+            listContainer.innerHTML = '';
+
+            // 排序：有「家長最後留言待老師回覆」的排最前面，其次有對話紀錄的，其餘依座號排列
+            const sortedStudents = [...CLASS_STUDENTS].sort((a, b) => {
+                const msgsA = getStudentMessages(a.id);
+                const msgsB = getStudentMessages(b.id);
+                const pendingA = msgsA.length > 0 && msgsA[msgsA.length - 1].sender === 'parent' ? 1 : 0;
+                const pendingB = msgsB.length > 0 && msgsB[msgsB.length - 1].sender === 'parent' ? 1 : 0;
+                if (pendingB !== pendingA) return pendingB - pendingA;
+                if ((msgsB.length > 0) !== (msgsA.length > 0)) return msgsB.length - msgsA.length;
+                return a.seat.localeCompare(b.seat);
+            });
+
+            let pendingTotal = 0;
+            sortedStudents.forEach(st => {
+                const msgs = getStudentMessages(st.id);
+                const lastMsg = msgs[msgs.length - 1];
+                const isPending = lastMsg && lastMsg.sender === 'parent';
+                if (isPending) pendingTotal++;
+
+                const isSelected = st.id === selectedMsgStudentId;
+                listContainer.innerHTML += `
+                    <button onclick="selectTeacherMsgStudent('${st.id}')" class="w-full p-2.5 text-left transition flex items-center justify-between gap-2 ${isSelected ? 'bg-indigo-50/80' : 'hover:bg-slate-50'}">
+                        <div class="min-w-0">
+                            <div class="flex items-center gap-1.5">
+                                <span class="font-bold text-xs md:text-sm text-slate-800">${st.seat} ${st.name}</span>
+                                ${isPending ? `<span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-rose-100 text-rose-700">待回覆</span>` : ''}
+                            </div>
+                            <p class="text-[11px] text-slate-400 truncate mt-0.5">
+                                ${lastMsg ? `${lastMsg.sender === 'parent' ? '家長：' : '老師：'}${lastMsg.text}` : '尚無留言紀錄'}
+                            </p>
+                        </div>
+                        <span class="shrink-0 text-[11px] font-bold text-slate-400">${msgs.length}</span>
+                    </button>
+                `;
+            });
+
+            document.getElementById('teacherPendingReplyBadge').innerText = pendingTotal > 0 ? `${pendingTotal} 位待回覆` : '皆已回覆';
+
+            // 渲染右側選中学生的完整對話紀錄
+            const activeSt = CLASS_STUDENTS.find(s => s.id === selectedMsgStudentId) || CLASS_STUDENTS[0];
+            const activeMsgs = getStudentMessages(activeSt.id);
+            document.getElementById('teacherActiveMsgStudentTitle').innerText = `${activeSt.seat}號 ${activeSt.name}（學號 ${activeSt.studentCode}）`;
+            document.getElementById('teacherActiveMsgCount').innerText = `${activeMsgs.length} 則紀錄`;
+
+            const historyBox = document.getElementById('teacherMessageHistory');
+            if (activeMsgs.length === 0) {
+                historyBox.innerHTML = `<p class="text-xs text-slate-400 text-center py-10">目前尚無與 ${activeSt.name} 家長的留言紀錄，老師也可以主動在下方留言給家長喔！</p>`;
+            } else {
+                historyBox.innerHTML = activeMsgs.map((msg, idx) => {
+                    const isTeacher = msg.sender === 'teacher';
+                    return `
+                        <div class="flex flex-col ${isTeacher ? 'items-end' : 'items-start'}">
+                            <div class="flex items-center gap-2 text-[10px] text-slate-400 mb-0.5 px-1">
+                                <span>${isTeacher ? '👩‍🏫 導師回覆' : '👨‍👩‍👧 家長留言'} ・ ${msg.timestamp}</span>
+                                <button onclick="deleteSingleMessage('${activeSt.id}', ${idx})" class="text-slate-300 hover:text-rose-500" title="刪除此則紀錄">刪除</button>
+                            </div>
+                            <div class="max-w-[85%] px-3 py-2 rounded-2xl text-xs md:text-sm leading-relaxed whitespace-pre-line ${isTeacher 
+                                ? 'bg-indigo-600 text-white rounded-tr-xs' 
+                                : 'bg-white text-slate-700 border border-slate-200 shadow-2xs rounded-tl-xs'}">
+                                ${escapeHtml(msg.text)}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                historyBox.scrollTop = historyBox.scrollHeight;
+            }
+            lucide.createIcons();
+        }
+
+        window.selectTeacherMsgStudent = function(studentId) {
+            selectedMsgStudentId = studentId;
+            renderTeacherMessagesPanel();
+        };
+
+        window.sendTeacherReply = function() {
+            const input = document.getElementById('teacherReplyInput');
+            const text = input.value.trim();
+            if (!text) {
+                showToast("請輸入回覆內容");
+                return;
+            }
+            const list = getStudentMessages(selectedMsgStudentId);
+            list.push({
+                id: 'msg_' + Date.now(),
+                sender: 'teacher',
+                text: text,
+                timestamp: getNowTimestamp(),
+                date: getTodayStr()
+            });
+            state.studentMessages[selectedMsgStudentId] = list;
+            input.value = '';
+            saveState();
+            updateUnreadMessageDot();
+            renderTeacherMessagesPanel();
+            showToast("老師回覆已送出並永久保留！");
+        };
+
+        window.deleteSingleMessage = function(studentId, msgIndex) {
+            if (!confirm("確定要刪除這則留言紀錄嗎？")) return;
+            const list = getStudentMessages(studentId);
+            list.splice(msgIndex, 1);
+            state.studentMessages[studentId] = list;
+            saveState();
+            updateUnreadMessageDot();
+            renderTeacherMessagesPanel();
+            showToast("已刪除該則留言紀錄");
         };
 
         function renderTeacherOverview() {
@@ -946,6 +1249,8 @@
                 const stRec = dayRec.studentRecords[st.id];
                 if (stRec.confirmed) confirmedCount++;
                 const pendingHw = dayRec.homeworkList.filter(hw => !HW_STATUS_CONFIG[normalizeStatus(stRec.hwStatus[hw.id])].isCompleted).length;
+                const msgs = getStudentMessages(st.id);
+                const hasPendingMsg = msgs.length > 0 && msgs[msgs.length - 1].sender === 'parent';
 
                 grid.innerHTML += `
                     <div onclick="jumpToStudentEdit('${st.id}')" class="cursor-pointer p-2.5 rounded-xl border transition ${stRec.confirmed ? 'bg-emerald-50/50 border-emerald-200' : 'bg-slate-50 border-slate-200 hover:border-teal-400'}">
@@ -956,8 +1261,9 @@
                                 : `<span class="shrink-0 text-[10px] font-bold text-amber-600 bg-amber-100 px-1.5 py-0.5 rounded">未簽</span>`
                             }
                         </div>
-                        <div class="text-[11px] text-slate-500">
-                            ${pendingHw === 0 ? '<span class="text-emerald-600">作業全完成</span>' : `<span class="text-amber-600 font-bold">${pendingHw} 項待處理</span>`}
+                        <div class="text-[11px] text-slate-500 flex items-center justify-between">
+                            <span>${pendingHw === 0 ? '<span class="text-emerald-600">作業全完成</span>' : `<span class="text-amber-600 font-bold">${pendingHw} 項待處理</span>`}</span>
+                            ${hasPendingMsg ? `<span class="text-[10px] font-bold text-rose-600 bg-rose-50 px-1.5 rounded">有新留言</span>` : ''}
                         </div>
                         <div class="text-[10px] text-slate-400 mt-0.5">學號：${st.studentCode}</div>
                     </div>
