@@ -93,11 +93,18 @@
                 </button>
             </div>
 
-            <!-- 家長登入表單（只需輸入學號） -->
+            <!-- 家長登入表單（輸入學號 + 記住登入選項） -->
             <div id="parentLoginForm" class="space-y-4">
                 <div>
                     <label for="loginStudentIdInput" class="block text-xs font-bold text-slate-600 mb-1.5">請輸入孩子學號</label>
                     <input type="text" id="loginStudentIdInput" inputmode="numeric" placeholder="請輸入學號" onkeydown="if(event.key==='Enter') handleParentLogin()" class="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500">
+                </div>
+                <div class="flex items-center justify-between pt-0.5">
+                    <label for="rememberParentLogin" class="inline-flex items-center gap-2 cursor-pointer select-none text-xs font-bold text-slate-600">
+                        <input type="checkbox" id="rememberParentLogin" checked class="w-4 h-4 rounded border-slate-300 text-teal-600 focus:ring-teal-500">
+                        <span>記住登入（下次自動登入）</span>
+                    </label>
+                    <span class="text-[11px] text-slate-400">僅限本機瀏覽器</span>
                 </div>
                 <button type="button" onclick="handleParentLogin()" class="w-full py-3.5 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-bold text-sm shadow-lg shadow-teal-600/20 transition flex items-center justify-center gap-2">
                     <i data-lucide="log-in" class="w-4 h-4"></i>
@@ -105,11 +112,18 @@
                 </button>
             </div>
 
-            <!-- 老師登入表單（密碼不顯示於畫面） -->
+            <!-- 老師登入表單（密碼不顯示於畫面 + 記住登入選項） -->
             <div id="teacherLoginForm" class="hidden space-y-4">
                 <div>
                     <label for="loginTeacherPwdInput" class="block text-xs font-bold text-slate-600 mb-1.5">導師管理密碼</label>
                     <input type="password" id="loginTeacherPwdInput" placeholder="請輸入管理密碼" onkeydown="if(event.key==='Enter') handleTeacherLogin()" class="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div class="flex items-center justify-between pt-0.5">
+                    <label for="rememberTeacherLogin" class="inline-flex items-center gap-2 cursor-pointer select-none text-xs font-bold text-slate-600">
+                        <input type="checkbox" id="rememberTeacherLogin" checked class="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
+                        <span>記住登入（下次自動登入）</span>
+                    </label>
+                    <span class="text-[11px] text-slate-400">僅限本機瀏覽器</span>
                 </div>
                 <button type="button" onclick="handleTeacherLogin()" class="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-sm shadow-lg shadow-indigo-600/20 transition flex items-center justify-center gap-2">
                     <i data-lucide="settings" class="w-4 h-4"></i>
@@ -214,7 +228,7 @@
                     </div>
                 </section>
 
-                <!-- 在校健康與傷病通知（確保完整顯示、不被遮擋） -->
+                <!-- 在校健康與傷病通知（完整顯示、不被遮擋） -->
                 <section id="parentHealthCard" class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-rose-100 space-y-2.5">
                     <div class="flex items-center gap-2 text-rose-700 font-bold text-sm">
                         <div class="p-1.5 bg-rose-50 rounded-lg"><i data-lucide="heart-pulse" class="w-4 h-4"></i></div>
@@ -225,7 +239,7 @@
                     </div>
                 </section>
 
-                <!-- 家長確認與取消確認按鈕區（隨內容流動，不遮擋下方卡片） -->
+                <!-- 家長確認與取消確認按鈕區 -->
                 <section class="bg-white rounded-2xl p-4 card-shadow border border-slate-100 space-y-2.5">
                     <button type="button" id="confirmBtnMain" onclick="confirmByParent()" class="w-full py-3.5 rounded-xl font-bold text-base shadow-md transition flex items-center justify-center gap-2">
                     </button>
@@ -467,6 +481,7 @@
         };
 
         const TEACHER_ACCESS_CODE = "ni99";
+        const SESSION_KEY = "class309_auth_session_v3";
 
         const STUDENT_NAMES = [
             "黃琨翔", "陳秉軒", "杜晨翔", "劉景碩", "王宇童",
@@ -598,6 +613,40 @@
             };
         }
 
+        function loadSavedSession() {
+            const localRaw = localStorage.getItem(SESSION_KEY);
+            if (localRaw) {
+                try {
+                    return JSON.parse(localRaw);
+                } catch (e) {
+                    localStorage.removeItem(SESSION_KEY);
+                }
+            }
+            const sessionRaw = sessionStorage.getItem(SESSION_KEY);
+            if (sessionRaw) {
+                try {
+                    return JSON.parse(sessionRaw);
+                } catch (e) {
+                    sessionStorage.removeItem(SESSION_KEY);
+                }
+            }
+            return null;
+        }
+
+        function saveSession(session, remember = false) {
+            authSession = session;
+            localStorage.removeItem(SESSION_KEY);
+            sessionStorage.removeItem(SESSION_KEY);
+            if (!session) return;
+
+            const serialized = JSON.stringify(session);
+            if (remember) {
+                localStorage.setItem(SESSION_KEY, serialized);
+            } else {
+                sessionStorage.setItem(SESSION_KEY, serialized);
+            }
+        }
+
         const TODAY_STR = getTodayStr();
         const DEFAULT_STATE = {
             students: CLASS_STUDENTS,
@@ -608,7 +657,7 @@
         };
 
         let state = JSON.parse(localStorage.getItem('class309_archive_cache')) || DEFAULT_STATE;
-        let authSession = JSON.parse(localStorage.getItem('class309_auth_session_v2')) || null;
+        let authSession = loadSavedSession();
         let selectedDate = TODAY_STR;
         let activeStampMode = 'cycle';
         let currentTeacherTab = 'overview';
@@ -724,15 +773,6 @@
             }
         }
 
-        function saveSession(session) {
-            authSession = session;
-            if (session) {
-                localStorage.setItem('class309_auth_session_v2', JSON.stringify(session));
-            } else {
-                localStorage.removeItem('class309_auth_session_v2');
-            }
-        }
-
         function showToast(msg) {
             const toast = document.getElementById('toast');
             toast.innerText = msg;
@@ -820,8 +860,11 @@
             }
         };
 
+        // 家長登入（含記住登入選項）
         window.handleParentLogin = function() {
             const codeInput = document.getElementById('loginStudentIdInput').value.trim();
+            const rememberChecked = !!document.getElementById('rememberParentLogin')?.checked;
+
             if (!codeInput) {
                 showToast("請輸入孩子的學號");
                 return;
@@ -834,33 +877,39 @@
 
             selectedDate = getTodayStr();
             ensureDateRecord(selectedDate);
-            saveSession({ role: 'parent', studentId: matchedStudent.id });
+            saveSession({ role: 'parent', studentId: matchedStudent.id, remembered: rememberChecked }, rememberChecked);
             window.scrollTo({ top: 0, behavior: 'smooth' });
             window.routeBySession();
-            showToast(`歡迎回來，${matchedStudent.seat}號 ${matchedStudent.name} 家長！`);
+            showToast(rememberChecked
+                ? `已記住登入，歡迎 ${matchedStudent.seat}號 ${matchedStudent.name} 家長！`
+                : `歡迎回來，${matchedStudent.seat}號 ${matchedStudent.name} 家長！`);
         };
 
+        // 老師登入（密碼為 ni99，含記住登入選項）
         window.handleTeacherLogin = function() {
             const pwd = document.getElementById('loginTeacherPwdInput').value.trim();
+            const rememberChecked = !!document.getElementById('rememberTeacherLogin')?.checked;
+
             if (pwd !== TEACHER_ACCESS_CODE) {
                 showToast("導師管理密碼錯誤，請重新輸入");
                 return;
             }
             selectedDate = getTodayStr();
             ensureDateRecord(selectedDate);
-            saveSession({ role: 'teacher' });
+            saveSession({ role: 'teacher', remembered: rememberChecked }, rememberChecked);
             window.scrollTo({ top: 0, behavior: 'smooth' });
             window.routeBySession();
-            showToast("已進入導師管理後台");
+            showToast(rememberChecked ? "已記住登入並進入導師管理後台" : "已進入導師管理後台");
         };
 
+        // 登出並清除已記住的登入狀態
         window.logout = function() {
-            saveSession(null);
+            saveSession(null, false);
             document.getElementById('loginStudentIdInput').value = '';
             document.getElementById('loginTeacherPwdInput').value = '';
             window.scrollTo({ top: 0, behavior: 'smooth' });
             window.routeBySession();
-            showToast("已安全登出");
+            showToast("已登出並清除本機記住狀態");
         };
 
         function renderParentView(student) {
