@@ -36,6 +36,11 @@
         .card-shadow {
             box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
         }
+        .drag-over-target {
+            outline: 2px dashed #4f46e5;
+            outline-offset: 2px;
+            background-color: #eef2ff !important;
+        }
         @keyframes popIn {
             0% { transform: scale(0.96); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
@@ -93,7 +98,7 @@
                 </button>
             </div>
 
-            <!-- 家長登入表單（輸入學號 + 記住登入選項） -->
+            <!-- 家長登入表單（只需輸入學號 + 記住登入） -->
             <div id="parentLoginForm" class="space-y-4">
                 <div>
                     <label for="loginStudentIdInput" class="block text-xs font-bold text-slate-600 mb-1.5">請輸入孩子學號</label>
@@ -112,7 +117,7 @@
                 </button>
             </div>
 
-            <!-- 老師登入表單（密碼不顯示於畫面 + 記住登入選項） -->
+            <!-- 老師登入表單（密碼不顯示於畫面 + 記住登入） -->
             <div id="teacherLoginForm" class="hidden space-y-4">
                 <div>
                     <label for="loginTeacherPwdInput" class="block text-xs font-bold text-slate-600 mb-1.5">導師管理密碼</label>
@@ -205,8 +210,25 @@
                 </section>
             </div>
 
-            <!-- 右欄：作業繳交與訂正統計 + 科任課 + 在校健康與傷病通知 + 確認/取消按鈕 -->
+            <!-- 右欄：欠缺作業區 + 作業繳交與訂正統計 + 科任課 + 在校健康與傷病通知 + 確認/取消按鈕 -->
             <div class="md:col-span-7 space-y-4">
+
+                <!-- 新增：家長專屬「欠缺作業區」（欠缺／遺失／需補交一目了然） -->
+                <section id="parentMissingHomeworkCard" class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-rose-100 space-y-3">
+                    <div class="flex items-center justify-between gap-2">
+                        <div class="flex items-center gap-2 text-rose-700 font-bold text-sm">
+                            <div class="p-1.5 bg-rose-50 rounded-lg"><i data-lucide="alert-circle" class="w-4 h-4"></i></div>
+                            <span>欠缺作業區（欠缺／遺失提醒）</span>
+                        </div>
+                        <span id="parentMissingBadge" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                            無欠缺項目
+                        </span>
+                    </div>
+                    <div id="parentMissingHomeworkList" class="space-y-2">
+                        <!-- 動態渲染欠缺或遺失作業項目 -->
+                    </div>
+                </section>
+
                 <section class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-slate-100 space-y-3">
                     <div class="flex justify-between items-center">
                         <div class="flex items-center gap-2 text-indigo-700 font-bold text-sm">
@@ -228,7 +250,7 @@
                     </div>
                 </section>
 
-                <!-- 在校健康與傷病通知（完整顯示、不被遮擋） -->
+                <!-- 在校健康與傷病通知 -->
                 <section id="parentHealthCard" class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-rose-100 space-y-2.5">
                     <div class="flex items-center gap-2 text-rose-700 font-bold text-sm">
                         <div class="p-1.5 bg-rose-50 rounded-lg"><i data-lucide="heart-pulse" class="w-4 h-4"></i></div>
@@ -267,21 +289,25 @@
             </div>
         </section>
 
-        <div class="grid grid-cols-5 gap-1 bg-slate-200/70 p-1 rounded-xl max-w-3xl mx-auto">
-            <button type="button" onclick="switchTeacherTab('overview')" id="tab-overview" class="py-2.5 text-[11px] md:text-sm font-bold rounded-lg bg-white text-teal-700 shadow-sm transition">
+        <!-- 導師功能分頁 Tabs（新增「圖卡/拖移勾選」） -->
+        <div class="grid grid-cols-3 sm:grid-cols-6 gap-1 bg-slate-200/70 p-1 rounded-xl max-w-4xl mx-auto">
+            <button type="button" onclick="switchTeacherTab('overview')" id="tab-overview" class="py-2.5 text-[11px] md:text-xs font-bold rounded-lg bg-white text-teal-700 shadow-sm transition">
                 簽章總覽
             </button>
-            <button type="button" onclick="switchTeacherTab('batchHw')" id="tab-batchHw" class="py-2.5 text-[11px] md:text-sm font-bold rounded-lg text-slate-600 hover:text-slate-800 transition">
+            <button type="button" onclick="switchTeacherTab('cardBoard')" id="tab-cardBoard" class="py-2.5 text-[11px] md:text-xs font-bold rounded-lg text-slate-600 hover:text-slate-800 transition">
+                圖卡/拖移勾選
+            </button>
+            <button type="button" onclick="switchTeacherTab('batchHw')" id="tab-batchHw" class="py-2.5 text-[11px] md:text-xs font-bold rounded-lg text-slate-600 hover:text-slate-800 transition">
                 批次作業
             </button>
-            <button type="button" onclick="switchTeacherTab('messages')" id="tab-messages" class="relative py-2.5 text-[11px] md:text-sm font-bold rounded-lg text-slate-600 hover:text-slate-800 transition">
+            <button type="button" onclick="switchTeacherTab('messages')" id="tab-messages" class="relative py-2.5 text-[11px] md:text-xs font-bold rounded-lg text-slate-600 hover:text-slate-800 transition">
                 親師留言
                 <span id="unreadMsgDot" class="hidden absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-rose-500"></span>
             </button>
-            <button type="button" onclick="switchTeacherTab('classNote')" id="tab-classNote" class="py-2.5 text-[11px] md:text-sm font-bold rounded-lg text-slate-600 hover:text-slate-800 transition">
+            <button type="button" onclick="switchTeacherTab('classNote')" id="tab-classNote" class="py-2.5 text-[11px] md:text-xs font-bold rounded-lg text-slate-600 hover:text-slate-800 transition">
                 聯絡/作業
             </button>
-            <button type="button" onclick="switchTeacherTab('studentDetail')" id="tab-studentDetail" class="py-2.5 text-[11px] md:text-sm font-bold rounded-lg text-slate-600 hover:text-slate-800 transition">
+            <button type="button" onclick="switchTeacherTab('studentDetail')" id="tab-studentDetail" class="py-2.5 text-[11px] md:text-xs font-bold rounded-lg text-slate-600 hover:text-slate-800 transition">
                 個別紀錄
             </button>
         </div>
@@ -309,7 +335,63 @@
             </div>
         </div>
 
-        <!-- TAB 2: 批次作業快速點名 -->
+        <!-- TAB 2: 新增「作業圖卡設計區 + 拖移／勾選快速登記區」 -->
+        <div id="panel-cardBoard" class="hidden space-y-4">
+            <!-- 區塊 A：設計固定作業圖卡與拖曳狀態 -->
+            <div class="bg-white rounded-2xl p-4 md:p-6 card-shadow border border-slate-100 space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div>
+                        <h2 class="font-bold text-slate-800 text-sm md:text-base flex items-center gap-1.5">
+                            <i data-lucide="layout-grid" class="w-4 h-4 text-indigo-600"></i>
+                            1. 固定作業圖卡區（可拖曳到下方學生卡片，或自訂圖卡）
+                        </h2>
+                        <p class="text-xs text-slate-400 mt-0.5">拖曳作業圖卡放開到學生身上，或直接點選下方勾選方塊快速記錄欠缺／遺失</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <label for="dragTargetStatusSelect" class="text-xs font-bold text-slate-600 shrink-0">拖曳套用狀態：</label>
+                        <select id="dragTargetStatusSelect" class="bg-slate-50 border border-slate-200 text-slate-800 font-bold text-xs rounded-xl px-2.5 py-1.5">
+                            <option value="missing">缺失（遺失／需尋找）</option>
+                            <option value="unsubmitted">未繳交</option>
+                            <option value="not_brought_home">未帶回家</option>
+                            <option value="not_brought_school">未帶來學校</option>
+                            <option value="correction">需訂正</option>
+                            <option value="madeup">已補交</option>
+                            <option value="submitted">已繳交</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 可拖曳的作業圖卡列 -->
+                <div id="draggableHomeworkCards" class="flex flex-wrap gap-2 p-3 rounded-xl bg-slate-50 border border-slate-200/80 min-h-[54px]">
+                    <!-- 動態生成可拖曳作業圖卡 -->
+                </div>
+
+                <!-- 新增自訂作業圖卡 -->
+                <div class="flex gap-2">
+                    <input type="text" id="newCardTitleInput" placeholder="新增固定作業圖卡（例如：國語習作、數小本、考卷訂正）" onkeydown="if(event.key==='Enter') addFixedHomeworkCard()" class="flex-1 px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <button type="button" onclick="addFixedHomeworkCard()" class="shrink-0 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition">
+                        新增圖卡
+                    </button>
+                </div>
+            </div>
+
+            <!-- 區塊 B：拖曳目標學生卡片 + 勾選快速登記區（免打字） -->
+            <div class="bg-white rounded-2xl p-4 md:p-6 card-shadow border border-slate-100 space-y-4">
+                <div class="flex justify-between items-center flex-wrap gap-2">
+                    <h2 class="font-bold text-slate-800 text-sm md:text-base flex items-center gap-1.5">
+                        <i data-lucide="check-square" class="w-4 h-4 text-teal-600"></i>
+                        2. 學生欠缺／遺失勾選與拖曳放置區（1～25號）
+                    </h2>
+                    <span class="text-[11px] text-slate-400">勾選代表「有欠缺／遺失」，取消勾選則還原為「已繳交」</span>
+                </div>
+
+                <div id="studentChecklistCardsGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <!-- 動態渲染 25 位學生的拖曳目標與作業勾選清單 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: 批次作業快速點名 -->
         <div id="panel-batchHw" class="hidden space-y-4">
             <div class="bg-white rounded-2xl p-4 md:p-6 card-shadow border border-slate-100 space-y-4">
                 <div class="flex justify-between items-center">
@@ -346,7 +428,7 @@
             </div>
         </div>
 
-        <!-- TAB 3: 親師留言與回覆管理區 -->
+        <!-- TAB 4: 親師留言與回覆管理區 -->
         <div id="panel-messages" class="hidden">
             <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
                 <div class="md:col-span-5 bg-white rounded-2xl p-4 card-shadow border border-slate-100 space-y-3">
@@ -384,7 +466,7 @@
             </div>
         </div>
 
-        <!-- TAB 4: 當日聯絡簿與保留區清單 -->
+        <!-- TAB 5: 當日聯絡簿與保留區清單 -->
         <div id="panel-classNote" class="hidden space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="bg-white rounded-2xl p-4 md:p-6 card-shadow border border-slate-100 space-y-3">
@@ -422,7 +504,7 @@
             </div>
         </div>
 
-        <!-- TAB 5: 個別學生紀錄編輯 -->
+        <!-- TAB 6: 個別學生紀錄編輯 -->
         <div id="panel-studentDetail" class="hidden max-w-2xl mx-auto">
             <div class="bg-white rounded-2xl p-4 md:p-6 card-shadow border border-slate-100 space-y-4">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -510,6 +592,7 @@
             submitted: {
                 label: '已繳交',
                 isCompleted: true,
+                parentHint: '',
                 badgeClass: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
                 solidClass: 'bg-emerald-600 text-white',
                 cardClass: 'bg-emerald-50/75 border-emerald-200',
@@ -518,6 +601,7 @@
             madeup: {
                 label: '已補交',
                 isCompleted: true,
+                parentHint: '',
                 badgeClass: 'bg-sky-50 text-sky-700 border border-sky-200',
                 solidClass: 'bg-sky-600 text-white',
                 cardClass: 'bg-sky-50/80 border-sky-200',
@@ -526,6 +610,7 @@
             correction: {
                 label: '需訂正',
                 isCompleted: false,
+                parentHint: '請協助孩子完成訂正並檢查',
                 badgeClass: 'bg-amber-50 text-amber-700 border border-amber-200',
                 solidClass: 'bg-amber-500 text-white',
                 cardClass: 'bg-amber-50/70 border-amber-200',
@@ -534,6 +619,7 @@
             unsubmitted: {
                 label: '未繳交',
                 isCompleted: false,
+                parentHint: '尚未繳交，請提醒孩子儘快完成補交',
                 badgeClass: 'bg-rose-50 text-rose-700 border border-rose-200',
                 solidClass: 'bg-rose-600 text-white',
                 cardClass: 'bg-rose-50/70 border-rose-200',
@@ -542,6 +628,7 @@
             not_brought_home: {
                 label: '未帶回家',
                 isCompleted: false,
+                parentHint: '今日未帶回家，請留意書包或與同學確認',
                 badgeClass: 'bg-purple-50 text-purple-700 border border-purple-200',
                 solidClass: 'bg-purple-600 text-white',
                 cardClass: 'bg-purple-50/70 border-purple-200',
@@ -550,6 +637,7 @@
             not_brought_school: {
                 label: '未帶來學校',
                 isCompleted: false,
+                parentHint: '未帶來學校，請提醒孩子隔天務必攜帶',
                 badgeClass: 'bg-indigo-50 text-indigo-700 border border-indigo-200',
                 solidClass: 'bg-indigo-600 text-white',
                 cardClass: 'bg-indigo-50/70 border-indigo-200',
@@ -558,6 +646,7 @@
             missing: {
                 label: '缺失',
                 isCompleted: false,
+                parentHint: '疑似遺失／缺失，請在家與書包中協助尋找',
                 badgeClass: 'bg-pink-50 text-pink-700 border border-pink-200',
                 solidClass: 'bg-pink-600 text-white',
                 cardClass: 'bg-pink-50/70 border-pink-200',
@@ -592,13 +681,14 @@
 
         function createDefaultDayRecord(dateStr) {
             const defaultHw = [
-                { id: "hw1", title: "數學習作" },
-                { id: "hw2", title: "國語生字簿" }
+                { id: "hw1", title: "國語習作" },
+                { id: "hw2", title: "數學習作" },
+                { id: "hw3", title: "國語生字簿" }
             ];
             const studentRecords = {};
             CLASS_STUDENTS.forEach(st => {
                 studentRecords[st.id] = {
-                    hwStatus: { hw1: "submitted", hw2: "submitted" },
+                    hwStatus: { hw1: "submitted", hw2: "submitted", hw3: "submitted" },
                     specialClass: "今日科任課表現良好。",
                     healthNote: "今日在校健康狀況良好，無傷病紀錄。",
                     confirmed: false,
@@ -616,19 +706,11 @@
         function loadSavedSession() {
             const localRaw = localStorage.getItem(SESSION_KEY);
             if (localRaw) {
-                try {
-                    return JSON.parse(localRaw);
-                } catch (e) {
-                    localStorage.removeItem(SESSION_KEY);
-                }
+                try { return JSON.parse(localRaw); } catch (e) { localStorage.removeItem(SESSION_KEY); }
             }
             const sessionRaw = sessionStorage.getItem(SESSION_KEY);
             if (sessionRaw) {
-                try {
-                    return JSON.parse(sessionRaw);
-                } catch (e) {
-                    sessionStorage.removeItem(SESSION_KEY);
-                }
+                try { return JSON.parse(sessionRaw); } catch (e) { sessionStorage.removeItem(SESSION_KEY); }
             }
             return null;
         }
@@ -638,13 +720,9 @@
             localStorage.removeItem(SESSION_KEY);
             sessionStorage.removeItem(SESSION_KEY);
             if (!session) return;
-
             const serialized = JSON.stringify(session);
-            if (remember) {
-                localStorage.setItem(SESSION_KEY, serialized);
-            } else {
-                sessionStorage.setItem(SESSION_KEY, serialized);
-            }
+            if (remember) localStorage.setItem(SESSION_KEY, serialized);
+            else sessionStorage.setItem(SESSION_KEY, serialized);
         }
 
         const TODAY_STR = getTodayStr();
@@ -662,6 +740,7 @@
         let activeStampMode = 'cycle';
         let currentTeacherTab = 'overview';
         let selectedMsgStudentId = CLASS_STUDENTS[0].id;
+        let draggedHomeworkId = null;
         let dbRef = null;
         let isCloudReady = false;
         let lastSyncDiagnostic = "正在嘗試連線至 Firebase Realtime Database...";
@@ -715,7 +794,7 @@
                 onValue(dbRef, (snapshot) => {
                     const cloudData = snapshot.val();
                     isCloudReady = true;
-                    lastSyncDiagnostic = "✅ 已成功連上 Firebase 雲端資料庫！每日聯絡簿、親師留言板與全班 25 人資料即時同步中。";
+                    lastSyncDiagnostic = "✅ 已成功連上 Firebase 雲端資料庫！每日聯絡簿、欠缺作業、親師留言板與全班 25 人資料即時同步中。";
 
                     indicator.className = "inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200";
                     indicator.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> 雲端同步中`;
@@ -768,6 +847,7 @@
             } else if (authSession.role === 'teacher') {
                 updateUnreadMessageDot();
                 if (currentTeacherTab === 'overview') renderTeacherOverview();
+                if (currentTeacherTab === 'cardBoard') renderCardBoardPanel();
                 if (currentTeacherTab === 'batchHw') populateBatchHomeworkSelect();
                 if (currentTeacherTab === 'messages') renderTeacherMessagesPanel();
             }
@@ -860,7 +940,6 @@
             }
         };
 
-        // 家長登入（含記住登入選項）
         window.handleParentLogin = function() {
             const codeInput = document.getElementById('loginStudentIdInput').value.trim();
             const rememberChecked = !!document.getElementById('rememberParentLogin')?.checked;
@@ -885,7 +964,6 @@
                 : `歡迎回來，${matchedStudent.seat}號 ${matchedStudent.name} 家長！`);
         };
 
-        // 老師登入（密碼為 ni99，含記住登入選項）
         window.handleTeacherLogin = function() {
             const pwd = document.getElementById('loginTeacherPwdInput').value.trim();
             const rememberChecked = !!document.getElementById('rememberTeacherLogin')?.checked;
@@ -902,7 +980,6 @@
             showToast(rememberChecked ? "已記住登入並進入導師管理後台" : "已進入導師管理後台");
         };
 
-        // 登出並清除已記住的登入狀態
         window.logout = function() {
             saveSession(null, false);
             document.getElementById('loginStudentIdInput').value = '';
@@ -912,6 +989,7 @@
             showToast("已登出並清除本機記住狀態");
         };
 
+        // ==================== 家長視角渲染（含欠缺作業區） ====================
         function renderParentView(student) {
             const dayRec = ensureDateRecord(selectedDate);
             const stRec = dayRec.studentRecords[student.id];
@@ -954,11 +1032,22 @@
             hwContainer.innerHTML = '';
             let attentionCount = 0;
             const correctionItems = [];
+            const missingOrDeficientItems = [];
 
             dayRec.homeworkList.forEach(hw => {
                 const statusKey = normalizeStatus(stRec.hwStatus[hw.id]);
                 const cfg = HW_STATUS_CONFIG[statusKey];
-                if (!cfg.isCompleted) attentionCount++;
+                if (!cfg.isCompleted) {
+                    attentionCount++;
+                    missingOrDeficientItems.push({
+                        title: hw.title,
+                        statusKey: statusKey,
+                        label: cfg.label,
+                        hint: cfg.parentHint,
+                        badgeClass: cfg.badgeClass,
+                        icon: cfg.icon
+                    });
+                }
                 if (statusKey === 'correction') correctionItems.push(hw.title);
 
                 hwContainer.innerHTML += `
@@ -970,6 +1059,34 @@
                     </div>
                 `;
             });
+
+            // 渲染「欠缺作業區」
+            const missingBadge = document.getElementById('parentMissingBadge');
+            const missingListEl = document.getElementById('parentMissingHomeworkList');
+            if (missingOrDeficientItems.length === 0) {
+                missingBadge.className = "text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200";
+                missingBadge.innerText = "無欠缺項目";
+                missingListEl.innerHTML = `
+                    <div class="p-3 rounded-xl bg-emerald-50/60 border border-emerald-100 text-xs text-emerald-800 flex items-center gap-2">
+                        <i data-lucide="sparkles" class="w-4 h-4 text-emerald-600 shrink-0"></i>
+                        <span>今日作業皆已繳交或完成，沒有欠缺或遺失項目！</span>
+                    </div>
+                `;
+            } else {
+                missingBadge.className = "text-xs font-bold px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-700 border border-rose-200";
+                missingBadge.innerText = `${missingOrDeficientItems.length} 項待處理`;
+                missingListEl.innerHTML = missingOrDeficientItems.map(item => `
+                    <div class="p-3 rounded-xl bg-rose-50/45 border border-rose-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div>
+                            <div class="font-bold text-sm text-slate-800">${escapeHtml(item.title)}</div>
+                            <div class="text-xs text-slate-500 mt-0.5">${escapeHtml(item.hint)}</div>
+                        </div>
+                        <span class="self-start sm:self-center shrink-0 inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-lg ${item.badgeClass}">
+                            <i data-lucide="${item.icon}" class="w-3.5 h-3.5"></i>${item.label}
+                        </span>
+                    </div>
+                `).join('');
+            }
 
             const corrStatsEl = document.getElementById('parentCorrectionStats');
             if (correctionItems.length > 0) {
@@ -1157,19 +1274,20 @@
 
         window.switchTeacherTab = function(tabName) {
             currentTeacherTab = tabName;
-            ['overview', 'batchHw', 'messages', 'classNote', 'studentDetail'].forEach(t => {
+            ['overview', 'cardBoard', 'batchHw', 'messages', 'classNote', 'studentDetail'].forEach(t => {
                 const btn = document.getElementById(`tab-${t}`);
                 const panel = document.getElementById(`panel-${t}`);
                 if (t === tabName) {
-                    btn.className = "relative py-2.5 text-[11px] md:text-sm font-bold rounded-lg bg-white text-teal-700 shadow-sm transition";
+                    btn.className = "relative py-2.5 text-[11px] md:text-xs font-bold rounded-lg bg-white text-teal-700 shadow-sm transition";
                     panel.classList.remove('hidden');
                 } else {
-                    btn.className = "relative py-2.5 text-[11px] md:text-sm font-bold rounded-lg text-slate-600 hover:text-slate-800 transition";
+                    btn.className = "relative py-2.5 text-[11px] md:text-xs font-bold rounded-lg text-slate-600 hover:text-slate-800 transition";
                     panel.classList.add('hidden');
                 }
             });
 
             if (tabName === 'overview') renderTeacherOverview();
+            if (tabName === 'cardBoard') renderCardBoardPanel();
             if (tabName === 'batchHw') {
                 renderStampPalette();
                 populateBatchHomeworkSelect();
@@ -1177,6 +1295,151 @@
             if (tabName === 'messages') renderTeacherMessagesPanel();
             if (tabName === 'classNote') loadTeacherClassNote();
             if (tabName === 'studentDetail') window.loadTeacherStudentForm(document.getElementById('teacherStudentSelect').value);
+        };
+
+        // ==================== 作業圖卡設計與拖移／勾選快速登記 ====================
+        function renderCardBoardPanel() {
+            const dayRec = ensureDateRecord(selectedDate);
+            const cardsContainer = document.getElementById('draggableHomeworkCards');
+            cardsContainer.innerHTML = '';
+
+            if (dayRec.homeworkList.length === 0) {
+                cardsContainer.innerHTML = `<span class="text-xs text-slate-400">尚未建立作業圖卡，請在下方輸入並新增圖卡。</span>`;
+            } else {
+                dayRec.homeworkList.forEach(hw => {
+                    cardsContainer.innerHTML += `
+                        <div draggable="true"
+                             ondragstart="handleCardDragStart('${hw.id}')"
+                             ondragend="handleCardDragEnd()"
+                             class="group inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white border-2 border-indigo-200 hover:border-indigo-500 text-slate-800 shadow-2xs cursor-grab active:cursor-grabbing select-none transition">
+                            <i data-lucide="grip-vertical" class="w-3.5 h-3.5 text-indigo-400"></i>
+                            <span class="text-xs md:text-sm font-bold">${escapeHtml(hw.title)}</span>
+                            <button type="button" onclick="event.stopPropagation(); deleteHomeworkItem('${hw.id}')" class="ml-1 text-slate-300 hover:text-rose-500 transition" title="移除此圖卡">
+                                <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+                    `;
+                });
+            }
+
+            const studentGrid = document.getElementById('studentChecklistCardsGrid');
+            studentGrid.innerHTML = '';
+
+            CLASS_STUDENTS.forEach(st => {
+                const stRec = dayRec.studentRecords[st.id];
+                const missingCount = dayRec.homeworkList.filter(hw => !HW_STATUS_CONFIG[normalizeStatus(stRec.hwStatus[hw.id])].isCompleted).length;
+
+                const checkboxesHtml = dayRec.homeworkList.map(hw => {
+                    const statusKey = normalizeStatus(stRec.hwStatus[hw.id]);
+                    const isDeficient = !HW_STATUS_CONFIG[statusKey].isCompleted;
+                    const cfg = HW_STATUS_CONFIG[statusKey];
+                    return `
+                        <label class="flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-lg border cursor-pointer transition ${isDeficient ? cfg.cardClass : 'bg-slate-50/70 border-slate-100 hover:bg-slate-100/70'}">
+                            <span class="inline-flex items-center gap-2 min-w-0">
+                                <input type="checkbox"
+                                       ${isDeficient ? 'checked' : ''}
+                                       onchange="toggleStudentHomeworkCheck('${st.id}', '${hw.id}', this.checked)"
+                                       class="w-4 h-4 rounded border-slate-300 text-rose-600 focus:ring-rose-500 shrink-0">
+                                <span class="text-xs font-medium text-slate-700 truncate">${escapeHtml(hw.title)}</span>
+                            </span>
+                            <span class="shrink-0 text-[10px] font-bold px-1.5 py-0.5 rounded ${isDeficient ? cfg.solidClass : 'bg-emerald-100 text-emerald-700'}">
+                                ${isDeficient ? cfg.label : '已繳交'}
+                            </span>
+                        </label>
+                    `;
+                }).join('');
+
+                studentGrid.innerHTML += `
+                    <div id="drop-student-${st.id}"
+                         ondragover="handleStudentDragOver(event, '${st.id}')"
+                         ondragleave="handleStudentDragLeave('${st.id}')"
+                         ondrop="handleStudentDrop(event, '${st.id}')"
+                         class="p-3 rounded-xl border border-slate-200 bg-white space-y-2 transition">
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-1.5">
+                            <div class="font-bold text-xs md:text-sm text-slate-800">
+                                ${st.seat}號 ${st.name}
+                            </div>
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${missingCount > 0 ? 'bg-rose-100 text-rose-700' : 'bg-emerald-50 text-emerald-700'}">
+                                ${missingCount > 0 ? `欠缺 ${missingCount} 項` : '無欠缺'}
+                            </span>
+                        </div>
+                        <div class="space-y-1.5">
+                            ${checkboxesHtml || '<p class="text-[11px] text-slate-400">上方尚未建立作業圖卡</p>'}
+                        </div>
+                    </div>
+                `;
+            });
+
+            lucide.createIcons();
+        }
+
+        window.addFixedHomeworkCard = function() {
+            const input = document.getElementById('newCardTitleInput');
+            const title = input.value.trim();
+            if (!title) return;
+
+            const dayRec = ensureDateRecord(selectedDate);
+            const newId = 'hw_' + Date.now();
+            dayRec.homeworkList.push({ id: newId, title: title });
+            CLASS_STUDENTS.forEach(s => {
+                dayRec.studentRecords[s.id].hwStatus[newId] = 'submitted';
+            });
+
+            input.value = '';
+            saveState();
+            renderCardBoardPanel();
+            showToast(`已新增作業圖卡「${title}」`);
+        };
+
+        window.handleCardDragStart = function(hwId) {
+            draggedHomeworkId = hwId;
+        };
+
+        window.handleCardDragEnd = function() {
+            draggedHomeworkId = null;
+            document.querySelectorAll('.drag-over-target').forEach(el => el.classList.remove('drag-over-target'));
+        };
+
+        window.handleStudentDragOver = function(event, studentId) {
+            event.preventDefault();
+            const card = document.getElementById(`drop-student-${studentId}`);
+            if (card) card.classList.add('drag-over-target');
+        };
+
+        window.handleStudentDragLeave = function(studentId) {
+            const card = document.getElementById(`drop-student-${studentId}`);
+            if (card) card.classList.remove('drag-over-target');
+        };
+
+        window.handleStudentDrop = function(event, studentId) {
+            event.preventDefault();
+            handleStudentDragLeave(studentId);
+            if (!draggedHomeworkId) return;
+
+            const targetStatus = document.getElementById('dragTargetStatusSelect')?.value || 'missing';
+            const dayRec = ensureDateRecord(selectedDate);
+            const stRec = dayRec.studentRecords[studentId];
+            const student = CLASS_STUDENTS.find(s => s.id === studentId);
+            const hw = dayRec.homeworkList.find(h => h.id === draggedHomeworkId);
+
+            if (stRec && hw) {
+                stRec.hwStatus[hw.id] = targetStatus;
+                saveState();
+                renderCardBoardPanel();
+                showToast(`已將「${hw.title}（${HW_STATUS_CONFIG[targetStatus].label}）」登記至 ${student?.seat}號 ${student?.name}`);
+            }
+            draggedHomeworkId = null;
+        };
+
+        window.toggleStudentHomeworkCheck = function(studentId, hwId, isChecked) {
+            const dayRec = ensureDateRecord(selectedDate);
+            const stRec = dayRec.studentRecords[studentId];
+            if (!stRec) return;
+
+            const chosenDeficientStatus = document.getElementById('dragTargetStatusSelect')?.value || 'missing';
+            stRec.hwStatus[hwId] = isChecked ? chosenDeficientStatus : 'submitted';
+            saveState();
+            renderCardBoardPanel();
         };
 
         function renderTeacherMessagesPanel() {
@@ -1388,7 +1651,7 @@
 
             if (dayRec.homeworkList.length === 0) {
                 sel.add(new Option("此日尚未建立作業項目", ""));
-                document.getElementById('batchHwGrid').innerHTML = `<p class="col-span-full text-xs text-slate-400 text-center py-4">請先至「聯絡/作業」分頁新增作業項目</p>`;
+                document.getElementById('batchHwGrid').innerHTML = `<p class="col-span-full text-xs text-slate-400 text-center py-4">請先至「聯絡/作業」或「圖卡/拖移勾選」新增作業項目</p>`;
                 document.getElementById('batchHwStats').innerText = "0 項作業";
                 return;
             }
@@ -1475,7 +1738,7 @@
             dayRec.homeworkList.forEach(hw => {
                 listEl.innerHTML += `
                     <div class="py-2.5 flex justify-between items-center">
-                        <span class="text-sm text-slate-700">${hw.title}</span>
+                        <span class="text-sm text-slate-700">${escapeHtml(hw.title)}</span>
                         <button type="button" onclick="deleteHomeworkItem('${hw.id}')" class="text-rose-500 hover:bg-rose-50 p-1.5 rounded-lg transition">
                             <i data-lucide="trash-2" class="w-4 h-4"></i>
                         </button>
@@ -1496,7 +1759,7 @@
                             <span class="font-bold text-sm text-slate-800">${d} ${d === getTodayStr() ? '(今日)' : ''}</span>
                             <span class="text-[11px] font-bold text-teal-700 bg-teal-100/80 px-2 py-0.5 rounded-full">已簽 ${confirmedNum}/25</span>
                         </div>
-                        <p class="text-xs text-slate-500 truncate">${rec.dailyNote || '無聯絡事項'}</p>
+                        <p class="text-xs text-slate-500 truncate">${escapeHtml(rec.dailyNote || '無聯絡事項')}</p>
                     </button>
                 `;
             });
@@ -1537,7 +1800,8 @@
                 delete dayRec.studentRecords[s.id].hwStatus[hwId];
             });
             saveState();
-            loadTeacherClassNote();
+            if (currentTeacherTab === 'cardBoard') renderCardBoardPanel();
+            else loadTeacherClassNote();
             showToast("已刪除該項作業並同步");
         };
 
@@ -1563,7 +1827,7 @@
 
                 toggleContainer.innerHTML += `
                     <div class="flex justify-between items-center p-2.5 rounded-xl border ${cfg.cardClass}">
-                        <span class="text-sm font-medium text-slate-700 pr-2">${hw.title}</span>
+                        <span class="text-sm font-medium text-slate-700 pr-2">${escapeHtml(hw.title)}</span>
                         <select onchange="changeSingleStudentHw('${student.id}', '${hw.id}', this.value)" class="text-xs font-bold px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                             ${optionsHtml}
                         </select>
