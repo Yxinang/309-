@@ -210,10 +210,10 @@
                 </section>
             </div>
 
-            <!-- 右欄：欠缺作業區 + 作業繳交與訂正統計 + 科任課 + 在校健康與傷病通知 + 確認/取消按鈕 -->
+            <!-- 右欄：欠缺作業區 + 平日回家作業 + 其他作業紀錄 + 科任課 + 健康傷病 + 確認/取消 -->
             <div class="md:col-span-7 space-y-4">
 
-                <!-- 新增：家長專屬「欠缺作業區」（欠缺／遺失／需補交一目了然） -->
+                <!-- 欠缺作業區（平日回家作業之欠缺／遺失提醒） -->
                 <section id="parentMissingHomeworkCard" class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-rose-100 space-y-3">
                     <div class="flex items-center justify-between gap-2">
                         <div class="flex items-center gap-2 text-rose-700 font-bold text-sm">
@@ -225,20 +225,35 @@
                         </span>
                     </div>
                     <div id="parentMissingHomeworkList" class="space-y-2">
-                        <!-- 動態渲染欠缺或遺失作業項目 -->
                     </div>
                 </section>
 
+                <!-- 平日回家作業 -->
                 <section class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-slate-100 space-y-3">
                     <div class="flex justify-between items-center">
                         <div class="flex items-center gap-2 text-indigo-700 font-bold text-sm">
                             <div class="p-1.5 bg-indigo-50 rounded-lg"><i data-lucide="clipboard-check" class="w-4 h-4"></i></div>
-                            <span>當日作業繳交狀況</span>
+                            <span>平日回家作業狀況</span>
                         </div>
                         <span id="hwSummaryTag" class="text-xs font-medium px-2.5 py-0.5 rounded-full"></span>
                     </div>
                     <div id="parentHomeworkList" class="divide-y divide-slate-100"></div>
                     <div id="parentCorrectionStats" class="pt-3 border-t border-slate-100 space-y-2"></div>
+                </section>
+
+                <!-- 其他作業紀錄區（與平日回家作業分開） -->
+                <section class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-violet-100 space-y-3">
+                    <div class="flex items-center justify-between gap-2">
+                        <div class="flex items-center gap-2 text-violet-700 font-bold text-sm">
+                            <div class="p-1.5 bg-violet-50 rounded-lg"><i data-lucide="layers" class="w-4 h-4"></i></div>
+                            <span>其他作業紀錄（訂正／回條／額外練習）</span>
+                        </div>
+                        <span id="parentExtraHwBadge" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-violet-50 text-violet-700 border border-violet-200">
+                            0 項需處理
+                        </span>
+                    </div>
+                    <div id="parentExtraHomeworkList" class="space-y-2">
+                    </div>
                 </section>
 
                 <section class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-slate-100 space-y-2.5">
@@ -250,7 +265,6 @@
                     </div>
                 </section>
 
-                <!-- 在校健康與傷病通知 -->
                 <section id="parentHealthCard" class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-rose-100 space-y-2.5">
                     <div class="flex items-center gap-2 text-rose-700 font-bold text-sm">
                         <div class="p-1.5 bg-rose-50 rounded-lg"><i data-lucide="heart-pulse" class="w-4 h-4"></i></div>
@@ -261,7 +275,6 @@
                     </div>
                 </section>
 
-                <!-- 家長確認與取消確認按鈕區 -->
                 <section class="bg-white rounded-2xl p-4 card-shadow border border-slate-100 space-y-2.5">
                     <button type="button" id="confirmBtnMain" onclick="confirmByParent()" class="w-full py-3.5 rounded-xl font-bold text-base shadow-md transition flex items-center justify-center gap-2">
                     </button>
@@ -289,23 +302,23 @@
             </div>
         </section>
 
-        <!-- 導師功能分頁 Tabs（新增「圖卡/拖移勾選」） -->
+        <!-- 導師功能分頁 Tabs -->
         <div class="grid grid-cols-3 sm:grid-cols-6 gap-1 bg-slate-200/70 p-1 rounded-xl max-w-4xl mx-auto">
             <button type="button" onclick="switchTeacherTab('overview')" id="tab-overview" class="py-2.5 text-[11px] md:text-xs font-bold rounded-lg bg-white text-teal-700 shadow-sm transition">
                 簽章總覽
             </button>
-            <button type="button" onclick="switchTeacherTab('cardBoard')" id="tab-cardBoard" class="py-2.5 text-[11px] md:text-xs font-bold rounded-lg text-slate-600 hover:text-slate-800 transition">
-                圖卡/拖移勾選
+            <button type="button" onclick="switchTeacherTab('extraBoard')" id="tab-extraBoard" class="py-2.5 text-[11px] md:text-xs font-bold rounded-lg text-slate-600 hover:text-slate-800 transition">
+                其他作業圖卡
             </button>
             <button type="button" onclick="switchTeacherTab('batchHw')" id="tab-batchHw" class="py-2.5 text-[11px] md:text-xs font-bold rounded-lg text-slate-600 hover:text-slate-800 transition">
-                批次作業
+                平日作業點名
             </button>
             <button type="button" onclick="switchTeacherTab('messages')" id="tab-messages" class="relative py-2.5 text-[11px] md:text-xs font-bold rounded-lg text-slate-600 hover:text-slate-800 transition">
                 親師留言
                 <span id="unreadMsgDot" class="hidden absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-rose-500"></span>
             </button>
             <button type="button" onclick="switchTeacherTab('classNote')" id="tab-classNote" class="py-2.5 text-[11px] md:text-xs font-bold rounded-lg text-slate-600 hover:text-slate-800 transition">
-                聯絡/作業
+                聯絡/平日作業
             </button>
             <button type="button" onclick="switchTeacherTab('studentDetail')" id="tab-studentDetail" class="py-2.5 text-[11px] md:text-xs font-bold rounded-lg text-slate-600 hover:text-slate-800 transition">
                 個別紀錄
@@ -335,76 +348,72 @@
             </div>
         </div>
 
-        <!-- TAB 2: 新增「作業圖卡設計區 + 拖移／勾選快速登記區」 -->
-        <div id="panel-cardBoard" class="hidden space-y-4">
-            <!-- 區塊 A：設計固定作業圖卡與拖曳狀態 -->
-            <div class="bg-white rounded-2xl p-4 md:p-6 card-shadow border border-slate-100 space-y-4">
+        <!-- TAB 2: 其他作業圖卡設計 + 拖移／勾選快速登記區（與平日回家作業分開） -->
+        <div id="panel-extraBoard" class="hidden space-y-4">
+            <div class="bg-white rounded-2xl p-4 md:p-6 card-shadow border border-violet-100 space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                     <div>
                         <h2 class="font-bold text-slate-800 text-sm md:text-base flex items-center gap-1.5">
-                            <i data-lucide="layout-grid" class="w-4 h-4 text-indigo-600"></i>
-                            1. 固定作業圖卡區（可拖曳到下方學生卡片，或自訂圖卡）
+                            <i data-lucide="layers" class="w-4 h-4 text-violet-600"></i>
+                            1. 其他作業固定圖卡區（獨立於平日回家作業）
                         </h2>
-                        <p class="text-xs text-slate-400 mt-0.5">拖曳作業圖卡放開到學生身上，或直接點選下方勾選方塊快速記錄欠缺／遺失</p>
+                        <p class="text-xs text-slate-400 mt-0.5">將其他作業圖卡拖曳到學生卡片上，或直接勾選方塊記錄，免打字</p>
                     </div>
                     <div class="flex items-center gap-2">
-                        <label for="dragTargetStatusSelect" class="text-xs font-bold text-slate-600 shrink-0">拖曳套用狀態：</label>
-                        <select id="dragTargetStatusSelect" class="bg-slate-50 border border-slate-200 text-slate-800 font-bold text-xs rounded-xl px-2.5 py-1.5">
-                            <option value="missing">缺失（遺失／需尋找）</option>
+                        <label for="extraDragStatusSelect" class="text-xs font-bold text-slate-600 shrink-0">登記狀態：</label>
+                        <select id="extraDragStatusSelect" class="bg-slate-50 border border-slate-200 text-slate-800 font-bold text-xs rounded-xl px-2.5 py-1.5">
+                            <option value="correction">需訂正</option>
                             <option value="unsubmitted">未繳交</option>
+                            <option value="missing">缺失（需尋找）</option>
                             <option value="not_brought_home">未帶回家</option>
                             <option value="not_brought_school">未帶來學校</option>
-                            <option value="correction">需訂正</option>
                             <option value="madeup">已補交</option>
-                            <option value="submitted">已繳交</option>
                         </select>
                     </div>
                 </div>
 
-                <!-- 可拖曳的作業圖卡列 -->
-                <div id="draggableHomeworkCards" class="flex flex-wrap gap-2 p-3 rounded-xl bg-slate-50 border border-slate-200/80 min-h-[54px]">
-                    <!-- 動態生成可拖曳作業圖卡 -->
+                <!-- 可拖曳的其他作業圖卡 -->
+                <div id="draggableExtraCards" class="flex flex-wrap gap-2 p-3 rounded-xl bg-violet-50/50 border border-violet-200/70 min-h-[54px]">
                 </div>
 
-                <!-- 新增自訂作業圖卡 -->
+                <!-- 新增固定其他作業圖卡 -->
                 <div class="flex gap-2">
-                    <input type="text" id="newCardTitleInput" placeholder="新增固定作業圖卡（例如：國語習作、數小本、考卷訂正）" onkeydown="if(event.key==='Enter') addFixedHomeworkCard()" class="flex-1 px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    <button type="button" onclick="addFixedHomeworkCard()" class="shrink-0 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition">
-                        新增圖卡
+                    <input type="text" id="newExtraCardInput" placeholder="新增其他作業圖卡（例如：考卷訂正、回條、補交作業）" onkeydown="if(event.key==='Enter') addExtraHomeworkCard()" class="flex-1 px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500">
+                    <button type="button" onclick="addExtraHomeworkCard()" class="shrink-0 px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-xl text-xs font-bold transition">
+                        新增其他圖卡
                     </button>
                 </div>
             </div>
 
-            <!-- 區塊 B：拖曳目標學生卡片 + 勾選快速登記區（免打字） -->
+            <!-- 學生拖曳放置與勾選區（其他作業） -->
             <div class="bg-white rounded-2xl p-4 md:p-6 card-shadow border border-slate-100 space-y-4">
                 <div class="flex justify-between items-center flex-wrap gap-2">
                     <h2 class="font-bold text-slate-800 text-sm md:text-base flex items-center gap-1.5">
                         <i data-lucide="check-square" class="w-4 h-4 text-teal-600"></i>
-                        2. 學生欠缺／遺失勾選與拖曳放置區（1～25號）
+                        2. 學生其他作業勾選與拖曳放置區（1～25號）
                     </h2>
-                    <span class="text-[11px] text-slate-400">勾選代表「有欠缺／遺失」，取消勾選則還原為「已繳交」</span>
+                    <span class="text-[11px] text-slate-400">勾選代表「有此項其他作業待處理」，取消勾選則設為「已完成」</span>
                 </div>
 
-                <div id="studentChecklistCardsGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <!-- 動態渲染 25 位學生的拖曳目標與作業勾選清單 -->
+                <div id="extraStudentChecklistGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 </div>
             </div>
         </div>
 
-        <!-- TAB 3: 批次作業快速點名 -->
+        <!-- TAB 3: 平日回家作業批次快速點名 -->
         <div id="panel-batchHw" class="hidden space-y-4">
             <div class="bg-white rounded-2xl p-4 md:p-6 card-shadow border border-slate-100 space-y-4">
                 <div class="flex justify-between items-center">
                     <h2 class="font-bold text-slate-800 text-sm md:text-base flex items-center gap-1.5">
                         <i data-lucide="zap" class="w-4 h-4 text-indigo-600"></i>
-                        全班作業一鍵快速點名
+                        平日回家作業一鍵快速點名
                     </h2>
                     <span id="batchHwStats" class="text-xs font-bold text-indigo-700 bg-indigo-50 px-3 py-1 rounded-full"></span>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label for="batchHwSelect" class="block text-xs font-medium text-slate-400 mb-1">1. 選擇作業項目</label>
+                        <label for="batchHwSelect" class="block text-xs font-medium text-slate-400 mb-1">1. 選擇平日回家作業項目</label>
                         <select id="batchHwSelect" onchange="renderBatchHomeworkGrid()" class="w-full bg-slate-50 border border-slate-200 text-slate-800 font-bold text-sm rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                         </select>
                     </div>
@@ -466,7 +475,7 @@
             </div>
         </div>
 
-        <!-- TAB 5: 當日聯絡簿與保留區清單 -->
+        <!-- TAB 5: 當日聯絡簿與平日回家作業設定 -->
         <div id="panel-classNote" class="hidden space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="bg-white rounded-2xl p-4 md:p-6 card-shadow border border-slate-100 space-y-3">
@@ -483,7 +492,7 @@
                 <div class="bg-white rounded-2xl p-4 md:p-6 card-shadow border border-slate-100 space-y-3">
                     <h2 class="font-bold text-slate-800 text-sm md:text-base flex items-center gap-1.5">
                         <i data-lucide="list-plus" class="w-4 h-4 text-indigo-600"></i>
-                        管理此日作業項目
+                        管理此日平日回家作業項目
                     </h2>
                     <div class="flex gap-2">
                         <input type="text" id="newHomeworkInput" placeholder="例如：國語習作 P.20-21" class="flex-1 px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500">
@@ -520,7 +529,7 @@
                 </div>
 
                 <div class="space-y-2">
-                    <label class="block text-xs font-bold text-indigo-700">當日各項作業狀態（下拉可直接選擇）</label>
+                    <label class="block text-xs font-bold text-indigo-700">當日平日回家作業狀態（下拉可直接選擇）</label>
                     <div id="teacherStudentHwToggles" class="space-y-2"></div>
                 </div>
 
@@ -682,13 +691,18 @@
         function createDefaultDayRecord(dateStr) {
             const defaultHw = [
                 { id: "hw1", title: "國語習作" },
-                { id: "hw2", title: "數學習作" },
-                { id: "hw3", title: "國語生字簿" }
+                { id: "hw2", title: "數學習作" }
+            ];
+            const defaultExtraCards = [
+                { id: "ex1", title: "考卷訂正" },
+                { id: "ex2", title: "回條／同意書" },
+                { id: "ex3", title: "補交作業" }
             ];
             const studentRecords = {};
             CLASS_STUDENTS.forEach(st => {
                 studentRecords[st.id] = {
-                    hwStatus: { hw1: "submitted", hw2: "submitted", hw3: "submitted" },
+                    hwStatus: { hw1: "submitted", hw2: "submitted" },
+                    extraHwStatus: { ex1: "submitted", ex2: "submitted", ex3: "submitted" },
                     specialClass: "今日科任課表現良好。",
                     healthNote: "今日在校健康狀況良好，無傷病紀錄。",
                     confirmed: false,
@@ -699,6 +713,7 @@
                 date: dateStr,
                 dailyNote: "1. 明日準時到校，攜帶水壺與學用品。\n2. 回家請確實完成今日作業並請家長簽名。",
                 homeworkList: defaultHw,
+                extraHomeworkCards: defaultExtraCards,
                 studentRecords: studentRecords
             };
         }
@@ -740,7 +755,7 @@
         let activeStampMode = 'cycle';
         let currentTeacherTab = 'overview';
         let selectedMsgStudentId = CLASS_STUDENTS[0].id;
-        let draggedHomeworkId = null;
+        let draggedExtraCardId = null;
         let dbRef = null;
         let isCloudReady = false;
         let lastSyncDiagnostic = "正在嘗試連線至 Firebase Realtime Database...";
@@ -753,21 +768,32 @@
             }
             const rec = state.recordsByDate[dateStr];
             if (!rec.homeworkList) rec.homeworkList = [];
+            if (!rec.extraHomeworkCards) {
+                rec.extraHomeworkCards = [
+                    { id: "ex1", title: "考卷訂正" },
+                    { id: "ex2", title: "回條／同意書" },
+                    { id: "ex3", title: "補交作業" }
+                ];
+            }
             if (!rec.studentRecords) rec.studentRecords = {};
 
             CLASS_STUDENTS.forEach(st => {
                 if (!rec.studentRecords[st.id]) {
                     const defaultHwStatus = {};
                     rec.homeworkList.forEach(h => defaultHwStatus[h.id] = 'submitted');
+                    const defaultExtraStatus = {};
+                    rec.extraHomeworkCards.forEach(ex => defaultExtraStatus[ex.id] = 'submitted');
                     rec.studentRecords[st.id] = {
                         hwStatus: defaultHwStatus,
+                        extraHwStatus: defaultExtraStatus,
                         specialClass: "今日科任課表現良好。",
                         healthNote: "今日在校健康狀況良好，無傷病紀錄。",
                         confirmed: false,
                         confirmedTime: ""
                     };
-                } else if (!rec.studentRecords[st.id].hwStatus) {
-                    rec.studentRecords[st.id].hwStatus = {};
+                } else {
+                    if (!rec.studentRecords[st.id].hwStatus) rec.studentRecords[st.id].hwStatus = {};
+                    if (!rec.studentRecords[st.id].extraHwStatus) rec.studentRecords[st.id].extraHwStatus = {};
                 }
             });
             return rec;
@@ -794,7 +820,7 @@
                 onValue(dbRef, (snapshot) => {
                     const cloudData = snapshot.val();
                     isCloudReady = true;
-                    lastSyncDiagnostic = "✅ 已成功連上 Firebase 雲端資料庫！每日聯絡簿、欠缺作業、親師留言板與全班 25 人資料即時同步中。";
+                    lastSyncDiagnostic = "✅ 已成功連上 Firebase 雲端資料庫！每日聯絡簿、其他作業圖卡、親師留言板與全班 25 人資料即時同步中。";
 
                     indicator.className = "inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200";
                     indicator.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> 雲端同步中`;
@@ -847,7 +873,7 @@
             } else if (authSession.role === 'teacher') {
                 updateUnreadMessageDot();
                 if (currentTeacherTab === 'overview') renderTeacherOverview();
-                if (currentTeacherTab === 'cardBoard') renderCardBoardPanel();
+                if (currentTeacherTab === 'extraBoard') renderExtraBoardPanel();
                 if (currentTeacherTab === 'batchHw') populateBatchHomeworkSelect();
                 if (currentTeacherTab === 'messages') renderTeacherMessagesPanel();
             }
@@ -989,7 +1015,6 @@
             showToast("已登出並清除本機記住狀態");
         };
 
-        // ==================== 家長視角渲染（含欠缺作業區） ====================
         function renderParentView(student) {
             const dayRec = ensureDateRecord(selectedDate);
             const stRec = dayRec.studentRecords[student.id];
@@ -1028,6 +1053,7 @@
 
             renderParentMessageHistory(student.id);
 
+            // 平日回家作業與欠缺作業區
             const hwContainer = document.getElementById('parentHomeworkList');
             hwContainer.innerHTML = '';
             let attentionCount = 0;
@@ -1052,7 +1078,7 @@
 
                 hwContainer.innerHTML += `
                     <div class="py-2.5 flex justify-between items-center gap-2">
-                        <span class="text-sm font-medium text-slate-700">${hw.title}</span>
+                        <span class="text-sm font-medium text-slate-700">${escapeHtml(hw.title)}</span>
                         <span class="shrink-0 inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-lg ${cfg.badgeClass}">
                             <i data-lucide="${cfg.icon}" class="w-3.5 h-3.5"></i>${cfg.label}
                         </span>
@@ -1060,7 +1086,6 @@
                 `;
             });
 
-            // 渲染「欠缺作業區」
             const missingBadge = document.getElementById('parentMissingBadge');
             const missingListEl = document.getElementById('parentMissingHomeworkList');
             if (missingOrDeficientItems.length === 0) {
@@ -1069,7 +1094,7 @@
                 missingListEl.innerHTML = `
                     <div class="p-3 rounded-xl bg-emerald-50/60 border border-emerald-100 text-xs text-emerald-800 flex items-center gap-2">
                         <i data-lucide="sparkles" class="w-4 h-4 text-emerald-600 shrink-0"></i>
-                        <span>今日作業皆已繳交或完成，沒有欠缺或遺失項目！</span>
+                        <span>今日平日回家作業皆已繳交或完成，沒有欠缺或遺失項目！</span>
                     </div>
                 `;
             } else {
@@ -1088,6 +1113,33 @@
                 `).join('');
             }
 
+            // 其他作業紀錄區（獨立於平日回家作業）
+            const extraListEl = document.getElementById('parentExtraHomeworkList');
+            const extraBadgeEl = document.getElementById('parentExtraHwBadge');
+            const pendingExtra = [];
+            (dayRec.extraHomeworkCards || []).forEach(ex => {
+                const statusKey = normalizeStatus((stRec.extraHwStatus || {})[ex.id]);
+                const cfg = HW_STATUS_CONFIG[statusKey];
+                if (!cfg.isCompleted) {
+                    pendingExtra.push({ title: ex.title, cfg });
+                }
+            });
+
+            if (pendingExtra.length === 0) {
+                extraBadgeEl.className = "text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200";
+                extraBadgeEl.innerText = "無其他待辦";
+                extraListEl.innerHTML = `<p class="text-xs text-slate-400 bg-slate-50 p-3 rounded-xl">目前無其他作業（訂正／回條／補交）待處理項目。</p>`;
+            } else {
+                extraBadgeEl.className = "text-xs font-bold px-2.5 py-0.5 rounded-full bg-violet-100 text-violet-700 border border-violet-200";
+                extraBadgeEl.innerText = `${pendingExtra.length} 項需處理`;
+                extraListEl.innerHTML = pendingExtra.map(item => `
+                    <div class="p-2.5 rounded-xl bg-violet-50/50 border border-violet-100 flex items-center justify-between gap-2">
+                        <span class="text-sm font-bold text-slate-800">${escapeHtml(item.title)}</span>
+                        <span class="shrink-0 text-xs font-bold px-2.5 py-1 rounded-lg ${item.cfg.badgeClass}">${item.cfg.label}</span>
+                    </div>
+                `).join('');
+            }
+
             const corrStatsEl = document.getElementById('parentCorrectionStats');
             if (correctionItems.length > 0) {
                 corrStatsEl.innerHTML = `
@@ -1102,7 +1154,7 @@
                             </span>
                         </div>
                         <div class="flex flex-wrap gap-1.5 pt-0.5">
-                            ${correctionItems.map(title => `<span class="text-xs font-medium bg-white text-amber-800 border border-amber-200 px-2 py-0.5 rounded-md">${title}</span>`).join('')}
+                            ${correctionItems.map(title => `<span class="text-xs font-medium bg-white text-amber-800 border border-amber-200 px-2 py-0.5 rounded-md">${escapeHtml(title)}</span>`).join('')}
                         </div>
                     </div>
                 `;
@@ -1274,7 +1326,7 @@
 
         window.switchTeacherTab = function(tabName) {
             currentTeacherTab = tabName;
-            ['overview', 'cardBoard', 'batchHw', 'messages', 'classNote', 'studentDetail'].forEach(t => {
+            ['overview', 'extraBoard', 'batchHw', 'messages', 'classNote', 'studentDetail'].forEach(t => {
                 const btn = document.getElementById(`tab-${t}`);
                 const panel = document.getElementById(`panel-${t}`);
                 if (t === tabName) {
@@ -1287,7 +1339,7 @@
             });
 
             if (tabName === 'overview') renderTeacherOverview();
-            if (tabName === 'cardBoard') renderCardBoardPanel();
+            if (tabName === 'extraBoard') renderExtraBoardPanel();
             if (tabName === 'batchHw') {
                 renderStampPalette();
                 populateBatchHomeworkSelect();
@@ -1297,24 +1349,25 @@
             if (tabName === 'studentDetail') window.loadTeacherStudentForm(document.getElementById('teacherStudentSelect').value);
         };
 
-        // ==================== 作業圖卡設計與拖移／勾選快速登記 ====================
-        function renderCardBoardPanel() {
+        // ==================== 其他作業圖卡設計與拖移／勾選（獨立於平日回家作業） ====================
+        function renderExtraBoardPanel() {
             const dayRec = ensureDateRecord(selectedDate);
-            const cardsContainer = document.getElementById('draggableHomeworkCards');
+            const cardsContainer = document.getElementById('draggableExtraCards');
             cardsContainer.innerHTML = '';
 
-            if (dayRec.homeworkList.length === 0) {
-                cardsContainer.innerHTML = `<span class="text-xs text-slate-400">尚未建立作業圖卡，請在下方輸入並新增圖卡。</span>`;
+            const extraCards = dayRec.extraHomeworkCards || [];
+            if (extraCards.length === 0) {
+                cardsContainer.innerHTML = `<span class="text-xs text-slate-400">尚未建立其他作業圖卡，請在下方輸入並新增圖卡。</span>`;
             } else {
-                dayRec.homeworkList.forEach(hw => {
+                extraCards.forEach(ex => {
                     cardsContainer.innerHTML += `
                         <div draggable="true"
-                             ondragstart="handleCardDragStart('${hw.id}')"
-                             ondragend="handleCardDragEnd()"
-                             class="group inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white border-2 border-indigo-200 hover:border-indigo-500 text-slate-800 shadow-2xs cursor-grab active:cursor-grabbing select-none transition">
-                            <i data-lucide="grip-vertical" class="w-3.5 h-3.5 text-indigo-400"></i>
-                            <span class="text-xs md:text-sm font-bold">${escapeHtml(hw.title)}</span>
-                            <button type="button" onclick="event.stopPropagation(); deleteHomeworkItem('${hw.id}')" class="ml-1 text-slate-300 hover:text-rose-500 transition" title="移除此圖卡">
+                             ondragstart="handleExtraCardDragStart('${ex.id}')"
+                             ondragend="handleExtraCardDragEnd()"
+                             class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white border-2 border-violet-200 hover:border-violet-500 text-slate-800 shadow-2xs cursor-grab active:cursor-grabbing select-none transition">
+                            <i data-lucide="grip-vertical" class="w-3.5 h-3.5 text-violet-400"></i>
+                            <span class="text-xs md:text-sm font-bold">${escapeHtml(ex.title)}</span>
+                            <button type="button" onclick="event.stopPropagation(); deleteExtraHomeworkCard('${ex.id}')" class="ml-1 text-slate-300 hover:text-rose-500 transition" title="移除此其他作業圖卡">
                                 <i data-lucide="x" class="w-3.5 h-3.5"></i>
                             </button>
                         </div>
@@ -1322,49 +1375,50 @@
                 });
             }
 
-            const studentGrid = document.getElementById('studentChecklistCardsGrid');
+            const studentGrid = document.getElementById('extraStudentChecklistGrid');
             studentGrid.innerHTML = '';
 
             CLASS_STUDENTS.forEach(st => {
                 const stRec = dayRec.studentRecords[st.id];
-                const missingCount = dayRec.homeworkList.filter(hw => !HW_STATUS_CONFIG[normalizeStatus(stRec.hwStatus[hw.id])].isCompleted).length;
+                const extraMap = stRec.extraHwStatus || {};
+                const pendingCount = extraCards.filter(ex => !HW_STATUS_CONFIG[normalizeStatus(extraMap[ex.id])].isCompleted).length;
 
-                const checkboxesHtml = dayRec.homeworkList.map(hw => {
-                    const statusKey = normalizeStatus(stRec.hwStatus[hw.id]);
-                    const isDeficient = !HW_STATUS_CONFIG[statusKey].isCompleted;
+                const checkboxesHtml = extraCards.map(ex => {
+                    const statusKey = normalizeStatus(extraMap[ex.id]);
+                    const isPending = !HW_STATUS_CONFIG[statusKey].isCompleted;
                     const cfg = HW_STATUS_CONFIG[statusKey];
                     return `
-                        <label class="flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-lg border cursor-pointer transition ${isDeficient ? cfg.cardClass : 'bg-slate-50/70 border-slate-100 hover:bg-slate-100/70'}">
+                        <label class="flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-lg border cursor-pointer transition ${isPending ? cfg.cardClass : 'bg-slate-50/70 border-slate-100 hover:bg-slate-100/70'}">
                             <span class="inline-flex items-center gap-2 min-w-0">
                                 <input type="checkbox"
-                                       ${isDeficient ? 'checked' : ''}
-                                       onchange="toggleStudentHomeworkCheck('${st.id}', '${hw.id}', this.checked)"
-                                       class="w-4 h-4 rounded border-slate-300 text-rose-600 focus:ring-rose-500 shrink-0">
-                                <span class="text-xs font-medium text-slate-700 truncate">${escapeHtml(hw.title)}</span>
+                                       ${isPending ? 'checked' : ''}
+                                       onchange="toggleStudentExtraHomeworkCheck('${st.id}', '${ex.id}', this.checked)"
+                                       class="w-4 h-4 rounded border-slate-300 text-violet-600 focus:ring-violet-500 shrink-0">
+                                <span class="text-xs font-medium text-slate-700 truncate">${escapeHtml(ex.title)}</span>
                             </span>
-                            <span class="shrink-0 text-[10px] font-bold px-1.5 py-0.5 rounded ${isDeficient ? cfg.solidClass : 'bg-emerald-100 text-emerald-700'}">
-                                ${isDeficient ? cfg.label : '已繳交'}
+                            <span class="shrink-0 text-[10px] font-bold px-1.5 py-0.5 rounded ${isPending ? cfg.solidClass : 'bg-emerald-100 text-emerald-700'}">
+                                ${isPending ? cfg.label : '已完成'}
                             </span>
                         </label>
                     `;
                 }).join('');
 
                 studentGrid.innerHTML += `
-                    <div id="drop-student-${st.id}"
-                         ondragover="handleStudentDragOver(event, '${st.id}')"
-                         ondragleave="handleStudentDragLeave('${st.id}')"
-                         ondrop="handleStudentDrop(event, '${st.id}')"
+                    <div id="drop-extra-student-${st.id}"
+                         ondragover="handleExtraStudentDragOver(event, '${st.id}')"
+                         ondragleave="handleExtraStudentDragLeave('${st.id}')"
+                         ondrop="handleExtraStudentDrop(event, '${st.id}')"
                          class="p-3 rounded-xl border border-slate-200 bg-white space-y-2 transition">
                         <div class="flex items-center justify-between border-b border-slate-100 pb-1.5">
                             <div class="font-bold text-xs md:text-sm text-slate-800">
                                 ${st.seat}號 ${st.name}
                             </div>
-                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${missingCount > 0 ? 'bg-rose-100 text-rose-700' : 'bg-emerald-50 text-emerald-700'}">
-                                ${missingCount > 0 ? `欠缺 ${missingCount} 項` : '無欠缺'}
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${pendingCount > 0 ? 'bg-violet-100 text-violet-700' : 'bg-emerald-50 text-emerald-700'}">
+                                ${pendingCount > 0 ? `其他 ${pendingCount} 項` : '無其他待辦'}
                             </span>
                         </div>
                         <div class="space-y-1.5">
-                            ${checkboxesHtml || '<p class="text-[11px] text-slate-400">上方尚未建立作業圖卡</p>'}
+                            ${checkboxesHtml || '<p class="text-[11px] text-slate-400">上方尚未建立其他作業圖卡</p>'}
                         </div>
                     </div>
                 `;
@@ -1373,73 +1427,89 @@
             lucide.createIcons();
         }
 
-        window.addFixedHomeworkCard = function() {
-            const input = document.getElementById('newCardTitleInput');
+        window.addExtraHomeworkCard = function() {
+            const input = document.getElementById('newExtraCardInput');
             const title = input.value.trim();
             if (!title) return;
 
             const dayRec = ensureDateRecord(selectedDate);
-            const newId = 'hw_' + Date.now();
-            dayRec.homeworkList.push({ id: newId, title: title });
+            const newId = 'ex_' + Date.now();
+            dayRec.extraHomeworkCards.push({ id: newId, title: title });
             CLASS_STUDENTS.forEach(s => {
-                dayRec.studentRecords[s.id].hwStatus[newId] = 'submitted';
+                if (!dayRec.studentRecords[s.id].extraHwStatus) dayRec.studentRecords[s.id].extraHwStatus = {};
+                dayRec.studentRecords[s.id].extraHwStatus[newId] = 'submitted';
             });
 
             input.value = '';
             saveState();
-            renderCardBoardPanel();
-            showToast(`已新增作業圖卡「${title}」`);
+            renderExtraBoardPanel();
+            showToast(`已新增其他作業圖卡「${title}」`);
         };
 
-        window.handleCardDragStart = function(hwId) {
-            draggedHomeworkId = hwId;
+        window.deleteExtraHomeworkCard = function(exId) {
+            const dayRec = ensureDateRecord(selectedDate);
+            dayRec.extraHomeworkCards = (dayRec.extraHomeworkCards || []).filter(ex => ex.id !== exId);
+            CLASS_STUDENTS.forEach(s => {
+                if (dayRec.studentRecords[s.id].extraHwStatus) {
+                    delete dayRec.studentRecords[s.id].extraHwStatus[exId];
+                }
+            });
+            saveState();
+            renderExtraBoardPanel();
+            showToast("已移除該項其他作業圖卡");
         };
 
-        window.handleCardDragEnd = function() {
-            draggedHomeworkId = null;
+        window.handleExtraCardDragStart = function(exId) {
+            draggedExtraCardId = exId;
+        };
+
+        window.handleExtraCardDragEnd = function() {
+            draggedExtraCardId = null;
             document.querySelectorAll('.drag-over-target').forEach(el => el.classList.remove('drag-over-target'));
         };
 
-        window.handleStudentDragOver = function(event, studentId) {
+        window.handleExtraStudentDragOver = function(event, studentId) {
             event.preventDefault();
-            const card = document.getElementById(`drop-student-${studentId}`);
+            const card = document.getElementById(`drop-extra-student-${studentId}`);
             if (card) card.classList.add('drag-over-target');
         };
 
-        window.handleStudentDragLeave = function(studentId) {
-            const card = document.getElementById(`drop-student-${studentId}`);
+        window.handleExtraStudentDragLeave = function(studentId) {
+            const card = document.getElementById(`drop-extra-student-${studentId}`);
             if (card) card.classList.remove('drag-over-target');
         };
 
-        window.handleStudentDrop = function(event, studentId) {
+        window.handleExtraStudentDrop = function(event, studentId) {
             event.preventDefault();
-            handleStudentDragLeave(studentId);
-            if (!draggedHomeworkId) return;
+            handleExtraStudentDragLeave(studentId);
+            if (!draggedExtraCardId) return;
 
-            const targetStatus = document.getElementById('dragTargetStatusSelect')?.value || 'missing';
+            const targetStatus = document.getElementById('extraDragStatusSelect')?.value || 'correction';
             const dayRec = ensureDateRecord(selectedDate);
             const stRec = dayRec.studentRecords[studentId];
             const student = CLASS_STUDENTS.find(s => s.id === studentId);
-            const hw = dayRec.homeworkList.find(h => h.id === draggedHomeworkId);
+            const exCard = (dayRec.extraHomeworkCards || []).find(ex => ex.id === draggedExtraCardId);
 
-            if (stRec && hw) {
-                stRec.hwStatus[hw.id] = targetStatus;
+            if (stRec && exCard) {
+                if (!stRec.extraHwStatus) stRec.extraHwStatus = {};
+                stRec.extraHwStatus[exCard.id] = targetStatus;
                 saveState();
-                renderCardBoardPanel();
-                showToast(`已將「${hw.title}（${HW_STATUS_CONFIG[targetStatus].label}）」登記至 ${student?.seat}號 ${student?.name}`);
+                renderExtraBoardPanel();
+                showToast(`已將其他作業「${exCard.title}（${HW_STATUS_CONFIG[targetStatus].label}）」登記至 ${student?.seat}號 ${student?.name}`);
             }
-            draggedHomeworkId = null;
+            draggedExtraCardId = null;
         };
 
-        window.toggleStudentHomeworkCheck = function(studentId, hwId, isChecked) {
+        window.toggleStudentExtraHomeworkCheck = function(studentId, exId, isChecked) {
             const dayRec = ensureDateRecord(selectedDate);
             const stRec = dayRec.studentRecords[studentId];
             if (!stRec) return;
 
-            const chosenDeficientStatus = document.getElementById('dragTargetStatusSelect')?.value || 'missing';
-            stRec.hwStatus[hwId] = isChecked ? chosenDeficientStatus : 'submitted';
+            if (!stRec.extraHwStatus) stRec.extraHwStatus = {};
+            const chosenStatus = document.getElementById('extraDragStatusSelect')?.value || 'correction';
+            stRec.extraHwStatus[exId] = isChecked ? chosenStatus : 'submitted';
             saveState();
-            renderCardBoardPanel();
+            renderExtraBoardPanel();
         };
 
         function renderTeacherMessagesPanel() {
@@ -1650,8 +1720,8 @@
             sel.innerHTML = '';
 
             if (dayRec.homeworkList.length === 0) {
-                sel.add(new Option("此日尚未建立作業項目", ""));
-                document.getElementById('batchHwGrid').innerHTML = `<p class="col-span-full text-xs text-slate-400 text-center py-4">請先至「聯絡/作業」或「圖卡/拖移勾選」新增作業項目</p>`;
+                sel.add(new Option("此日尚未建立平日回家作業", ""));
+                document.getElementById('batchHwGrid').innerHTML = `<p class="col-span-full text-xs text-slate-400 text-center py-4">請先至「聯絡/平日作業」分頁新增作業項目</p>`;
                 document.getElementById('batchHwStats').innerText = "0 項作業";
                 return;
             }
@@ -1790,7 +1860,7 @@
             input.value = '';
             saveState();
             loadTeacherClassNote();
-            showToast("已新增作業項目並同步雲端");
+            showToast("已新增平日回家作業項目並同步雲端");
         };
 
         window.deleteHomeworkItem = function(hwId) {
@@ -1800,9 +1870,8 @@
                 delete dayRec.studentRecords[s.id].hwStatus[hwId];
             });
             saveState();
-            if (currentTeacherTab === 'cardBoard') renderCardBoardPanel();
-            else loadTeacherClassNote();
-            showToast("已刪除該項作業並同步");
+            loadTeacherClassNote();
+            showToast("已刪除該項平日回家作業並同步");
         };
 
         window.loadTeacherStudentForm = function(studentId) {
