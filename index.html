@@ -348,7 +348,7 @@
             </div>
         </div>
 
-        <!-- TAB 2: 其他作業點名（當日設定） -->
+        <!-- TAB 2: 其他作業點名（每日獨立設定） -->
         <div id="panel-extraBoard" class="hidden space-y-4">
             <div class="bg-white rounded-2xl p-4 md:p-6 card-shadow border border-violet-100 space-y-4">
                 <div class="flex justify-between items-center flex-wrap gap-2">
@@ -755,7 +755,7 @@
             return `${m}/${d} ${hh}:${mm}`;
         }
 
-        // 每天各自獨立紀錄，只顯示當日設定好的作業
+        // 每天各自獨立紀錄，其他作業與平日作業都只看當日設定
         function createDefaultDayRecord(dateStr) {
             const studentRecords = {};
             CLASS_STUDENTS.forEach(st => {
@@ -876,15 +876,11 @@
         let isCloudReady = false;
         let lastSyncDiagnostic = "正在嘗試連線至 Firebase Realtime Database...";
 
+        // 每天各自獨立的其他作業清單，不自動帶入其他日期或全域舊卡片
         function getDayExtraCards(dayRec) {
-            if (Array.isArray(dayRec.extraCards)) {
-                return dayRec.extraCards;
+            if (!Array.isArray(dayRec.extraCards)) {
+                dayRec.extraCards = [];
             }
-            if (Array.isArray(state.extraCards) && state.extraCards.length > 0) {
-                dayRec.extraCards = state.extraCards.map(c => ({ ...c }));
-                return dayRec.extraCards;
-            }
-            dayRec.extraCards = [];
             return dayRec.extraCards;
         }
 
@@ -899,8 +895,8 @@
             }
             const rec = state.recordsByDate[dateStr];
             if (!Array.isArray(rec.homeworkList)) rec.homeworkList = [];
+            if (!Array.isArray(rec.extraCards)) rec.extraCards = [];
             if (!rec.studentRecords) rec.studentRecords = {};
-            getDayExtraCards(rec);
 
             CLASS_STUDENTS.forEach(st => {
                 if (!rec.studentRecords[st.id]) {
@@ -1268,7 +1264,7 @@
                 `).join('');
             }
 
-            // 2. 其他作業區：只顯示當日設定，且登記為「已繳交」（submitted）者家長端不再顯示
+            // 2. 其他作業區：只看當日設定，且登記為「已繳交」（submitted）者家長端不再顯示
             const extraListEl = document.getElementById('parentExtraHomeworkList');
             const extraBadgeEl = document.getElementById('parentExtraHwBadge');
             const dayExtraCards = getDayExtraCards(dayRec);
@@ -1656,7 +1652,7 @@
 
             const dayRec = ensureDateRecord(selectedDate);
             const dayExtraCards = getDayExtraCards(dayRec);
-            const newId = 'ex_' + Date.now();
+            const newId = `ex_${selectedDate}_${Date.now()}`;
             dayExtraCards.push({ id: newId, title: title });
 
             CLASS_STUDENTS.forEach(s => {
@@ -1669,7 +1665,7 @@
             renderExtraBoardPanel();
             document.getElementById('extraHwSelect').value = newId;
             window.renderExtraHomeworkGrid();
-            showToast(`已新增 ${selectedDate} 其他作業圖卡「${title}」`);
+            showToast(`已新增 ${selectedDate} 專屬其他作業圖卡「${title}」`);
         };
 
         window.deleteExtraHomeworkCard = function(exId) {
@@ -2149,7 +2145,7 @@
             let addedCount = 0;
 
             pendingHwSelection.forEach((title, i) => {
-                const newId = 'hw_' + Date.now() + '_' + i;
+                const newId = `hw_${selectedDate}_${Date.now()}_${i}`;
                 dayRec.homeworkList.push({ id: newId, title: title });
                 CLASS_STUDENTS.forEach(s => {
                     dayRec.studentRecords[s.id].hwStatus[newId] = 'submitted';
@@ -2215,7 +2211,7 @@
             if (!title) return;
 
             const dayRec = ensureDateRecord(selectedDate);
-            const newId = 'hw_' + Date.now();
+            const newId = `hw_${selectedDate}_${Date.now()}`;
             dayRec.homeworkList.push({ id: newId, title: title });
             CLASS_STUDENTS.forEach(s => {
                 dayRec.studentRecords[s.id].hwStatus[newId] = 'submitted';
