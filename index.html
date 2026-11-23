@@ -11,19 +11,28 @@
         html {
             font-family: 'Noto Sans TC', sans-serif;
             background-color: #F4F7F9;
+            max-width: 100%;
             overflow-x: clip;
             scroll-behavior: smooth;
         }
         body {
             font-family: 'Noto Sans TC', sans-serif;
             background-color: #F4F7F9;
-            height: auto !important;
-            min-height: 100%;
+            max-width: 100%;
+            min-height: 100dvh;
+            margin: 0;
+            padding-top: env(safe-area-inset-top);
+            padding-left: env(safe-area-inset-left);
+            padding-right: env(safe-area-inset-right);
             overflow-x: clip !important;
             overflow-y: auto !important;
             -webkit-overflow-scrolling: touch;
             touch-action: pan-y;
             -webkit-tap-highlight-color: transparent;
+        }
+        main, section, div {
+            max-width: 100%;
+            box-sizing: border-box;
         }
         #loginView,
         #parentView,
@@ -35,11 +44,6 @@
         }
         .card-shadow {
             box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
-        }
-        .drag-over-target {
-            outline: 2px dashed #4f46e5;
-            outline-offset: 2px;
-            background-color: #eef2ff !important;
         }
         @keyframes popIn {
             0% { transform: scale(0.96); opacity: 0; }
@@ -54,12 +58,12 @@
 
     <!-- 頂部導覽列 -->
     <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/80 px-4 py-3">
-        <div class="max-w-4xl mx-auto flex justify-between items-center gap-2">
-            <div class="flex items-center gap-2.5">
+        <div class="max-w-4xl mx-auto flex justify-between items-center gap-2 min-w-0">
+            <div class="flex items-center gap-2.5 min-w-0">
                 <div class="w-9 h-9 rounded-xl bg-teal-600 text-white flex items-center justify-center font-bold shadow-sm shrink-0">
                     309
                 </div>
-                <div>
+                <div class="min-w-0">
                     <div class="flex items-center gap-2 flex-wrap">
                         <h1 class="text-base md:text-lg font-bold text-slate-800 leading-tight">崇明國小 309班</h1>
                         <button type="button" onclick="showSyncDiagnostic()" id="syncIndicator" class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
@@ -98,18 +102,20 @@
                 </button>
             </div>
 
-            <!-- 家長登入表單 -->
+            <!-- 家長登入表單（只需輸入學號 + 記住登入） -->
             <div id="parentLoginForm" class="space-y-4">
                 <div>
                     <label for="loginStudentIdInput" class="block text-xs font-bold text-slate-600 mb-1.5">請輸入孩子學號</label>
                     <input type="text" id="loginStudentIdInput" inputmode="numeric" placeholder="請輸入學號" onkeydown="if(event.key==='Enter') handleParentLogin()" class="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500">
                 </div>
-                <div class="flex items-center justify-between pt-0.5">
+                <div class="flex items-center justify-between gap-2 flex-wrap pt-0.5">
                     <label for="rememberParentLogin" class="inline-flex items-center gap-2 cursor-pointer select-none text-xs font-bold text-slate-600">
                         <input type="checkbox" id="rememberParentLogin" checked class="w-4 h-4 rounded border-slate-300 text-teal-600 focus:ring-teal-500">
                         <span>記住登入（下次自動登入）</span>
                     </label>
-                    <span class="text-[11px] text-slate-400">僅限本機瀏覽器</span>
+                    <button type="button" onclick="clearSavedLoginInfo()" class="text-[11px] text-slate-400 hover:text-rose-600 underline">
+                        清除記住
+                    </button>
                 </div>
                 <button type="button" onclick="handleParentLogin()" class="w-full py-3.5 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-bold text-sm shadow-lg shadow-teal-600/20 transition flex items-center justify-center gap-2">
                     <i data-lucide="log-in" class="w-4 h-4"></i>
@@ -123,12 +129,14 @@
                     <label for="loginTeacherPwdInput" class="block text-xs font-bold text-slate-600 mb-1.5">導師管理密碼</label>
                     <input type="password" id="loginTeacherPwdInput" placeholder="請輸入管理密碼" onkeydown="if(event.key==='Enter') handleTeacherLogin()" class="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 </div>
-                <div class="flex items-center justify-between pt-0.5">
+                <div class="flex items-center justify-between gap-2 flex-wrap pt-0.5">
                     <label for="rememberTeacherLogin" class="inline-flex items-center gap-2 cursor-pointer select-none text-xs font-bold text-slate-600">
                         <input type="checkbox" id="rememberTeacherLogin" checked class="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
                         <span>記住登入（下次自動登入）</span>
                     </label>
-                    <span class="text-[11px] text-slate-400">僅限本機瀏覽器</span>
+                    <button type="button" onclick="clearSavedLoginInfo()" class="text-[11px] text-slate-400 hover:text-rose-600 underline">
+                        清除記住
+                    </button>
                 </div>
                 <button type="button" onclick="handleTeacherLogin()" class="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-sm shadow-lg shadow-indigo-600/20 transition flex items-center justify-center gap-2">
                     <i data-lucide="settings" class="w-4 h-4"></i>
@@ -157,36 +165,36 @@
 
         <div class="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6 items-start">
             
-            <div class="md:col-span-5 space-y-4">
+            <div class="md:col-span-5 space-y-4 min-w-0">
                 <section class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-slate-100">
                     <div class="flex justify-between items-center gap-3">
-                        <div class="flex items-center gap-3">
-                            <div id="parentStudentSeatBadge" class="w-12 h-12 rounded-2xl bg-teal-50 text-teal-700 font-bold text-lg flex items-center justify-center border border-teal-100">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div id="parentStudentSeatBadge" class="w-12 h-12 rounded-2xl bg-teal-50 text-teal-700 font-bold text-lg flex items-center justify-center border border-teal-100 shrink-0">
                                 01
                             </div>
-                            <div>
+                            <div class="min-w-0">
                                 <span id="parentStudentCodeLabel" class="text-[11px] font-medium text-slate-400">學號 113056</span>
-                                <h2 id="parentStudentName" class="text-lg md:text-xl font-bold text-slate-800">黃琨翔</h2>
+                                <h2 id="parentStudentName" class="text-lg md:text-xl font-bold text-slate-800 truncate">黃琨翔</h2>
                             </div>
                         </div>
-                        <div id="parentStatusBadge" class="text-right"></div>
+                        <div id="parentStatusBadge" class="text-right shrink-0"></div>
                     </div>
                 </section>
 
                 <section class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-slate-100 space-y-2.5">
-                    <div class="flex items-center justify-between">
+                    <div class="flex items-center justify-between gap-2">
                         <div class="flex items-center gap-2 text-teal-700 font-bold text-sm">
                             <div class="p-1.5 bg-teal-50 rounded-lg"><i data-lucide="book-open" class="w-4 h-4"></i></div>
                             <span>當日聯絡事項與叮嚀</span>
                         </div>
                         <span id="parentNoteDateBadge" class="text-[11px] font-bold text-slate-400"></span>
                     </div>
-                    <div id="parentDailyNote" class="text-sm text-slate-600 leading-relaxed bg-slate-50/80 p-3.5 rounded-xl whitespace-pre-line">
+                    <div id="parentDailyNote" class="text-sm text-slate-600 leading-relaxed bg-slate-50/80 p-3.5 rounded-xl whitespace-pre-line break-words">
                     </div>
                 </section>
 
                 <section class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-slate-100 space-y-3">
-                    <div class="flex items-center justify-between">
+                    <div class="flex items-center justify-between gap-2">
                         <div class="flex items-center gap-2 text-cyan-700 font-bold text-sm">
                             <div class="p-1.5 bg-cyan-50 rounded-lg"><i data-lucide="message-square-heart" class="w-4 h-4"></i></div>
                             <span>親師交流留言板</span>
@@ -207,10 +215,10 @@
                 </section>
             </div>
 
-            <div class="md:col-span-7 space-y-4">
+            <div class="md:col-span-7 space-y-4 min-w-0">
 
                 <section id="parentMissingHomeworkCard" class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-rose-100 space-y-3">
-                    <div class="flex items-center justify-between gap-2">
+                    <div class="flex items-center justify-between gap-2 flex-wrap">
                         <div class="flex items-center gap-2 text-rose-700 font-bold text-sm">
                             <div class="p-1.5 bg-rose-50 rounded-lg"><i data-lucide="alert-circle" class="w-4 h-4"></i></div>
                             <span>欠缺作業區（未完成／欠缺／遺失提醒）</span>
@@ -224,7 +232,7 @@
                 </section>
 
                 <section class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-slate-100 space-y-3">
-                    <div class="flex justify-between items-center">
+                    <div class="flex justify-between items-center gap-2">
                         <div class="flex items-center gap-2 text-indigo-700 font-bold text-sm">
                             <div class="p-1.5 bg-indigo-50 rounded-lg"><i data-lucide="clipboard-check" class="w-4 h-4"></i></div>
                             <span>平日回家作業狀況</span>
@@ -236,7 +244,7 @@
                 </section>
 
                 <section class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-violet-100 space-y-3">
-                    <div class="flex items-center justify-between gap-2">
+                    <div class="flex items-center justify-between gap-2 flex-wrap">
                         <div class="flex items-center gap-2 text-violet-700 font-bold text-sm">
                             <div class="p-1.5 bg-violet-50 rounded-lg"><i data-lucide="layers" class="w-4 h-4"></i></div>
                             <span>其他作業紀錄</span>
@@ -254,7 +262,7 @@
                         <div class="p-1.5 bg-amber-50 rounded-lg"><i data-lucide="sparkles" class="w-4 h-4"></i></div>
                         <span>科任課表現紀錄</span>
                     </div>
-                    <div id="parentSpecialClass" class="text-sm text-slate-600 bg-amber-50/40 border border-amber-100/60 p-3.5 rounded-xl leading-relaxed">
+                    <div id="parentSpecialClass" class="text-sm text-slate-600 bg-amber-50/40 border border-amber-100/60 p-3.5 rounded-xl leading-relaxed break-words">
                     </div>
                 </section>
 
@@ -263,7 +271,7 @@
                         <div class="p-1.5 bg-rose-50 rounded-lg"><i data-lucide="heart-pulse" class="w-4 h-4"></i></div>
                         <span>在校健康與傷病通知</span>
                     </div>
-                    <div id="parentHealthNote" class="text-sm text-slate-700 bg-rose-50/60 border border-rose-200/70 p-3.5 rounded-xl leading-relaxed min-h-[3.5rem] whitespace-pre-line">
+                    <div id="parentHealthNote" class="text-sm text-slate-700 bg-rose-50/60 border border-rose-200/70 p-3.5 rounded-xl leading-relaxed min-h-[3.5rem] whitespace-pre-line break-words">
                         今日在校健康狀況良好，無傷病紀錄。
                     </div>
                 </section>
@@ -300,7 +308,7 @@
                 簽章總覽
             </button>
             <button type="button" onclick="switchTeacherTab('extraBoard')" id="tab-extraBoard" class="py-2.5 text-[11px] md:text-xs font-bold rounded-lg text-slate-600 hover:text-slate-800 transition">
-                其他作業圖卡
+                其他作業點名
             </button>
             <button type="button" onclick="switchTeacherTab('batchHw')" id="tab-batchHw" class="py-2.5 text-[11px] md:text-xs font-bold rounded-lg text-slate-600 hover:text-slate-800 transition">
                 平日作業點名
@@ -340,61 +348,64 @@
             </div>
         </div>
 
-        <!-- TAB 2: 其他作業圖卡區（支援印章蓋章、拖移、勾選與全部清空） -->
+        <!-- TAB 2: 其他作業點名（與平日作業點名相同操作方式 + 圖卡管理與全部清空） -->
         <div id="panel-extraBoard" class="hidden space-y-4">
             <div class="bg-white rounded-2xl p-4 md:p-6 card-shadow border border-violet-100 space-y-4">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                    <div>
-                        <h2 class="font-bold text-slate-800 text-sm md:text-base flex items-center gap-1.5">
-                            <i data-lucide="layers" class="w-4 h-4 text-violet-600"></i>
-                            1. 其他作業圖卡區（平時全空；新增後持續保留直到刪除）
-                        </h2>
-                        <p class="text-xs text-slate-400 mt-0.5">選擇下方印章後，點擊學生卡片上的作業印章即可蓋章，也可拖移圖卡或直接勾選</p>
-                    </div>
-                    <button type="button" onclick="clearAllExtraHomeworkCards()" class="self-start sm:self-auto inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 transition">
-                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                        <span>全部清空</span>
-                    </button>
-                </div>
-
-                <!-- 其他作業蓋章調色盤 -->
-                <div class="space-y-1.5">
-                    <label class="block text-xs font-bold text-violet-700">選擇要蓋上的其他作業印章：</label>
-                    <div id="extraStampPalette" class="flex flex-wrap gap-1.5"></div>
-                </div>
-
-                <!-- 可拖曳的其他作業圖卡列 -->
-                <div id="draggableExtraCards" class="flex flex-wrap gap-2 p-3 rounded-xl bg-violet-50/50 border border-violet-200/70 min-h-[54px]">
-                </div>
-
-                <!-- 新增其他作業圖卡 -->
-                <div class="flex gap-2">
-                    <input type="text" id="newExtraCardInput" placeholder="輸入有需要的其他作業圖卡名稱後按新增..." onkeydown="if(event.key==='Enter') addExtraHomeworkCard()" class="flex-1 px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500">
-                    <button type="button" onclick="addExtraHomeworkCard()" class="shrink-0 px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-xl text-xs font-bold transition">
-                        新增其他圖卡
-                    </button>
-                </div>
-            </div>
-
-            <!-- 學生蓋章／勾選／拖曳放置區 -->
-            <div class="bg-white rounded-2xl p-4 md:p-6 card-shadow border border-slate-100 space-y-4">
                 <div class="flex justify-between items-center flex-wrap gap-2">
                     <h2 class="font-bold text-slate-800 text-sm md:text-base flex items-center gap-1.5">
-                        <i data-lucide="stamp" class="w-4 h-4 text-teal-600"></i>
-                        2. 學生其他作業蓋章與勾選區（1～25號）
+                        <i data-lucide="layers" class="w-4 h-4 text-violet-600"></i>
+                        其他作業一鍵快速點名
                     </h2>
-                    <span class="text-[11px] text-slate-400">點右側印章按鈕可直接蓋章；勾選代表有待處理項目，取消勾選還原為已繳交</span>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span id="extraHwStats" class="text-xs font-bold text-violet-700 bg-violet-50 px-3 py-1 rounded-full"></span>
+                        <button type="button" onclick="clearAllExtraHomeworkCards()" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-bold bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 transition">
+                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                            <span>全部清空</span>
+                        </button>
+                    </div>
                 </div>
 
-                <div id="extraStudentChecklistGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <!-- 新增其他作業圖卡（平時全空，新增後持續保留直到刪除） -->
+                <div class="flex gap-2">
+                    <input type="text" id="newExtraCardInput" placeholder="新增其他作業圖卡名稱（例如：考卷訂正、回條）..." onkeydown="if(event.key==='Enter') addExtraHomeworkCard()" class="flex-1 min-w-0 px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500">
+                    <button type="button" onclick="addExtraHomeworkCard()" class="shrink-0 px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-xl text-xs font-bold transition">
+                        新增圖卡
+                    </button>
                 </div>
+
+                <!-- 已新增的其他作業圖卡標籤 -->
+                <div id="extraCardsTagList" class="flex flex-wrap gap-1.5"></div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="extraHwSelect" class="block text-xs font-medium text-slate-400 mb-1">1. 選擇其他作業圖卡</label>
+                        <select id="extraHwSelect" onchange="renderExtraHomeworkGrid()" class="w-full bg-slate-50 border border-slate-200 text-slate-800 font-bold text-sm rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-violet-500">
+                        </select>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-medium text-slate-400">2. 選擇點擊學生時要套用的狀態（蓋章模式）</label>
+                        <div id="extraStampPalette" class="flex flex-wrap gap-1.5"></div>
+                    </div>
+                </div>
+
+                <div class="pt-2 flex gap-2 flex-wrap border-t border-slate-100">
+                    <button type="button" onclick="setAllExtraHomeworkStatus('submitted')" class="flex-1 py-2 px-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-xl text-xs font-bold transition">
+                        全班設為「已繳交」
+                    </button>
+                    <button type="button" onclick="setAllExtraHomeworkStatus('incomplete')" class="flex-1 py-2 px-3 bg-orange-50 hover:bg-orange-100 text-orange-700 border border-orange-200 rounded-xl text-xs font-bold transition">
+                        全班設為「未完成」
+                    </button>
+                </div>
+
+                <div id="extraHwGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2.5 pt-1"></div>
             </div>
         </div>
 
         <!-- TAB 3: 平日回家作業批次快速點名 -->
         <div id="panel-batchHw" class="hidden space-y-4">
             <div class="bg-white rounded-2xl p-4 md:p-6 card-shadow border border-slate-100 space-y-4">
-                <div class="flex justify-between items-center">
+                <div class="flex justify-between items-center flex-wrap gap-2">
                     <h2 class="font-bold text-slate-800 text-sm md:text-base flex items-center gap-1.5">
                         <i data-lucide="zap" class="w-4 h-4 text-indigo-600"></i>
                         平日回家作業一鍵快速點名
@@ -415,7 +426,7 @@
                     </div>
                 </div>
 
-                <div class="pt-2 flex gap-2 border-t border-slate-100">
+                <div class="pt-2 flex gap-2 flex-wrap border-t border-slate-100">
                     <button type="button" onclick="setAllHomeworkStatus('submitted')" class="flex-1 py-2 px-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-xl text-xs font-bold transition">
                         全班設為「已繳交」
                     </button>
@@ -431,8 +442,8 @@
         <!-- TAB 4: 親師留言與回覆管理區 -->
         <div id="panel-messages" class="hidden">
             <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
-                <div class="md:col-span-5 bg-white rounded-2xl p-4 card-shadow border border-slate-100 space-y-3">
-                    <div class="flex items-center justify-between">
+                <div class="md:col-span-5 bg-white rounded-2xl p-4 card-shadow border border-slate-100 space-y-3 min-w-0">
+                    <div class="flex items-center justify-between gap-2">
                         <h2 class="font-bold text-slate-800 text-sm flex items-center gap-1.5">
                             <i data-lucide="messages-square" class="w-4 h-4 text-cyan-600"></i>
                             全班親師留言列表
@@ -443,13 +454,13 @@
                     </div>
                 </div>
 
-                <div class="md:col-span-7 bg-white rounded-2xl p-4 md:p-5 card-shadow border border-slate-100 space-y-3">
-                    <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
-                        <div>
+                <div class="md:col-span-7 bg-white rounded-2xl p-4 md:p-5 card-shadow border border-slate-100 space-y-3 min-w-0">
+                    <div class="flex items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
+                        <div class="min-w-0">
                             <span class="text-[11px] text-slate-400">正在查看親師對話紀錄</span>
-                            <h3 id="teacherActiveMsgStudentTitle" class="font-bold text-base text-slate-800">01號 黃琨翔</h3>
+                            <h3 id="teacherActiveMsgStudentTitle" class="font-bold text-base text-slate-800 truncate">01號 黃琨翔</h3>
                         </div>
-                        <span id="teacherActiveMsgCount" class="text-xs font-bold text-cyan-700 bg-cyan-50 px-2.5 py-1 rounded-full">0 則</span>
+                        <span id="teacherActiveMsgCount" class="shrink-0 text-xs font-bold text-cyan-700 bg-cyan-50 px-2.5 py-1 rounded-full">0 則</span>
                     </div>
 
                     <div id="teacherMessageHistory" class="h-72 overflow-y-auto space-y-2.5 bg-slate-50/80 p-3.5 rounded-xl border border-slate-100">
@@ -469,25 +480,46 @@
         <!-- TAB 5: 當日聯絡簿與平日回家作業設定 -->
         <div id="panel-classNote" class="hidden space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="bg-white rounded-2xl p-4 md:p-6 card-shadow border border-slate-100 space-y-3">
-                    <h2 class="font-bold text-slate-800 text-sm md:text-base flex items-center gap-1.5">
+                <div class="bg-white rounded-2xl p-4 md:p-6 card-shadow border border-slate-100 space-y-3 min-w-0">
+                    <h2 class="font-bold text-slate-800 text-sm md:text-base flex items-center gap-1.5 flex-wrap">
                         <i data-lucide="edit-3" class="w-4 h-4 text-teal-600"></i>
-                        編輯 <span id="editNoteDateTitle" class="text-teal-700"></span> 聯絡事項
+                        <span>編輯 <span id="editNoteDateTitle" class="text-teal-700"></span> 聯絡事項</span>
                     </h2>
-                    <textarea id="editGlobalNote" rows="5" class="w-full p-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500" placeholder="輸入當日聯絡簿內容..."></textarea>
+
+                    <div class="space-y-1.5">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-xs font-bold text-teal-700">聯絡簿快捷圖卡（點擊自動輸入到框框）</span>
+                            <button type="button" onclick="clearDailyNoteInput()" class="text-[11px] text-slate-400 hover:text-rose-500">清空框框</button>
+                        </div>
+                        <div id="dailyNotePresetCards" class="flex flex-wrap gap-1.5"></div>
+                        <div class="flex gap-1.5 pt-0.5">
+                            <input type="text" id="newNotePresetCardInput" placeholder="新增聯絡簿圖卡文字..." onkeydown="if(event.key==='Enter') addNotePresetCard()" class="flex-1 min-w-0 px-2.5 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500">
+                            <button type="button" onclick="addNotePresetCard()" class="shrink-0 px-3 py-1.5 bg-teal-50 hover:bg-teal-100 text-teal-700 rounded-lg text-xs font-bold">
+                                ＋圖卡
+                            </button>
+                        </div>
+                    </div>
+
+                    <textarea id="editGlobalNote" rows="5" class="w-full p-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500" placeholder="輸入當日聯絡簿內容，或點擊上方圖卡自動填入..."></textarea>
                     <button type="button" onclick="saveGlobalNote()" class="w-full py-2.5 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-sm font-bold shadow-sm transition">
                         儲存並同步此日聯絡事項
                     </button>
                 </div>
 
-                <div class="bg-white rounded-2xl p-4 md:p-6 card-shadow border border-slate-100 space-y-3">
+                <div class="bg-white rounded-2xl p-4 md:p-6 card-shadow border border-slate-100 space-y-3 min-w-0">
                     <h2 class="font-bold text-slate-800 text-sm md:text-base flex items-center gap-1.5">
                         <i data-lucide="list-plus" class="w-4 h-4 text-indigo-600"></i>
-                        管理此日平日回家作業項目
+                        <span>管理此日平日回家作業項目</span>
                     </h2>
+
+                    <div class="space-y-1.5">
+                        <span class="block text-xs font-bold text-indigo-700">作業項目圖卡（點擊自動輸入到作業框框）</span>
+                        <div id="homeworkPresetCards" class="flex flex-wrap gap-1.5"></div>
+                    </div>
+
                     <div class="flex gap-2">
-                        <input type="text" id="newHomeworkInput" placeholder="例如：國語習作 P.20-21" class="flex-1 px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                        <button type="button" onclick="addHomeworkItem()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold">
+                        <input type="text" id="newHomeworkInput" placeholder="點擊上方圖卡或輸入作業名稱..." onkeydown="if(event.key==='Enter') addHomeworkItem()" class="flex-1 min-w-0 px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <button type="button" onclick="addHomeworkItem()" class="shrink-0 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold">
                             新增
                         </button>
                     </div>
@@ -498,7 +530,7 @@
             <div class="bg-white rounded-2xl p-4 md:p-6 card-shadow border border-slate-100 space-y-3">
                 <h2 class="font-bold text-slate-800 text-sm md:text-base flex items-center gap-1.5">
                     <i data-lucide="folder-clock" class="w-4 h-4 text-teal-600"></i>
-                    已保留的每日聯絡簿存檔（點擊可直接切換修改）
+                    <span>已保留的每日聯絡簿存檔（點擊可直接切換修改）</span>
                 </h2>
                 <div id="savedDatesArchiveList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5"></div>
             </div>
@@ -563,7 +595,7 @@
         };
 
         const TEACHER_ACCESS_CODE = "ni99";
-        const SESSION_KEY = "class309_auth_session_v3";
+        const SESSION_KEY = "class309_auth_session_v4";
 
         const STUDENT_NAMES = [
             "黃琨翔", "陳秉軒", "杜晨翔", "劉景碩", "王宇童",
@@ -587,6 +619,23 @@
             name: name,
             studentCode: STUDENT_CODES[idx]
         }));
+
+        const DEFAULT_NOTE_PRESET_CARDS = [
+            "請攜帶水壺與學用品",
+            "請攜帶跳繩準備測驗",
+            "請完成今日作業並簽名",
+            "回條／同意書請盡快交回",
+            "請複習國語／數學重點"
+        ];
+
+        const DEFAULT_HOMEWORK_PRESET_CARDS = [
+            "國語習作",
+            "數學習作",
+            "國語生字簿",
+            "數學練習簿",
+            "閱讀心得單",
+            "考卷訂正"
+        ];
 
         const HW_STATUS_CONFIG = {
             submitted: {
@@ -706,21 +755,21 @@
             });
             return {
                 date: dateStr,
-                dailyNote: "1. 明日準時到校，攜帶水壺與學用品。\n2. 回家請確實完成今日作業並請家長簽名。",
+                dailyNote: "1. 請攜帶水壺與學用品\n2. 請完成今日作業並簽名",
                 homeworkList: defaultHw,
                 studentRecords: studentRecords
             };
         }
 
         function loadSavedSession() {
-            const localRaw = localStorage.getItem(SESSION_KEY);
-            if (localRaw) {
-                try { return JSON.parse(localRaw); } catch (e) { localStorage.removeItem(SESSION_KEY); }
-            }
-            const sessionRaw = sessionStorage.getItem(SESSION_KEY);
-            if (sessionRaw) {
-                try { return JSON.parse(sessionRaw); } catch (e) { sessionStorage.removeItem(SESSION_KEY); }
-            }
+            const raw = localStorage.getItem(SESSION_KEY) || sessionStorage.getItem(SESSION_KEY);
+            if (!raw) return null;
+            try {
+                const parsed = JSON.parse(raw);
+                if (parsed && (parsed.role === 'parent' || parsed.role === 'teacher')) {
+                    return parsed;
+                }
+            } catch (e) {}
             return null;
         }
 
@@ -730,14 +779,18 @@
             sessionStorage.removeItem(SESSION_KEY);
             if (!session) return;
             const serialized = JSON.stringify(session);
-            if (remember) localStorage.setItem(SESSION_KEY, serialized);
-            else sessionStorage.setItem(SESSION_KEY, serialized);
+            if (remember) {
+                localStorage.setItem(SESSION_KEY, serialized);
+            } else {
+                sessionStorage.setItem(SESSION_KEY, serialized);
+            }
         }
 
         const TODAY_STR = getTodayStr();
         const DEFAULT_STATE = {
             students: CLASS_STUDENTS,
             extraCards: [],
+            notePresetCards: DEFAULT_NOTE_PRESET_CARDS,
             recordsByDate: {
                 [TODAY_STR]: createDefaultDayRecord(TODAY_STR)
             },
@@ -746,6 +799,7 @@
 
         let state = JSON.parse(localStorage.getItem('class309_archive_cache')) || DEFAULT_STATE;
         if (!Array.isArray(state.extraCards)) state.extraCards = [];
+        if (!Array.isArray(state.notePresetCards)) state.notePresetCards = [...DEFAULT_NOTE_PRESET_CARDS];
 
         let authSession = loadSavedSession();
         let selectedDate = TODAY_STR;
@@ -753,7 +807,6 @@
         let activeExtraStampMode = 'cycle';
         let currentTeacherTab = 'overview';
         let selectedMsgStudentId = CLASS_STUDENTS[0].id;
-        let draggedExtraCardId = null;
         let dbRef = null;
         let isCloudReady = false;
         let lastSyncDiagnostic = "正在嘗試連線至 Firebase Realtime Database...";
@@ -762,6 +815,7 @@
             if (!state.recordsByDate) state.recordsByDate = {};
             if (!state.studentMessages) state.studentMessages = {};
             if (!Array.isArray(state.extraCards)) state.extraCards = [];
+            if (!Array.isArray(state.notePresetCards)) state.notePresetCards = [...DEFAULT_NOTE_PRESET_CARDS];
             if (!state.recordsByDate[dateStr]) {
                 state.recordsByDate[dateStr] = createDefaultDayRecord(dateStr);
             }
@@ -810,14 +864,13 @@
                 onValue(dbRef, (snapshot) => {
                     const cloudData = snapshot.val();
                     isCloudReady = true;
-                    lastSyncDiagnostic = "✅ 已成功連上 Firebase 雲端資料庫！每日聯絡簿、其他作業圖卡、親師留言板與全班 25 人資料即時同步中。";
+                    lastSyncDiagnostic = "✅ 已成功連上 Firebase 雲端資料庫！每日聯絡簿、其他作業點名、親師留言板與全班 25 人資料即時同步中。";
 
                     indicator.className = "inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200";
                     indicator.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> 雲端同步中`;
 
                     if (!cloudData || !cloudData.recordsByDate) {
                         state.students = CLASS_STUDENTS;
-                        if (!Array.isArray(state.extraCards)) state.extraCards = [];
                         ensureDateRecord(selectedDate);
                         set(dbRef, state);
                         return;
@@ -826,6 +879,7 @@
                     state = {
                         students: CLASS_STUDENTS,
                         extraCards: Array.isArray(cloudData.extraCards) ? cloudData.extraCards : [],
+                        notePresetCards: Array.isArray(cloudData.notePresetCards) ? cloudData.notePresetCards : [...DEFAULT_NOTE_PRESET_CARDS],
                         recordsByDate: cloudData.recordsByDate || {},
                         studentMessages: cloudData.studentMessages || {}
                     };
@@ -847,6 +901,7 @@
         function saveState() {
             state.students = CLASS_STUDENTS;
             if (!Array.isArray(state.extraCards)) state.extraCards = [];
+            if (!Array.isArray(state.notePresetCards)) state.notePresetCards = [...DEFAULT_NOTE_PRESET_CARDS];
             localStorage.setItem('class309_archive_cache', JSON.stringify(state));
             if (dbRef && isCloudReady) {
                 set(dbRef, state).catch(err => {
@@ -884,6 +939,7 @@
             const days = ['日', '一', '二', '三', '四', '五', '六'];
             document.getElementById('headerDate').innerText = `今日：${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()} (週${days[now.getDay()]})`;
 
+            authSession = loadSavedSession();
             ensureDateRecord(selectedDate);
             initFirebaseSync();
             window.routeBySession();
@@ -999,13 +1055,22 @@
             showToast(rememberChecked ? "已記住登入並進入導師管理後台" : "已進入導師管理後台");
         };
 
+        window.clearSavedLoginInfo = function() {
+            localStorage.removeItem(SESSION_KEY);
+            sessionStorage.removeItem(SESSION_KEY);
+            authSession = null;
+            document.getElementById('loginStudentIdInput').value = '';
+            document.getElementById('loginTeacherPwdInput').value = '';
+            showToast("已清除已記住的登入資訊");
+        };
+
         window.logout = function() {
             saveSession(null, false);
             document.getElementById('loginStudentIdInput').value = '';
             document.getElementById('loginTeacherPwdInput').value = '';
             window.scrollTo({ top: 0, behavior: 'smooth' });
             window.routeBySession();
-            showToast("已登出並清除本機記住狀態");
+            showToast("已登出並清除記住狀態");
         };
 
         function renderParentView(student) {
@@ -1070,7 +1135,7 @@
 
                 hwContainer.innerHTML += `
                     <div class="py-2.5 flex justify-between items-center gap-2">
-                        <span class="text-sm font-medium text-slate-700">${escapeHtml(hw.title)}</span>
+                        <span class="text-sm font-medium text-slate-700 min-w-0 break-words">${escapeHtml(hw.title)}</span>
                         <span class="shrink-0 inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-lg ${cfg.badgeClass}">
                             <i data-lucide="${cfg.icon}" class="w-3.5 h-3.5"></i>${cfg.label}
                         </span>
@@ -1094,9 +1159,9 @@
                 missingBadge.innerText = `${missingOrDeficientItems.length} 項待處理`;
                 missingListEl.innerHTML = missingOrDeficientItems.map(item => `
                     <div class="p-3 rounded-xl bg-rose-50/45 border border-rose-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                        <div>
-                            <div class="font-bold text-sm text-slate-800">${escapeHtml(item.title)}</div>
-                            <div class="text-xs text-slate-500 mt-0.5">${escapeHtml(item.hint)}</div>
+                        <div class="min-w-0">
+                            <div class="font-bold text-sm text-slate-800 break-words">${escapeHtml(item.title)}</div>
+                            <div class="text-xs text-slate-500 mt-0.5 break-words">${escapeHtml(item.hint)}</div>
                         </div>
                         <span class="self-start sm:self-center shrink-0 inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-lg ${item.badgeClass}">
                             <i data-lucide="${item.icon}" class="w-3.5 h-3.5"></i>${item.label}
@@ -1126,7 +1191,7 @@
                 extraBadgeEl.innerText = `${pendingExtra.length} 項需處理`;
                 extraListEl.innerHTML = pendingExtra.map(item => `
                     <div class="p-2.5 rounded-xl bg-violet-50/50 border border-violet-100 flex items-center justify-between gap-2">
-                        <span class="text-sm font-bold text-slate-800">${escapeHtml(item.title)}</span>
+                        <span class="text-sm font-bold text-slate-800 min-w-0 break-words">${escapeHtml(item.title)}</span>
                         <span class="shrink-0 text-xs font-bold px-2.5 py-1 rounded-lg ${item.cfg.badgeClass}">${item.cfg.label}</span>
                     </div>
                 `).join('');
@@ -1211,7 +1276,7 @@
                         <div class="text-[10px] text-slate-400 mb-0.5 px-1">
                             ${isParent ? '家長留言' : '👩‍🏫 班導師回覆'} ・ ${msg.timestamp}
                         </div>
-                        <div class="max-w-[88%] px-3 py-2 rounded-2xl text-xs md:text-sm leading-relaxed whitespace-pre-line ${isParent 
+                        <div class="max-w-[88%] px-3 py-2 rounded-2xl text-xs md:text-sm leading-relaxed whitespace-pre-line break-words ${isParent 
                             ? 'bg-teal-600 text-white rounded-tr-xs' 
                             : 'bg-white text-slate-700 border border-indigo-100 shadow-2xs rounded-tl-xs'}">
                             ${escapeHtml(msg.text)}
@@ -1340,7 +1405,7 @@
             if (tabName === 'studentDetail') window.loadTeacherStudentForm(document.getElementById('teacherStudentSelect').value);
         };
 
-        // ==================== 其他作業圖卡區（蓋章模式 + 勾選 + 拖移 + 全部清空） ====================
+        // ==================== 其他作業點名（與平日作業點名相同操作方式） ====================
         function renderExtraStampPalette() {
             const palette = document.getElementById('extraStampPalette');
             if (!palette) return;
@@ -1371,86 +1436,85 @@
 
         function renderExtraBoardPanel() {
             renderExtraStampPalette();
-            const dayRec = ensureDateRecord(selectedDate);
-            const cardsContainer = document.getElementById('draggableExtraCards');
-            cardsContainer.innerHTML = '';
-
             const extraCards = Array.isArray(state.extraCards) ? state.extraCards : [];
+
+            const tagListEl = document.getElementById('extraCardsTagList');
+            tagListEl.innerHTML = '';
             if (extraCards.length === 0) {
-                cardsContainer.innerHTML = `<span class="text-xs text-slate-400">平時無圖卡；有需要時在下方輸入名稱並按「新增其他圖卡」，新增後會持續保留直到你刪除。</span>`;
+                tagListEl.innerHTML = `<span class="text-xs text-slate-400">平時無其他作業圖卡；有需要時輸入名稱並按「新增圖卡」，新增後會持續保留直到你刪除。</span>`;
             } else {
                 extraCards.forEach(ex => {
-                    cardsContainer.innerHTML += `
-                        <div draggable="true"
-                             ondragstart="handleExtraCardDragStart('${ex.id}')"
-                             ondragend="handleExtraCardDragEnd()"
-                             class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white border-2 border-violet-200 hover:border-violet-500 text-slate-800 shadow-2xs cursor-grab active:cursor-grabbing select-none transition">
-                            <i data-lucide="grip-vertical" class="w-3.5 h-3.5 text-violet-400"></i>
-                            <span class="text-xs md:text-sm font-bold">${escapeHtml(ex.title)}</span>
-                            <button type="button" onclick="event.stopPropagation(); deleteExtraHomeworkCard('${ex.id}')" class="ml-1 text-slate-400 hover:text-rose-600 transition" title="刪除此其他作業圖卡">
-                                <i data-lucide="x" class="w-3.5 h-3.5"></i>
-                            </button>
-                        </div>
+                    tagListEl.innerHTML += `
+                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-violet-50 text-violet-800 border border-violet-200">
+                            <button type="button" onclick="selectExtraHomeworkFromTag('${ex.id}')">${escapeHtml(ex.title)}</button>
+                            <button type="button" onclick="deleteExtraHomeworkCard('${ex.id}')" class="text-violet-400 hover:text-rose-600" title="刪除">×</button>
+                        </span>
                     `;
                 });
             }
 
-            const studentGrid = document.getElementById('extraStudentChecklistGrid');
-            studentGrid.innerHTML = '';
+            const sel = document.getElementById('extraHwSelect');
+            const prevVal = sel.value;
+            sel.innerHTML = '';
+
+            if (extraCards.length === 0) {
+                sel.add(new Option("請先新增其他作業圖卡", ""));
+                document.getElementById('extraHwGrid').innerHTML = `<p class="col-span-full text-xs text-slate-400 text-center py-4">尚未新增其他作業圖卡</p>`;
+                document.getElementById('extraHwStats').innerText = "0 項圖卡";
+                return;
+            }
+
+            extraCards.forEach(ex => {
+                sel.add(new Option(ex.title, ex.id));
+            });
+
+            if (prevVal && extraCards.some(h => h.id === prevVal)) {
+                sel.value = prevVal;
+            }
+            window.renderExtraHomeworkGrid();
+        }
+
+        window.selectExtraHomeworkFromTag = function(exId) {
+            const sel = document.getElementById('extraHwSelect');
+            if (sel) {
+                sel.value = exId;
+                window.renderExtraHomeworkGrid();
+            }
+        };
+
+        window.renderExtraHomeworkGrid = function() {
+            const dayRec = ensureDateRecord(selectedDate);
+            const exId = document.getElementById('extraHwSelect').value;
+            const grid = document.getElementById('extraHwGrid');
+            if (!exId) return;
+
+            grid.innerHTML = '';
+            let completedCount = 0;
 
             CLASS_STUDENTS.forEach(st => {
                 const stRec = dayRec.studentRecords[st.id];
-                const extraMap = stRec.extraHwStatus || {};
-                const pendingCount = extraCards.filter(ex => !HW_STATUS_CONFIG[normalizeStatus(extraMap[ex.id])].isCompleted).length;
+                if (!stRec.extraHwStatus) stRec.extraHwStatus = {};
+                const statusKey = normalizeStatus(stRec.extraHwStatus[exId]);
+                const cfg = HW_STATUS_CONFIG[statusKey];
+                if (cfg.isCompleted) completedCount++;
 
-                const rowsHtml = extraCards.map(ex => {
-                    const statusKey = normalizeStatus(extraMap[ex.id]);
-                    const cfg = HW_STATUS_CONFIG[statusKey];
-                    const isPending = !cfg.isCompleted;
-                    return `
-                        <div class="flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-lg border transition ${isPending ? cfg.cardClass : 'bg-slate-50/70 border-slate-100'}">
-                            <label class="inline-flex items-center gap-2 min-w-0 cursor-pointer flex-1">
-                                <input type="checkbox"
-                                       ${isPending ? 'checked' : ''}
-                                       onchange="toggleStudentExtraHomeworkCheck('${st.id}', '${ex.id}', this.checked)"
-                                       class="w-4 h-4 rounded border-slate-300 text-violet-600 focus:ring-violet-500 shrink-0">
-                                <span class="text-xs font-medium text-slate-700 truncate">${escapeHtml(ex.title)}</span>
-                            </label>
-                            <button type="button"
-                                    onclick="applyExtraStampToStudent('${st.id}', '${ex.id}')"
-                                    title="點擊直接蓋章"
-                                    class="shrink-0 text-[10px] font-bold px-2 py-0.5 rounded transition active:scale-95 ${cfg.solidClass}">
-                                ${cfg.label}
-                            </button>
+                grid.innerHTML += `
+                    <button type="button" onclick="applyBatchExtraHw('${st.id}', '${exId}')" class="flex items-center justify-between p-2.5 rounded-xl border text-left transition active:scale-[0.97] ${cfg.cardClass}">
+                        <div class="min-w-0 pr-1">
+                            <div class="text-[11px] text-slate-500">${st.seat}號</div>
+                            <div class="font-bold text-xs md:text-sm text-slate-800 truncate">${st.name}</div>
                         </div>
-                    `;
-                }).join('');
-
-                studentGrid.innerHTML += `
-                    <div id="drop-extra-student-${st.id}"
-                         ondragover="handleExtraStudentDragOver(event, '${st.id}')"
-                         ondragleave="handleExtraStudentDragLeave('${st.id}')"
-                         ondrop="handleExtraStudentDrop(event, '${st.id}')"
-                         class="p-3 rounded-xl border border-slate-200 bg-white space-y-2 transition">
-                        <div class="flex items-center justify-between border-b border-slate-100 pb-1.5">
-                            <div class="font-bold text-xs md:text-sm text-slate-800">
-                                ${st.seat}號 ${st.name}
-                            </div>
-                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${pendingCount > 0 ? 'bg-violet-100 text-violet-700' : 'bg-emerald-50 text-emerald-700'}">
-                                ${pendingCount > 0 ? `其他 ${pendingCount} 項` : '無其他待辦'}
-                            </span>
-                        </div>
-                        <div class="space-y-1.5">
-                            ${rowsHtml || '<p class="text-[11px] text-slate-400">目前無其他作業圖卡</p>'}
-                        </div>
-                    </div>
+                        <span class="shrink-0 text-[11px] font-bold px-2 py-1 rounded-lg ${cfg.solidClass}">
+                            ${cfg.label}
+                        </span>
+                    </button>
                 `;
             });
 
-            lucide.createIcons();
-        }
+            document.getElementById('extraHwStats').innerText = `完成 ${completedCount} / ${CLASS_STUDENTS.length}`;
+        };
 
-        window.applyExtraStampToStudent = function(studentId, exId) {
+        window.applyBatchExtraHw = function(studentId, exId) {
             const dayRec = ensureDateRecord(selectedDate);
             const stRec = dayRec.studentRecords[studentId];
             if (!stRec) return;
@@ -1466,7 +1530,20 @@
             }
 
             saveState();
-            renderExtraBoardPanel();
+            window.renderExtraHomeworkGrid();
+        };
+
+        window.setAllExtraHomeworkStatus = function(statusKey) {
+            const dayRec = ensureDateRecord(selectedDate);
+            const exId = document.getElementById('extraHwSelect').value;
+            if (!exId) return;
+            CLASS_STUDENTS.forEach(st => {
+                if (!dayRec.studentRecords[st.id].extraHwStatus) dayRec.studentRecords[st.id].extraHwStatus = {};
+                dayRec.studentRecords[st.id].extraHwStatus[exId] = statusKey;
+            });
+            saveState();
+            window.renderExtraHomeworkGrid();
+            showToast(`已將全班此項其他作業設為「${HW_STATUS_CONFIG[statusKey].label}」並同步`);
         };
 
         window.addExtraHomeworkCard = function() {
@@ -1487,6 +1564,8 @@
             input.value = '';
             saveState();
             renderExtraBoardPanel();
+            document.getElementById('extraHwSelect').value = newId;
+            window.renderExtraHomeworkGrid();
             showToast(`已新增其他作業圖卡「${title}」，將持續保留直到刪除`);
         };
 
@@ -1529,63 +1608,6 @@
             saveState();
             renderExtraBoardPanel();
             showToast("已全部清空其他作業圖卡");
-        };
-
-        window.handleExtraCardDragStart = function(exId) {
-            draggedExtraCardId = exId;
-        };
-
-        window.handleExtraCardDragEnd = function() {
-            draggedExtraCardId = null;
-            document.querySelectorAll('.drag-over-target').forEach(el => el.classList.remove('drag-over-target'));
-        };
-
-        window.handleExtraStudentDragOver = function(event, studentId) {
-            event.preventDefault();
-            const card = document.getElementById(`drop-extra-student-${studentId}`);
-            if (card) card.classList.add('drag-over-target');
-        };
-
-        window.handleExtraStudentDragLeave = function(studentId) {
-            const card = document.getElementById(`drop-extra-student-${studentId}`);
-            if (card) card.classList.remove('drag-over-target');
-        };
-
-        window.handleExtraStudentDrop = function(event, studentId) {
-            event.preventDefault();
-            handleExtraStudentDragLeave(studentId);
-            if (!draggedExtraCardId) return;
-
-            const targetStatus = (activeExtraStampMode && activeExtraStampMode !== 'cycle')
-                ? activeExtraStampMode
-                : 'incomplete';
-            const dayRec = ensureDateRecord(selectedDate);
-            const stRec = dayRec.studentRecords[studentId];
-            const student = CLASS_STUDENTS.find(s => s.id === studentId);
-            const exCard = (state.extraCards || []).find(ex => ex.id === draggedExtraCardId);
-
-            if (stRec && exCard) {
-                if (!stRec.extraHwStatus) stRec.extraHwStatus = {};
-                stRec.extraHwStatus[exCard.id] = targetStatus;
-                saveState();
-                renderExtraBoardPanel();
-                showToast(`已將其他作業「${exCard.title}（${HW_STATUS_CONFIG[targetStatus].label}）」登記至 ${student?.seat}號 ${student?.name}`);
-            }
-            draggedExtraCardId = null;
-        };
-
-        window.toggleStudentExtraHomeworkCheck = function(studentId, exId, isChecked) {
-            const dayRec = ensureDateRecord(selectedDate);
-            const stRec = dayRec.studentRecords[studentId];
-            if (!stRec) return;
-
-            if (!stRec.extraHwStatus) stRec.extraHwStatus = {};
-            const chosenStatus = (activeExtraStampMode && activeExtraStampMode !== 'cycle')
-                ? activeExtraStampMode
-                : 'incomplete';
-            stRec.extraHwStatus[exId] = isChecked ? chosenStatus : 'submitted';
-            saveState();
-            renderExtraBoardPanel();
         };
 
         function renderTeacherMessagesPanel() {
@@ -1645,7 +1667,7 @@
                                 <span>${isTeacher ? '👩‍🏫 導師回覆' : '👨‍👩‍👧 家長留言'} ・ ${msg.timestamp}</span>
                                 <button type="button" onclick="deleteSingleMessage('${activeSt.id}', ${idx})" class="text-slate-300 hover:text-rose-500" title="刪除此則紀錄">刪除</button>
                             </div>
-                            <div class="max-w-[85%] px-3 py-2 rounded-2xl text-xs md:text-sm leading-relaxed whitespace-pre-line ${isTeacher 
+                            <div class="max-w-[85%] px-3 py-2 rounded-2xl text-xs md:text-sm leading-relaxed whitespace-pre-line break-words ${isTeacher 
                                 ? 'bg-indigo-600 text-white rounded-tr-xs' 
                                 : 'bg-white text-slate-700 border border-slate-200 shadow-2xs rounded-tl-xs'}">
                                 ${escapeHtml(msg.text)}
@@ -1720,7 +1742,7 @@
                                 : `<span class="shrink-0 text-[10px] font-bold text-amber-600 bg-amber-100 px-1.5 py-0.5 rounded">未簽</span>`
                             }
                         </div>
-                        <div class="text-[11px] text-slate-500 flex items-center justify-between">
+                        <div class="text-[11px] text-slate-500 flex items-center justify-between gap-1">
                             <span>${pendingHw === 0 ? '<span class="text-emerald-600">作業全完成</span>' : `<span class="text-amber-600 font-bold">${pendingHw} 項待處理</span>`}</span>
                             ${hasPendingMsg ? `<span class="text-[10px] font-bold text-rose-600 bg-rose-50 px-1.5 rounded">有新留言</span>` : ''}
                         </div>
@@ -1877,15 +1899,33 @@
             const dayRec = ensureDateRecord(selectedDate);
             document.getElementById('editNoteDateTitle').innerText = selectedDate;
             document.getElementById('editGlobalNote').value = dayRec.dailyNote;
+
+            const noteCardsEl = document.getElementById('dailyNotePresetCards');
+            const noteCards = Array.isArray(state.notePresetCards) ? state.notePresetCards : DEFAULT_NOTE_PRESET_CARDS;
+            noteCardsEl.innerHTML = noteCards.map((cardText, idx) => `
+                <span class="inline-flex items-center gap-1 rounded-lg bg-teal-50 border border-teal-200 text-teal-800 text-xs font-bold">
+                    <button type="button" onclick="insertCardIntoDailyNote(${idx})" class="px-2.5 py-1 hover:bg-teal-100/70 rounded-l-lg transition">
+                        ＋ ${escapeHtml(cardText)}
+                    </button>
+                    <button type="button" onclick="deleteNotePresetCard(${idx})" class="pr-1.5 text-teal-400 hover:text-rose-500" title="移除此聯絡簿圖卡">×</button>
+                </span>
+            `).join('');
+
+            const hwCardsEl = document.getElementById('homeworkPresetCards');
+            hwCardsEl.innerHTML = DEFAULT_HOMEWORK_PRESET_CARDS.map((hwTitle, idx) => `
+                <button type="button" onclick="fillHomeworkInputFromCard(${idx})" class="px-2.5 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-indigo-800 text-xs font-bold transition">
+                    ＋ ${escapeHtml(hwTitle)}
+                </button>
+            `).join('');
             
             const listEl = document.getElementById('teacherHomeworkList');
             listEl.innerHTML = '';
 
             dayRec.homeworkList.forEach(hw => {
                 listEl.innerHTML += `
-                    <div class="py-2.5 flex justify-between items-center">
-                        <span class="text-sm text-slate-700">${escapeHtml(hw.title)}</span>
-                        <button type="button" onclick="deleteHomeworkItem('${hw.id}')" class="text-rose-500 hover:bg-rose-50 p-1.5 rounded-lg transition">
+                    <div class="py-2.5 flex justify-between items-center gap-2">
+                        <span class="text-sm text-slate-700 min-w-0 break-words">${escapeHtml(hw.title)}</span>
+                        <button type="button" onclick="deleteHomeworkItem('${hw.id}')" class="shrink-0 text-rose-500 hover:bg-rose-50 p-1.5 rounded-lg transition">
                             <i data-lucide="trash-2" class="w-4 h-4"></i>
                         </button>
                     </div>
@@ -1912,6 +1952,50 @@
 
             lucide.createIcons();
         }
+
+        window.insertCardIntoDailyNote = function(cardIndex) {
+            const noteCards = Array.isArray(state.notePresetCards) ? state.notePresetCards : DEFAULT_NOTE_PRESET_CARDS;
+            const text = noteCards[cardIndex];
+            if (!text) return;
+            const textarea = document.getElementById('editGlobalNote');
+            const current = textarea.value.trim();
+            const lines = current ? current.split('\n').length : 0;
+            const prefix = `${lines + 1}. `;
+            textarea.value = current ? `${current}\n${prefix}${text}` : `${prefix}${text}`;
+            showToast(`已填入聯絡簿：${text}`);
+        };
+
+        window.clearDailyNoteInput = function() {
+            document.getElementById('editGlobalNote').value = '';
+            showToast("已清空聯絡簿輸入框");
+        };
+
+        window.addNotePresetCard = function() {
+            const input = document.getElementById('newNotePresetCardInput');
+            const val = input.value.trim();
+            if (!val) return;
+            if (!Array.isArray(state.notePresetCards)) state.notePresetCards = [...DEFAULT_NOTE_PRESET_CARDS];
+            state.notePresetCards.push(val);
+            input.value = '';
+            saveState();
+            loadTeacherClassNote();
+            showToast("已新增聯絡簿快捷圖卡");
+        };
+
+        window.deleteNotePresetCard = function(cardIndex) {
+            if (!Array.isArray(state.notePresetCards)) return;
+            state.notePresetCards.splice(cardIndex, 1);
+            saveState();
+            loadTeacherClassNote();
+            showToast("已移除聯絡簿快捷圖卡");
+        };
+
+        window.fillHomeworkInputFromCard = function(cardIndex) {
+            const title = DEFAULT_HOMEWORK_PRESET_CARDS[cardIndex];
+            if (!title) return;
+            document.getElementById('newHomeworkInput').value = title;
+            showToast(`已填入作業名稱：${title}`);
+        };
 
         window.saveGlobalNote = function() {
             const dayRec = ensureDateRecord(selectedDate);
