@@ -102,7 +102,7 @@
                 </button>
             </div>
 
-            <!-- 家長登入表單（只需輸入學號 + 記住登入） -->
+            <!-- 家長登入表單 -->
             <div id="parentLoginForm" class="space-y-4">
                 <div>
                     <label for="loginStudentIdInput" class="block text-xs font-bold text-slate-600 mb-1.5">請輸入孩子學號</label>
@@ -123,7 +123,7 @@
                 </button>
             </div>
 
-            <!-- 老師登入表單（密碼不顯示於畫面 + 記住登入） -->
+            <!-- 老師登入表單 -->
             <div id="teacherLoginForm" class="hidden space-y-4">
                 <div>
                     <label for="loginTeacherPwdInput" class="block text-xs font-bold text-slate-600 mb-1.5">導師管理密碼</label>
@@ -235,7 +235,7 @@
                     <div class="flex justify-between items-center gap-2">
                         <div class="flex items-center gap-2 text-indigo-700 font-bold text-sm">
                             <div class="p-1.5 bg-indigo-50 rounded-lg"><i data-lucide="clipboard-check" class="w-4 h-4"></i></div>
-                            <span>平日回家作業狀況</span>
+                            <span>當日平日回家作業狀況</span>
                         </div>
                         <span id="hwSummaryTag" class="text-xs font-medium px-2.5 py-0.5 rounded-full"></span>
                     </div>
@@ -247,7 +247,7 @@
                     <div class="flex items-center justify-between gap-2 flex-wrap">
                         <div class="flex items-center gap-2 text-violet-700 font-bold text-sm">
                             <div class="p-1.5 bg-violet-50 rounded-lg"><i data-lucide="layers" class="w-4 h-4"></i></div>
-                            <span>其他作業紀錄</span>
+                            <span>當日其他作業紀錄</span>
                         </div>
                         <span id="parentExtraHwBadge" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-violet-50 text-violet-700 border border-violet-200">
                             0 項需處理
@@ -348,27 +348,27 @@
             </div>
         </div>
 
-        <!-- TAB 2: 其他作業點名 -->
+        <!-- TAB 2: 其他作業點名（當日設定） -->
         <div id="panel-extraBoard" class="hidden space-y-4">
             <div class="bg-white rounded-2xl p-4 md:p-6 card-shadow border border-violet-100 space-y-4">
                 <div class="flex justify-between items-center flex-wrap gap-2">
-                    <h2 class="font-bold text-slate-800 text-sm md:text-base flex items-center gap-1.5">
+                    <h2 class="font-bold text-slate-800 text-sm md:text-base flex items-center gap-1.5 flex-wrap">
                         <i data-lucide="layers" class="w-4 h-4 text-violet-600"></i>
-                        其他作業一鍵快速點名
+                        <span><span id="extraBoardDateLabel" class="text-violet-700"></span> 其他作業一鍵快速點名</span>
                     </h2>
                     <div class="flex items-center gap-2 flex-wrap">
                         <span id="extraHwStats" class="text-xs font-bold text-violet-700 bg-violet-50 px-3 py-1 rounded-full"></span>
                         <button type="button" onclick="clearAllExtraHomeworkCards()" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-bold bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 transition">
                             <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                            <span>全部清空</span>
+                            <span>清空當日其他作業</span>
                         </button>
                     </div>
                 </div>
 
                 <div class="flex gap-2">
-                    <input type="text" id="newExtraCardInput" placeholder="新增其他作業圖卡名稱（例如：考卷訂正、回條）..." onkeydown="if(event.key==='Enter') addExtraHomeworkCard()" class="flex-1 min-w-0 px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500">
+                    <input type="text" id="newExtraCardInput" placeholder="新增當日其他作業圖卡名稱（例如：考卷訂正、回條）..." onkeydown="if(event.key==='Enter') addExtraHomeworkCard()" class="flex-1 min-w-0 px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500">
                     <button type="button" onclick="addExtraHomeworkCard()" class="shrink-0 px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-xl text-xs font-bold transition">
-                        新增圖卡
+                        新增至當日
                     </button>
                 </div>
 
@@ -376,7 +376,7 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label for="extraHwSelect" class="block text-xs font-medium text-slate-400 mb-1">1. 選擇其他作業圖卡</label>
+                        <label for="extraHwSelect" class="block text-xs font-medium text-slate-400 mb-1">1. 選擇當日其他作業圖卡</label>
                         <select id="extraHwSelect" onchange="renderExtraHomeworkGrid()" class="w-full bg-slate-50 border border-slate-200 text-slate-800 font-bold text-sm rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-violet-500">
                         </select>
                     </div>
@@ -404,16 +404,16 @@
         <div id="panel-batchHw" class="hidden space-y-4">
             <div class="bg-white rounded-2xl p-4 md:p-6 card-shadow border border-slate-100 space-y-4">
                 <div class="flex justify-between items-center flex-wrap gap-2">
-                    <h2 class="font-bold text-slate-800 text-sm md:text-base flex items-center gap-1.5">
+                    <h2 class="font-bold text-slate-800 text-sm md:text-base flex items-center gap-1.5 flex-wrap">
                         <i data-lucide="zap" class="w-4 h-4 text-indigo-600"></i>
-                        平日回家作業一鍵快速點名
+                        <span><span id="batchHwDateLabel" class="text-indigo-700"></span> 平日回家作業一鍵快速點名</span>
                     </h2>
                     <span id="batchHwStats" class="text-xs font-bold text-indigo-700 bg-indigo-50 px-3 py-1 rounded-full"></span>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label for="batchHwSelect" class="block text-xs font-medium text-slate-400 mb-1">1. 選擇平日回家作業項目</label>
+                        <label for="batchHwSelect" class="block text-xs font-medium text-slate-400 mb-1">1. 選擇當日平日回家作業項目</label>
                         <select id="batchHwSelect" onchange="renderBatchHomeworkGrid()" class="w-full bg-slate-50 border border-slate-200 text-slate-800 font-bold text-sm rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                         </select>
                     </div>
@@ -504,11 +504,11 @@
                     </button>
                 </div>
 
-                <!-- 管理此日平日回家作業項目：上方保存圖卡 -> 點擊進下方確定區 -> 確認加入當日作業 -->
+                <!-- 管理此日平日回家作業項目 -->
                 <div class="bg-white rounded-2xl p-4 md:p-6 card-shadow border border-slate-100 space-y-3 min-w-0">
-                    <h2 class="font-bold text-slate-800 text-sm md:text-base flex items-center gap-1.5">
+                    <h2 class="font-bold text-slate-800 text-sm md:text-base flex items-center gap-1.5 flex-wrap">
                         <i data-lucide="list-plus" class="w-4 h-4 text-indigo-600"></i>
-                        <span>管理此日平日回家作業項目</span>
+                        <span>設定 <span id="editHwDateTitle" class="text-indigo-700"></span> 平日回家作業</span>
                     </h2>
 
                     <div class="space-y-1.5">
@@ -755,15 +755,12 @@
             return `${m}/${d} ${hh}:${mm}`;
         }
 
+        // 每天各自獨立紀錄，預設只建立空白當日作業清單，由老師依當日設定加入
         function createDefaultDayRecord(dateStr) {
-            const defaultHw = [
-                { id: "hw1", title: "國語習作" },
-                { id: "hw2", title: "數學習作" }
-            ];
             const studentRecords = {};
             CLASS_STUDENTS.forEach(st => {
                 studentRecords[st.id] = {
-                    hwStatus: { hw1: "submitted", hw2: "submitted" },
+                    hwStatus: {},
                     extraHwStatus: {},
                     specialClass: "今日科任課表現良好。",
                     healthNote: "今日在校健康狀況良好，無傷病紀錄。",
@@ -774,7 +771,8 @@
             return {
                 date: dateStr,
                 dailyNote: "1. 請攜帶水壺與學用品\n2. 請完成今日作業並簽名",
-                homeworkList: defaultHw,
+                homeworkList: [],
+                extraCards: [],
                 studentRecords: studentRecords
             };
         }
@@ -853,7 +851,6 @@
         const TODAY_STR = getTodayStr();
         const DEFAULT_STATE = {
             students: CLASS_STUDENTS,
-            extraCards: [],
             notePresetCards: DEFAULT_NOTE_PRESET_CARDS,
             homeworkPresetCards: DEFAULT_HOMEWORK_PRESET_CARDS,
             recordsByDate: {
@@ -862,8 +859,7 @@
             studentMessages: {}
         };
 
-        let state = JSON.parse(localStorage.getItem('class309_archive_cache')) || DEFAULT_STATE;
-        if (!Array.isArray(state.extraCards)) state.extraCards = [];
+        let state = JSON.parse(localStorage.getItem('class309_archive_cache_v2')) || DEFAULT_STATE;
         if (!Array.isArray(state.notePresetCards)) state.notePresetCards = [...DEFAULT_NOTE_PRESET_CARDS];
         if (!Array.isArray(state.homeworkPresetCards)) state.homeworkPresetCards = [...DEFAULT_HOMEWORK_PRESET_CARDS];
 
@@ -881,22 +877,20 @@
         function ensureDateRecord(dateStr) {
             if (!state.recordsByDate) state.recordsByDate = {};
             if (!state.studentMessages) state.studentMessages = {};
-            if (!Array.isArray(state.extraCards)) state.extraCards = [];
             if (!Array.isArray(state.notePresetCards)) state.notePresetCards = [...DEFAULT_NOTE_PRESET_CARDS];
             if (!Array.isArray(state.homeworkPresetCards)) state.homeworkPresetCards = [...DEFAULT_HOMEWORK_PRESET_CARDS];
             if (!state.recordsByDate[dateStr]) {
                 state.recordsByDate[dateStr] = createDefaultDayRecord(dateStr);
             }
             const rec = state.recordsByDate[dateStr];
-            if (!rec.homeworkList) rec.homeworkList = [];
+            if (!Array.isArray(rec.homeworkList)) rec.homeworkList = [];
+            if (!Array.isArray(rec.extraCards)) rec.extraCards = [];
             if (!rec.studentRecords) rec.studentRecords = {};
 
             CLASS_STUDENTS.forEach(st => {
                 if (!rec.studentRecords[st.id]) {
-                    const defaultHwStatus = {};
-                    rec.homeworkList.forEach(h => defaultHwStatus[h.id] = 'submitted');
                     rec.studentRecords[st.id] = {
-                        hwStatus: defaultHwStatus,
+                        hwStatus: {},
                         extraHwStatus: {},
                         specialClass: "今日科任課表現良好。",
                         healthNote: "今日在校健康狀況良好，無傷病紀錄。",
@@ -927,7 +921,7 @@
             try {
                 const app = initializeApp(firebaseConfig);
                 const db = getDatabase(app);
-                dbRef = ref(db, 'class309_archive_data');
+                dbRef = ref(db, 'class309_archive_data_v2');
 
                 onValue(dbRef, (snapshot) => {
                     const cloudData = snapshot.val();
@@ -946,14 +940,13 @@
 
                     state = {
                         students: CLASS_STUDENTS,
-                        extraCards: Array.isArray(cloudData.extraCards) ? cloudData.extraCards : [],
                         notePresetCards: Array.isArray(cloudData.notePresetCards) ? cloudData.notePresetCards : [...DEFAULT_NOTE_PRESET_CARDS],
                         homeworkPresetCards: Array.isArray(cloudData.homeworkPresetCards) ? cloudData.homeworkPresetCards : [...DEFAULT_HOMEWORK_PRESET_CARDS],
                         recordsByDate: cloudData.recordsByDate || {},
                         studentMessages: cloudData.studentMessages || {}
                     };
                     ensureDateRecord(selectedDate);
-                    localStorage.setItem('class309_archive_cache', JSON.stringify(state));
+                    localStorage.setItem('class309_archive_cache_v2', JSON.stringify(state));
                     refreshActiveViewFromCloud();
                 }, (error) => {
                     isCloudReady = false;
@@ -969,10 +962,9 @@
 
         function saveState() {
             state.students = CLASS_STUDENTS;
-            if (!Array.isArray(state.extraCards)) state.extraCards = [];
             if (!Array.isArray(state.notePresetCards)) state.notePresetCards = [...DEFAULT_NOTE_PRESET_CARDS];
             if (!Array.isArray(state.homeworkPresetCards)) state.homeworkPresetCards = [...DEFAULT_HOMEWORK_PRESET_CARDS];
-            localStorage.setItem('class309_archive_cache', JSON.stringify(state));
+            localStorage.setItem('class309_archive_cache_v2', JSON.stringify(state));
             if (dbRef && isCloudReady) {
                 set(dbRef, state).catch(err => {
                     lastSyncDiagnostic = "❌ 寫入雲端失敗：" + err.message;
@@ -1197,37 +1189,43 @@
 
             renderParentMessageHistory(student.id);
 
+            // 1. 只顯示當日設定好的平日回家作業
             const hwContainer = document.getElementById('parentHomeworkList');
             hwContainer.innerHTML = '';
             let attentionCount = 0;
             const correctionItems = [];
             const missingOrDeficientItems = [];
+            const dayHomeworkList = Array.isArray(dayRec.homeworkList) ? dayRec.homeworkList : [];
 
-            dayRec.homeworkList.forEach(hw => {
-                const statusKey = normalizeStatus(stRec.hwStatus[hw.id]);
-                const cfg = HW_STATUS_CONFIG[statusKey];
-                if (!cfg.isCompleted) {
-                    attentionCount++;
-                    missingOrDeficientItems.push({
-                        title: hw.title,
-                        statusKey: statusKey,
-                        label: cfg.label,
-                        hint: cfg.parentHint,
-                        badgeClass: cfg.badgeClass,
-                        icon: cfg.icon
-                    });
-                }
-                if (statusKey === 'correction') correctionItems.push(hw.title);
+            if (dayHomeworkList.length === 0) {
+                hwContainer.innerHTML = `<p class="py-3 text-xs text-slate-400">當日尚未設定平日回家作業。</p>`;
+            } else {
+                dayHomeworkList.forEach(hw => {
+                    const statusKey = normalizeStatus(stRec.hwStatus[hw.id]);
+                    const cfg = HW_STATUS_CONFIG[statusKey];
+                    if (!cfg.isCompleted) {
+                        attentionCount++;
+                        missingOrDeficientItems.push({
+                            title: hw.title,
+                            statusKey: statusKey,
+                            label: cfg.label,
+                            hint: cfg.parentHint,
+                            badgeClass: cfg.badgeClass,
+                            icon: cfg.icon
+                        });
+                    }
+                    if (statusKey === 'correction') correctionItems.push(hw.title);
 
-                hwContainer.innerHTML += `
-                    <div class="py-2.5 flex justify-between items-center gap-2">
-                        <span class="text-sm font-medium text-slate-700 min-w-0 break-words">${escapeHtml(hw.title)}</span>
-                        <span class="shrink-0 inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-lg ${cfg.badgeClass}">
-                            <i data-lucide="${cfg.icon}" class="w-3.5 h-3.5"></i>${cfg.label}
-                        </span>
-                    </div>
-                `;
-            });
+                    hwContainer.innerHTML += `
+                        <div class="py-2.5 flex justify-between items-center gap-2">
+                            <span class="text-sm font-medium text-slate-700 min-w-0 break-words">${escapeHtml(hw.title)}</span>
+                            <span class="shrink-0 inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-lg ${cfg.badgeClass}">
+                                <i data-lucide="${cfg.icon}" class="w-3.5 h-3.5"></i>${cfg.label}
+                            </span>
+                        </div>
+                    `;
+                });
+            }
 
             const missingBadge = document.getElementById('parentMissingBadge');
             const missingListEl = document.getElementById('parentMissingHomeworkList');
@@ -1256,26 +1254,30 @@
                 `).join('');
             }
 
+            // 2. 其他作業區：只看當日設定，且若登記為「已繳交」（submitted）則家長端不再顯示
             const extraListEl = document.getElementById('parentExtraHomeworkList');
             const extraBadgeEl = document.getElementById('parentExtraHwBadge');
-            const extraCards = state.extraCards || [];
-            const pendingExtra = [];
-            extraCards.forEach(ex => {
+            const dayExtraCards = Array.isArray(dayRec.extraCards) ? dayRec.extraCards : [];
+            const visibleExtraItems = [];
+
+            dayExtraCards.forEach(ex => {
                 const statusKey = normalizeStatus((stRec.extraHwStatus || {})[ex.id]);
-                const cfg = HW_STATUS_CONFIG[statusKey];
-                if (!cfg.isCompleted) {
-                    pendingExtra.push({ title: ex.title, cfg });
+                if (statusKey !== 'submitted') {
+                    visibleExtraItems.push({
+                        title: ex.title,
+                        cfg: HW_STATUS_CONFIG[statusKey]
+                    });
                 }
             });
 
-            if (pendingExtra.length === 0) {
+            if (visibleExtraItems.length === 0) {
                 extraBadgeEl.className = "text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200";
                 extraBadgeEl.innerText = "無其他待辦";
-                extraListEl.innerHTML = `<p class="text-xs text-slate-400 bg-slate-50 p-3 rounded-xl">目前無其他作業待處理項目。</p>`;
+                extraListEl.innerHTML = `<p class="text-xs text-slate-400 bg-slate-50 p-3 rounded-xl">目前無需顯示的其他作業項目。</p>`;
             } else {
                 extraBadgeEl.className = "text-xs font-bold px-2.5 py-0.5 rounded-full bg-violet-100 text-violet-700 border border-violet-200";
-                extraBadgeEl.innerText = `${pendingExtra.length} 項需處理`;
-                extraListEl.innerHTML = pendingExtra.map(item => `
+                extraBadgeEl.innerText = `${visibleExtraItems.length} 項需處理`;
+                extraListEl.innerHTML = visibleExtraItems.map(item => `
                     <div class="p-2.5 rounded-xl bg-violet-50/50 border border-violet-100 flex items-center justify-between gap-2">
                         <span class="text-sm font-bold text-slate-800 min-w-0 break-words">${escapeHtml(item.title)}</span>
                         <span class="shrink-0 text-xs font-bold px-2.5 py-1 rounded-lg ${item.cfg.badgeClass}">${item.cfg.label}</span>
@@ -1314,9 +1316,9 @@
             }
 
             const summaryTag = document.getElementById('hwSummaryTag');
-            if (dayRec.homeworkList.length === 0) {
+            if (dayHomeworkList.length === 0) {
                 summaryTag.className = "text-xs font-medium px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-500";
-                summaryTag.innerText = "當日無作業";
+                summaryTag.innerText = "當日無設定作業";
             } else if (attentionCount === 0) {
                 summaryTag.className = "text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700";
                 summaryTag.innerText = "全數完成";
@@ -1521,14 +1523,16 @@
 
         function renderExtraBoardPanel() {
             renderExtraStampPalette();
-            const extraCards = Array.isArray(state.extraCards) ? state.extraCards : [];
+            const dayRec = ensureDateRecord(selectedDate);
+            document.getElementById('extraBoardDateLabel').innerText = selectedDate;
+            const dayExtraCards = Array.isArray(dayRec.extraCards) ? dayRec.extraCards : [];
 
             const tagListEl = document.getElementById('extraCardsTagList');
             tagListEl.innerHTML = '';
-            if (extraCards.length === 0) {
-                tagListEl.innerHTML = `<span class="text-xs text-slate-400">平時無其他作業圖卡；有需要時輸入名稱並按「新增圖卡」，新增後會持續保留直到你刪除。</span>`;
+            if (dayExtraCards.length === 0) {
+                tagListEl.innerHTML = `<span class="text-xs text-slate-400">${selectedDate} 尚未設定其他作業圖卡；請輸入名稱並按「新增至當日」。</span>`;
             } else {
-                extraCards.forEach(ex => {
+                dayExtraCards.forEach(ex => {
                     tagListEl.innerHTML += `
                         <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-violet-50 text-violet-800 border border-violet-200">
                             <button type="button" onclick="selectExtraHomeworkFromTag('${ex.id}')">${escapeHtml(ex.title)}</button>
@@ -1542,18 +1546,18 @@
             const prevVal = sel.value;
             sel.innerHTML = '';
 
-            if (extraCards.length === 0) {
-                sel.add(new Option("請先新增其他作業圖卡", ""));
-                document.getElementById('extraHwGrid').innerHTML = `<p class="col-span-full text-xs text-slate-400 text-center py-4">尚未新增其他作業圖卡</p>`;
+            if (dayExtraCards.length === 0) {
+                sel.add(new Option("此日尚未新增其他作業圖卡", ""));
+                document.getElementById('extraHwGrid').innerHTML = `<p class="col-span-full text-xs text-slate-400 text-center py-4">此日尚未新增其他作業圖卡</p>`;
                 document.getElementById('extraHwStats').innerText = "0 項圖卡";
                 return;
             }
 
-            extraCards.forEach(ex => {
+            dayExtraCards.forEach(ex => {
                 sel.add(new Option(ex.title, ex.id));
             });
 
-            if (prevVal && extraCards.some(h => h.id === prevVal)) {
+            if (prevVal && dayExtraCards.some(h => h.id === prevVal)) {
                 sel.value = prevVal;
             }
             window.renderExtraHomeworkGrid();
@@ -1574,14 +1578,14 @@
             if (!exId) return;
 
             grid.innerHTML = '';
-            let completedCount = 0;
+            let submittedCount = 0;
 
             CLASS_STUDENTS.forEach(st => {
                 const stRec = dayRec.studentRecords[st.id];
                 if (!stRec.extraHwStatus) stRec.extraHwStatus = {};
                 const statusKey = normalizeStatus(stRec.extraHwStatus[exId]);
                 const cfg = HW_STATUS_CONFIG[statusKey];
-                if (cfg.isCompleted) completedCount++;
+                if (statusKey === 'submitted') submittedCount++;
 
                 grid.innerHTML += `
                     <button type="button" onclick="applyBatchExtraHw('${st.id}', '${exId}')" class="flex items-center justify-between p-2.5 rounded-xl border text-left transition active:scale-[0.97] ${cfg.cardClass}">
@@ -1596,7 +1600,7 @@
                 `;
             });
 
-            document.getElementById('extraHwStats').innerText = `完成 ${completedCount} / ${CLASS_STUDENTS.length}`;
+            document.getElementById('extraHwStats').innerText = `已繳交 ${submittedCount} / ${CLASS_STUDENTS.length}`;
         };
 
         window.applyBatchExtraHw = function(studentId, exId) {
@@ -1611,7 +1615,7 @@
                 stRec.extraHwStatus[exId] = STATUS_KEYS[nextIdx];
             } else {
                 const currentKey = normalizeStatus(stRec.extraHwStatus[exId]);
-                stRec.extraHwStatus[exId] = (currentKey === activeExtraStampMode) ? 'submitted' : activeExtraStampMode;
+                stRec.extraHwStatus[exId] = (currentKey === activeExtraStampMode) ? 'unsubmitted' : activeExtraStampMode;
             }
 
             saveState();
@@ -1636,14 +1640,14 @@
             const title = input.value.trim();
             if (!title) return;
 
-            if (!Array.isArray(state.extraCards)) state.extraCards = [];
-            const newId = 'ex_' + Date.now();
-            state.extraCards.push({ id: newId, title: title });
-
             const dayRec = ensureDateRecord(selectedDate);
+            if (!Array.isArray(dayRec.extraCards)) dayRec.extraCards = [];
+            const newId = 'ex_' + Date.now();
+            dayRec.extraCards.push({ id: newId, title: title });
+
             CLASS_STUDENTS.forEach(s => {
                 if (!dayRec.studentRecords[s.id].extraHwStatus) dayRec.studentRecords[s.id].extraHwStatus = {};
-                dayRec.studentRecords[s.id].extraHwStatus[newId] = 'submitted';
+                dayRec.studentRecords[s.id].extraHwStatus[newId] = 'unsubmitted';
             });
 
             input.value = '';
@@ -1651,48 +1655,40 @@
             renderExtraBoardPanel();
             document.getElementById('extraHwSelect').value = newId;
             window.renderExtraHomeworkGrid();
-            showToast(`已新增其他作業圖卡「${title}」，將持續保留直到刪除`);
+            showToast(`已新增 ${selectedDate} 其他作業圖卡「${title}」`);
         };
 
         window.deleteExtraHomeworkCard = function(exId) {
-            state.extraCards = (state.extraCards || []).filter(ex => ex.id !== exId);
-            Object.keys(state.recordsByDate || {}).forEach(d => {
-                const rec = state.recordsByDate[d];
-                if (rec && rec.studentRecords) {
-                    CLASS_STUDENTS.forEach(s => {
-                        if (rec.studentRecords[s.id] && rec.studentRecords[s.id].extraHwStatus) {
-                            delete rec.studentRecords[s.id].extraHwStatus[exId];
-                        }
-                    });
+            const dayRec = ensureDateRecord(selectedDate);
+            dayRec.extraCards = (dayRec.extraCards || []).filter(ex => ex.id !== exId);
+            CLASS_STUDENTS.forEach(s => {
+                if (dayRec.studentRecords[s.id] && dayRec.studentRecords[s.id].extraHwStatus) {
+                    delete dayRec.studentRecords[s.id].extraHwStatus[exId];
                 }
             });
             saveState();
             renderExtraBoardPanel();
-            showToast("已刪除該項其他作業圖卡");
+            showToast("已刪除該項當日其他作業圖卡");
         };
 
         window.clearAllExtraHomeworkCards = function() {
-            if (!Array.isArray(state.extraCards) || state.extraCards.length === 0) {
-                showToast("目前已經沒有其他作業圖卡了");
+            const dayRec = ensureDateRecord(selectedDate);
+            if (!Array.isArray(dayRec.extraCards) || dayRec.extraCards.length === 0) {
+                showToast("此日已經沒有其他作業圖卡了");
                 return;
             }
-            if (!confirm("確定要全部清空所有「其他作業圖卡」嗎？（清空後才會移除）")) return;
+            if (!confirm(`確定要清空 ${selectedDate} 的所有「其他作業圖卡」嗎？`)) return;
 
-            state.extraCards = [];
-            Object.keys(state.recordsByDate || {}).forEach(d => {
-                const rec = state.recordsByDate[d];
-                if (rec && rec.studentRecords) {
-                    CLASS_STUDENTS.forEach(s => {
-                        if (rec.studentRecords[s.id]) {
-                            rec.studentRecords[s.id].extraHwStatus = {};
-                        }
-                    });
+            dayRec.extraCards = [];
+            CLASS_STUDENTS.forEach(s => {
+                if (dayRec.studentRecords[s.id]) {
+                    dayRec.studentRecords[s.id].extraHwStatus = {};
                 }
             });
 
             saveState();
             renderExtraBoardPanel();
-            showToast("已全部清空其他作業圖卡");
+            showToast(`已清空 ${selectedDate} 其他作業圖卡`);
         };
 
         function renderTeacherMessagesPanel() {
@@ -1814,7 +1810,7 @@
             CLASS_STUDENTS.forEach(st => {
                 const stRec = dayRec.studentRecords[st.id];
                 if (stRec.confirmed) confirmedCount++;
-                const pendingHw = dayRec.homeworkList.filter(hw => !HW_STATUS_CONFIG[normalizeStatus(stRec.hwStatus[hw.id])].isCompleted).length;
+                const pendingHw = (dayRec.homeworkList || []).filter(hw => !HW_STATUS_CONFIG[normalizeStatus(stRec.hwStatus[hw.id])].isCompleted).length;
                 const msgs = getStudentMessages(st.id);
                 const hasPendingMsg = msgs.length > 0 && msgs[msgs.length - 1].sender === 'parent';
 
@@ -1898,22 +1894,24 @@
 
         function populateBatchHomeworkSelect() {
             const dayRec = ensureDateRecord(selectedDate);
+            document.getElementById('batchHwDateLabel').innerText = selectedDate;
             const sel = document.getElementById('batchHwSelect');
             const prevVal = sel.value;
             sel.innerHTML = '';
 
-            if (dayRec.homeworkList.length === 0) {
-                sel.add(new Option("此日尚未建立平日回家作業", ""));
-                document.getElementById('batchHwGrid').innerHTML = `<p class="col-span-full text-xs text-slate-400 text-center py-4">請先至「聯絡/平日作業」分頁新增作業項目</p>`;
+            const dayHwList = Array.isArray(dayRec.homeworkList) ? dayRec.homeworkList : [];
+            if (dayHwList.length === 0) {
+                sel.add(new Option(`${selectedDate} 尚未設定平日回家作業`, ""));
+                document.getElementById('batchHwGrid').innerHTML = `<p class="col-span-full text-xs text-slate-400 text-center py-4">請先至「聯絡/平日作業」分頁設定 ${selectedDate} 的作業項目</p>`;
                 document.getElementById('batchHwStats').innerText = "0 項作業";
                 return;
             }
 
-            dayRec.homeworkList.forEach(hw => {
+            dayHwList.forEach(hw => {
                 sel.add(new Option(hw.title, hw.id));
             });
 
-            if (prevVal && dayRec.homeworkList.some(h => h.id === prevVal)) {
+            if (prevVal && dayHwList.some(h => h.id === prevVal)) {
                 sel.value = prevVal;
             }
             window.renderBatchHomeworkGrid();
@@ -1983,6 +1981,7 @@
         function loadTeacherClassNote() {
             const dayRec = ensureDateRecord(selectedDate);
             document.getElementById('editNoteDateTitle').innerText = selectedDate;
+            document.getElementById('editHwDateTitle').innerText = selectedDate;
             document.getElementById('editGlobalNote').value = dayRec.dailyNote;
 
             const noteCardsEl = document.getElementById('dailyNotePresetCards');
@@ -2006,12 +2005,15 @@
                 const isSelected = d === selectedDate;
                 const rec = state.recordsByDate[d];
                 const confirmedNum = CLASS_STUDENTS.filter(s => rec.studentRecords && rec.studentRecords[s.id] && rec.studentRecords[s.id].confirmed).length;
+                const hwCount = Array.isArray(rec.homeworkList) ? rec.homeworkList.length : 0;
+                const exCount = Array.isArray(rec.extraCards) ? rec.extraCards.length : 0;
                 archiveEl.innerHTML += `
                     <button type="button" onclick="changeSelectedDate('${d}')" class="p-3 rounded-xl border text-left transition ${isSelected ? 'bg-teal-50/80 border-teal-400 ring-1 ring-teal-400' : 'bg-slate-50 border-slate-200 hover:border-teal-300'}">
                         <div class="flex justify-between items-center mb-1">
                             <span class="font-bold text-sm text-slate-800">${d} ${d === getTodayStr() ? '(今日)' : ''}</span>
                             <span class="text-[11px] font-bold text-teal-700 bg-teal-100/80 px-2 py-0.5 rounded-full">已簽 ${confirmedNum}/25</span>
                         </div>
+                        <div class="text-[11px] text-indigo-600 font-medium mb-0.5">平日作業 ${hwCount} 項・其他作業 ${exCount} 項</div>
                         <p class="text-xs text-slate-500 truncate">${escapeHtml(rec.dailyNote || '無聯絡事項')}</p>
                     </button>
                 `;
@@ -2057,7 +2059,12 @@
         function renderTeacherHomeworkList(dayRec) {
             const listEl = document.getElementById('teacherHomeworkList');
             listEl.innerHTML = '';
-            (dayRec.homeworkList || []).forEach(hw => {
+            const list = Array.isArray(dayRec.homeworkList) ? dayRec.homeworkList : [];
+            if (list.length === 0) {
+                listEl.innerHTML = `<p class="py-2.5 text-xs text-slate-400">${selectedDate} 尚未設定平日回家作業。</p>`;
+                return;
+            }
+            list.forEach(hw => {
                 listEl.innerHTML += `
                     <div class="py-2.5 flex justify-between items-center gap-2">
                         <span class="text-sm text-slate-700 min-w-0 break-words">${escapeHtml(hw.title)}</span>
@@ -2139,7 +2146,7 @@
             saveState();
             renderHomeworkPresetCardsAndStaging();
             renderTeacherHomeworkList(dayRec);
-            showToast(`已確認加入 ${addedCount} 項當日作業並同步雲端`);
+            showToast(`已確認加入 ${addedCount} 項 ${selectedDate} 作業並同步雲端`);
         };
 
         window.insertCardIntoDailyNote = function(cardIndex) {
@@ -2202,7 +2209,7 @@
             input.value = '';
             saveState();
             renderTeacherHomeworkList(dayRec);
-            showToast("已新增平日回家作業項目並同步雲端");
+            showToast(`已新增 ${selectedDate} 平日回家作業項目並同步雲端`);
         };
 
         window.deleteHomeworkItem = function(hwId) {
@@ -2213,7 +2220,7 @@
             });
             saveState();
             renderTeacherHomeworkList(dayRec);
-            showToast("已刪除該項平日回家作業並同步");
+            showToast("已刪除該項當日平日回家作業並同步");
         };
 
         window.loadTeacherStudentForm = function(studentId) {
@@ -2228,23 +2235,28 @@
             const toggleContainer = document.getElementById('teacherStudentHwToggles');
             toggleContainer.innerHTML = '';
 
-            dayRec.homeworkList.forEach(hw => {
-                const currentKey = normalizeStatus(stRec.hwStatus[hw.id]);
-                const cfg = HW_STATUS_CONFIG[currentKey];
+            const dayHwList = Array.isArray(dayRec.homeworkList) ? dayRec.homeworkList : [];
+            if (dayHwList.length === 0) {
+                toggleContainer.innerHTML = `<p class="text-xs text-slate-400 p-2.5 rounded-xl bg-slate-50">${selectedDate} 尚未設定平日回家作業。</p>`;
+            } else {
+                dayHwList.forEach(hw => {
+                    const currentKey = normalizeStatus(stRec.hwStatus[hw.id]);
+                    const cfg = HW_STATUS_CONFIG[currentKey];
 
-                const optionsHtml = STATUS_KEYS.map(k => 
-                    `<option value="${k}" ${k === currentKey ? 'selected' : ''}>${HW_STATUS_CONFIG[k].label}</option>`
-                ).join('');
+                    const optionsHtml = STATUS_KEYS.map(k => 
+                        `<option value="${k}" ${k === currentKey ? 'selected' : ''}>${HW_STATUS_CONFIG[k].label}</option>`
+                    ).join('');
 
-                toggleContainer.innerHTML += `
-                    <div class="flex justify-between items-center p-2.5 rounded-xl border ${cfg.cardClass}">
-                        <span class="text-sm font-medium text-slate-700 pr-2">${escapeHtml(hw.title)}</span>
-                        <select onchange="changeSingleStudentHw('${student.id}', '${hw.id}', this.value)" class="text-xs font-bold px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                            ${optionsHtml}
-                        </select>
-                    </div>
-                `;
-            });
+                    toggleContainer.innerHTML += `
+                        <div class="flex justify-between items-center p-2.5 rounded-xl border ${cfg.cardClass}">
+                            <span class="text-sm font-medium text-slate-700 pr-2">${escapeHtml(hw.title)}</span>
+                            <select onchange="changeSingleStudentHw('${student.id}', '${hw.id}', this.value)" class="text-xs font-bold px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                ${optionsHtml}
+                            </select>
+                        </div>
+                    `;
+                });
+            }
 
             document.getElementById('editStudentSpecial').value = stRec.specialClass;
             document.getElementById('editStudentHealth').value = stRec.healthNote;
