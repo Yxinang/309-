@@ -755,7 +755,7 @@
             return `${m}/${d} ${hh}:${mm}`;
         }
 
-        // 每天各自獨立紀錄，預設只建立空白當日作業清單，由老師依當日設定加入
+        // 每天各自獨立紀錄，只顯示當日設定好的作業
         function createDefaultDayRecord(dateStr) {
             const studentRecords = {};
             CLASS_STUDENTS.forEach(st => {
@@ -851,6 +851,7 @@
         const TODAY_STR = getTodayStr();
         const DEFAULT_STATE = {
             students: CLASS_STUDENTS,
+            extraCards: [],
             notePresetCards: DEFAULT_NOTE_PRESET_CARDS,
             homeworkPresetCards: DEFAULT_HOMEWORK_PRESET_CARDS,
             recordsByDate: {
@@ -859,7 +860,8 @@
             studentMessages: {}
         };
 
-        let state = JSON.parse(localStorage.getItem('class309_archive_cache_v2')) || DEFAULT_STATE;
+        let state = JSON.parse(localStorage.getItem('class309_archive_cache')) || DEFAULT_STATE;
+        if (!Array.isArray(state.extraCards)) state.extraCards = [];
         if (!Array.isArray(state.notePresetCards)) state.notePresetCards = [...DEFAULT_NOTE_PRESET_CARDS];
         if (!Array.isArray(state.homeworkPresetCards)) state.homeworkPresetCards = [...DEFAULT_HOMEWORK_PRESET_CARDS];
 
@@ -874,9 +876,22 @@
         let isCloudReady = false;
         let lastSyncDiagnostic = "正在嘗試連線至 Firebase Realtime Database...";
 
+        function getDayExtraCards(dayRec) {
+            if (Array.isArray(dayRec.extraCards)) {
+                return dayRec.extraCards;
+            }
+            if (Array.isArray(state.extraCards) && state.extraCards.length > 0) {
+                dayRec.extraCards = state.extraCards.map(c => ({ ...c }));
+                return dayRec.extraCards;
+            }
+            dayRec.extraCards = [];
+            return dayRec.extraCards;
+        }
+
         function ensureDateRecord(dateStr) {
             if (!state.recordsByDate) state.recordsByDate = {};
             if (!state.studentMessages) state.studentMessages = {};
+            if (!Array.isArray(state.extraCards)) state.extraCards = [];
             if (!Array.isArray(state.notePresetCards)) state.notePresetCards = [...DEFAULT_NOTE_PRESET_CARDS];
             if (!Array.isArray(state.homeworkPresetCards)) state.homeworkPresetCards = [...DEFAULT_HOMEWORK_PRESET_CARDS];
             if (!state.recordsByDate[dateStr]) {
@@ -884,8 +899,8 @@
             }
             const rec = state.recordsByDate[dateStr];
             if (!Array.isArray(rec.homeworkList)) rec.homeworkList = [];
-            if (!Array.isArray(rec.extraCards)) rec.extraCards = [];
             if (!rec.studentRecords) rec.studentRecords = {};
+            getDayExtraCards(rec);
 
             CLASS_STUDENTS.forEach(st => {
                 if (!rec.studentRecords[st.id]) {
@@ -921,12 +936,12 @@
             try {
                 const app = initializeApp(firebaseConfig);
                 const db = getDatabase(app);
-                dbRef = ref(db, 'class309_archive_data_v2');
+                dbRef = ref(db, 'class309_archive_data');
 
                 onValue(dbRef, (snapshot) => {
                     const cloudData = snapshot.val();
                     isCloudReady = true;
-                    lastSyncDiagnostic = "✅ 已成功連上 Firebase 雲端資料庫！老師區與家長區資料即時同步中。";
+                    lastSyncDiagnostic = "✅ 已成功連上 Firebase 雲端資料庫（class309_archive_data）！老師區與家長區資料即時同步中。";
 
                     indicator.className = "inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200";
                     indicator.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> 雲端同步中`;
@@ -940,13 +955,14 @@
 
                     state = {
                         students: CLASS_STUDENTS,
+                        extraCards: Array.isArray(cloudData.extraCards) ? cloudData.extraCards : [],
                         notePresetCards: Array.isArray(cloudData.notePresetCards) ? cloudData.notePresetCards : [...DEFAULT_NOTE_PRESET_CARDS],
                         homeworkPresetCards: Array.isArray(cloudData.homeworkPresetCards) ? cloudData.homeworkPresetCards : [...DEFAULT_HOMEWORK_PRESET_CARDS],
                         recordsByDate: cloudData.recordsByDate || {},
                         studentMessages: cloudData.studentMessages || {}
                     };
                     ensureDateRecord(selectedDate);
-                    localStorage.setItem('class309_archive_cache_v2', JSON.stringify(state));
+                    localStorage.setItem('class309_archive_cache', JSON.stringify(state));
                     refreshActiveViewFromCloud();
                 }, (error) => {
                     isCloudReady = false;
@@ -962,9 +978,10 @@
 
         function saveState() {
             state.students = CLASS_STUDENTS;
+            if (!Array.isArray(state.extraCards)) state.extraCards = [];
             if (!Array.isArray(state.notePresetCards)) state.notePresetCards = [...DEFAULT_NOTE_PRESET_CARDS];
             if (!Array.isArray(state.homeworkPresetCards)) state.homeworkPresetCards = [...DEFAULT_HOMEWORK_PRESET_CARDS];
-            localStorage.setItem('class309_archive_cache_v2', JSON.stringify(state));
+            localStorage.setItem('class309_archive_cache', JSON.stringify(state));
             if (dbRef && isCloudReady) {
                 set(dbRef, state).catch(err => {
                     lastSyncDiagnostic = "❌ 寫入雲端失敗：" + err.message;
@@ -1015,9 +1032,6 @@
             selectedDate = newDateStr;
             pendingHwSelection = [];
             ensureDateRecord(selectedDate);
-            if (authSession && authSession.role === 'teacher') {
-                saveState();
-            }
             window.routeBySession();
             showToast(`已切換至 ${selectedDate} 聯絡簿`);
         };
@@ -1254,10 +1268,10 @@
                 `).join('');
             }
 
-            // 2. 其他作業區：只看當日設定，且若登記為「已繳交」（submitted）則家長端不再顯示
+            // 2. 其他作業區：只顯示當日設定，且登記為「已繳交」（submitted）者家長端不再顯示
             const extraListEl = document.getElementById('parentExtraHomeworkList');
             const extraBadgeEl = document.getElementById('parentExtraHwBadge');
-            const dayExtraCards = Array.isArray(dayRec.extraCards) ? dayRec.extraCards : [];
+            const dayExtraCards = getDayExtraCards(dayRec);
             const visibleExtraItems = [];
 
             dayExtraCards.forEach(ex => {
@@ -1525,7 +1539,7 @@
             renderExtraStampPalette();
             const dayRec = ensureDateRecord(selectedDate);
             document.getElementById('extraBoardDateLabel').innerText = selectedDate;
-            const dayExtraCards = Array.isArray(dayRec.extraCards) ? dayRec.extraCards : [];
+            const dayExtraCards = getDayExtraCards(dayRec);
 
             const tagListEl = document.getElementById('extraCardsTagList');
             tagListEl.innerHTML = '';
@@ -1641,9 +1655,9 @@
             if (!title) return;
 
             const dayRec = ensureDateRecord(selectedDate);
-            if (!Array.isArray(dayRec.extraCards)) dayRec.extraCards = [];
+            const dayExtraCards = getDayExtraCards(dayRec);
             const newId = 'ex_' + Date.now();
-            dayRec.extraCards.push({ id: newId, title: title });
+            dayExtraCards.push({ id: newId, title: title });
 
             CLASS_STUDENTS.forEach(s => {
                 if (!dayRec.studentRecords[s.id].extraHwStatus) dayRec.studentRecords[s.id].extraHwStatus = {};
@@ -1660,7 +1674,7 @@
 
         window.deleteExtraHomeworkCard = function(exId) {
             const dayRec = ensureDateRecord(selectedDate);
-            dayRec.extraCards = (dayRec.extraCards || []).filter(ex => ex.id !== exId);
+            dayRec.extraCards = getDayExtraCards(dayRec).filter(ex => ex.id !== exId);
             CLASS_STUDENTS.forEach(s => {
                 if (dayRec.studentRecords[s.id] && dayRec.studentRecords[s.id].extraHwStatus) {
                     delete dayRec.studentRecords[s.id].extraHwStatus[exId];
@@ -1673,7 +1687,8 @@
 
         window.clearAllExtraHomeworkCards = function() {
             const dayRec = ensureDateRecord(selectedDate);
-            if (!Array.isArray(dayRec.extraCards) || dayRec.extraCards.length === 0) {
+            const dayExtraCards = getDayExtraCards(dayRec);
+            if (dayExtraCards.length === 0) {
                 showToast("此日已經沒有其他作業圖卡了");
                 return;
             }
