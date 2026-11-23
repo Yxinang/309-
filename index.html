@@ -89,8 +89,8 @@
                 <div class="w-12 h-12 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center mx-auto mb-2">
                     <i data-lucide="shield-check" class="w-6 h-6"></i>
                 </div>
-                <h2 class="text-xl font-bold text-slate-800">歡迎使用班級追蹤系統</h2>
-                <p class="text-xs text-slate-400">請選擇身分並登入查看每日聯絡簿</p>
+                <h2 class="text-xl font-bold text-slate-800">309 班親師聯絡簿</h2>
+                <p class="text-xs text-slate-400">請輸入學號登入查看孩子每日學習與聯絡事項</p>
             </div>
 
             <div class="grid grid-cols-2 gap-1.5 bg-slate-100 p-1 rounded-xl">
@@ -102,7 +102,7 @@
                 </button>
             </div>
 
-            <!-- 家長登入表單 -->
+            <!-- 家長登入表單（只需輸入學號 + 記住登入） -->
             <div id="parentLoginForm" class="space-y-4">
                 <div>
                     <label for="loginStudentIdInput" class="block text-xs font-bold text-slate-600 mb-1.5">請輸入孩子學號</label>
@@ -511,7 +511,6 @@
                         <span>管理此日平日回家作業項目</span>
                     </h2>
 
-                    <!-- 上方：已保存的作業圖卡區（可新增、刪除，點擊後先進入下方確定區） -->
                     <div class="space-y-1.5">
                         <span class="block text-xs font-bold text-indigo-700">1. 作業項目圖卡區（點擊後先到下方確定區）</span>
                         <div id="homeworkPresetCards" class="flex flex-wrap gap-1.5 p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 min-h-[42px]"></div>
@@ -523,7 +522,6 @@
                         </div>
                     </div>
 
-                    <!-- 中間：當天要收的作業「確定區」 -->
                     <div class="p-3 rounded-xl bg-amber-50/60 border border-amber-200/80 space-y-2">
                         <div class="flex items-center justify-between gap-2">
                             <span class="text-xs font-bold text-amber-900">2. 當天要收的作業確定區</span>
@@ -535,7 +533,6 @@
                         </button>
                     </div>
 
-                    <!-- 手動輸入補充區 -->
                     <div class="flex gap-2">
                         <input type="text" id="newHomeworkInput" placeholder="或直接輸入單項作業名稱..." onkeydown="if(event.key==='Enter') addHomeworkItem()" class="flex-1 min-w-0 px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500">
                         <button type="button" onclick="addHomeworkItem()" class="shrink-0 px-4 py-2 bg-slate-700 hover:bg-slate-800 text-white rounded-xl text-xs font-bold">
@@ -543,7 +540,6 @@
                         </button>
                     </div>
 
-                    <!-- 當日已建立的作業項目清單 -->
                     <div id="teacherHomeworkList" class="divide-y divide-slate-100"></div>
                 </div>
             </div>
@@ -877,7 +873,7 @@
         let activeExtraStampMode = 'cycle';
         let currentTeacherTab = 'overview';
         let selectedMsgStudentId = CLASS_STUDENTS[0].id;
-        let pendingHwSelection = []; // 點擊圖卡後先暫存於此「確定區」
+        let pendingHwSelection = [];
         let dbRef = null;
         let isCloudReady = false;
         let lastSyncDiagnostic = "正在嘗試連線至 Firebase Realtime Database...";
@@ -936,7 +932,7 @@
                 onValue(dbRef, (snapshot) => {
                     const cloudData = snapshot.val();
                     isCloudReady = true;
-                    lastSyncDiagnostic = "✅ 已成功連上 Firebase 雲端資料庫！每日聯絡簿、其他作業點名、親師留言板與全班 25 人資料即時同步中。";
+                    lastSyncDiagnostic = "✅ 已成功連上 Firebase 雲端資料庫！老師區與家長區資料即時同步中。";
 
                     indicator.className = "inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200";
                     indicator.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> 雲端同步中`;
@@ -998,6 +994,7 @@
                 if (currentTeacherTab === 'extraBoard') renderExtraBoardPanel();
                 if (currentTeacherTab === 'batchHw') populateBatchHomeworkSelect();
                 if (currentTeacherTab === 'messages') renderTeacherMessagesPanel();
+                if (currentTeacherTab === 'classNote') loadTeacherClassNote();
             }
         }
 
@@ -1494,7 +1491,6 @@
             if (tabName === 'studentDetail') window.loadTeacherStudentForm(document.getElementById('teacherStudentSelect').value);
         };
 
-        // ==================== 其他作業點名 ====================
         function renderExtraStampPalette() {
             const palette = document.getElementById('extraStampPalette');
             if (!palette) return;
@@ -1984,7 +1980,6 @@
             showToast(`已將全班設為「${HW_STATUS_CONFIG[statusKey].label}」並同步`);
         };
 
-        // ==================== 管理此日平日回家作業項目：圖卡保存 -> 點擊入確定區 -> 按確定加入 ====================
         function loadTeacherClassNote() {
             const dayRec = ensureDateRecord(selectedDate);
             document.getElementById('editNoteDateTitle').innerText = selectedDate;
