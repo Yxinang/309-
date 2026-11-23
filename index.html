@@ -98,7 +98,7 @@
                 </button>
             </div>
 
-            <!-- 家長登入表單（只需輸入學號 + 記住登入） -->
+            <!-- 家長登入表單 -->
             <div id="parentLoginForm" class="space-y-4">
                 <div>
                     <label for="loginStudentIdInput" class="block text-xs font-bold text-slate-600 mb-1.5">請輸入孩子學號</label>
@@ -213,7 +213,7 @@
                     <div class="flex items-center justify-between gap-2">
                         <div class="flex items-center gap-2 text-rose-700 font-bold text-sm">
                             <div class="p-1.5 bg-rose-50 rounded-lg"><i data-lucide="alert-circle" class="w-4 h-4"></i></div>
-                            <span>欠缺作業區（欠缺／遺失提醒）</span>
+                            <span>欠缺作業區（未完成／欠缺／遺失提醒）</span>
                         </div>
                         <span id="parentMissingBadge" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
                             無欠缺項目
@@ -340,7 +340,7 @@
             </div>
         </div>
 
-        <!-- TAB 2: 其他作業圖卡區（平時全空，新增後持續保留直到刪除） -->
+        <!-- TAB 2: 其他作業圖卡區（支援印章蓋章、拖移、勾選與全部清空） -->
         <div id="panel-extraBoard" class="hidden space-y-4">
             <div class="bg-white rounded-2xl p-4 md:p-6 card-shadow border border-violet-100 space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
@@ -349,26 +349,21 @@
                             <i data-lucide="layers" class="w-4 h-4 text-violet-600"></i>
                             1. 其他作業圖卡區（平時全空；新增後持續保留直到刪除）
                         </h2>
-                        <p class="text-xs text-slate-400 mt-0.5">有需要時新增圖卡，拖曳到學生卡片或直接勾選方塊記錄，免打字</p>
+                        <p class="text-xs text-slate-400 mt-0.5">選擇下方印章後，點擊學生卡片上的作業印章即可蓋章，也可拖移圖卡或直接勾選</p>
                     </div>
-                    <div class="flex items-center gap-2 flex-wrap">
-                        <label for="extraDragStatusSelect" class="text-xs font-bold text-slate-600 shrink-0">登記狀態：</label>
-                        <select id="extraDragStatusSelect" class="bg-slate-50 border border-slate-200 text-slate-800 font-bold text-xs rounded-xl px-2.5 py-1.5">
-                            <option value="correction">需訂正</option>
-                            <option value="unsubmitted">未繳交</option>
-                            <option value="missing">缺失（需尋找）</option>
-                            <option value="not_brought_home">未帶回家</option>
-                            <option value="not_brought_school">未帶來學校</option>
-                            <option value="madeup">已補交</option>
-                        </select>
-                        <button type="button" onclick="clearAllExtraHomeworkCards()" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 transition">
-                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                            <span>全部清空</span>
-                        </button>
-                    </div>
+                    <button type="button" onclick="clearAllExtraHomeworkCards()" class="self-start sm:self-auto inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 transition">
+                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                        <span>全部清空</span>
+                    </button>
                 </div>
 
-                <!-- 可拖曳的其他作業圖卡列（預設全空） -->
+                <!-- 其他作業蓋章調色盤 -->
+                <div class="space-y-1.5">
+                    <label class="block text-xs font-bold text-violet-700">選擇要蓋上的其他作業印章：</label>
+                    <div id="extraStampPalette" class="flex flex-wrap gap-1.5"></div>
+                </div>
+
+                <!-- 可拖曳的其他作業圖卡列 -->
                 <div id="draggableExtraCards" class="flex flex-wrap gap-2 p-3 rounded-xl bg-violet-50/50 border border-violet-200/70 min-h-[54px]">
                 </div>
 
@@ -381,14 +376,14 @@
                 </div>
             </div>
 
-            <!-- 學生拖曳放置與勾選區 -->
+            <!-- 學生蓋章／勾選／拖曳放置區 -->
             <div class="bg-white rounded-2xl p-4 md:p-6 card-shadow border border-slate-100 space-y-4">
                 <div class="flex justify-between items-center flex-wrap gap-2">
                     <h2 class="font-bold text-slate-800 text-sm md:text-base flex items-center gap-1.5">
-                        <i data-lucide="check-square" class="w-4 h-4 text-teal-600"></i>
-                        2. 學生其他作業勾選與拖曳放置區（1～25號）
+                        <i data-lucide="stamp" class="w-4 h-4 text-teal-600"></i>
+                        2. 學生其他作業蓋章與勾選區（1～25號）
                     </h2>
-                    <span class="text-[11px] text-slate-400">勾選代表「有此項其他作業待處理」，取消勾選則設為「已完成」</span>
+                    <span class="text-[11px] text-slate-400">點右側印章按鈕可直接蓋章；勾選代表有待處理項目，取消勾選還原為已繳交</span>
                 </div>
 
                 <div id="extraStudentChecklistGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -612,6 +607,15 @@
                 cardClass: 'bg-sky-50/80 border-sky-200',
                 icon: 'check-check'
             },
+            incomplete: {
+                label: '未完成',
+                isCompleted: false,
+                parentHint: '作業尚未完成，請在家協助孩子完成後再繳交',
+                badgeClass: 'bg-orange-50 text-orange-700 border border-orange-200',
+                solidClass: 'bg-orange-500 text-white',
+                cardClass: 'bg-orange-50/75 border-orange-200',
+                icon: 'clock-alert'
+            },
             correction: {
                 label: '需訂正',
                 isCompleted: false,
@@ -746,6 +750,7 @@
         let authSession = loadSavedSession();
         let selectedDate = TODAY_STR;
         let activeStampMode = 'cycle';
+        let activeExtraStampMode = 'cycle';
         let currentTeacherTab = 'overview';
         let selectedMsgStudentId = CLASS_STUDENTS[0].id;
         let draggedExtraCardId = null;
@@ -1100,7 +1105,6 @@
                 `).join('');
             }
 
-            // 其他作業紀錄區（顯示已新增圖卡中當日需處理的項目）
             const extraListEl = document.getElementById('parentExtraHomeworkList');
             const extraBadgeEl = document.getElementById('parentExtraHwBadge');
             const extraCards = state.extraCards || [];
@@ -1336,8 +1340,37 @@
             if (tabName === 'studentDetail') window.loadTeacherStudentForm(document.getElementById('teacherStudentSelect').value);
         };
 
-        // ==================== 其他作業圖卡區（平時全空，新增後持續保留直到刪除） ====================
+        // ==================== 其他作業圖卡區（蓋章模式 + 勾選 + 拖移 + 全部清空） ====================
+        function renderExtraStampPalette() {
+            const palette = document.getElementById('extraStampPalette');
+            if (!palette) return;
+            palette.innerHTML = '';
+
+            const isCycle = activeExtraStampMode === 'cycle';
+            palette.innerHTML += `
+                <button type="button" onclick="selectExtraStampMode('cycle')" class="px-2.5 py-1 rounded-lg text-xs font-bold border transition ${isCycle ? 'bg-slate-800 text-white border-slate-800 shadow-xs' : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'}">
+                    🔄 依序切換
+                </button>
+            `;
+
+            STATUS_KEYS.forEach(key => {
+                const cfg = HW_STATUS_CONFIG[key];
+                const isSelected = activeExtraStampMode === key;
+                palette.innerHTML += `
+                    <button type="button" onclick="selectExtraStampMode('${key}')" class="px-2.5 py-1 rounded-lg text-xs font-bold transition ${isSelected ? cfg.solidClass + ' ring-2 ring-offset-1 ring-slate-400 shadow-xs' : cfg.badgeClass + ' opacity-85 hover:opacity-100'}">
+                        ${cfg.label}
+                    </button>
+                `;
+            });
+        }
+
+        window.selectExtraStampMode = function(mode) {
+            activeExtraStampMode = mode;
+            renderExtraStampPalette();
+        };
+
         function renderExtraBoardPanel() {
+            renderExtraStampPalette();
             const dayRec = ensureDateRecord(selectedDate);
             const cardsContainer = document.getElementById('draggableExtraCards');
             cardsContainer.innerHTML = '';
@@ -1370,23 +1403,26 @@
                 const extraMap = stRec.extraHwStatus || {};
                 const pendingCount = extraCards.filter(ex => !HW_STATUS_CONFIG[normalizeStatus(extraMap[ex.id])].isCompleted).length;
 
-                const checkboxesHtml = extraCards.map(ex => {
+                const rowsHtml = extraCards.map(ex => {
                     const statusKey = normalizeStatus(extraMap[ex.id]);
-                    const isPending = !HW_STATUS_CONFIG[statusKey].isCompleted;
                     const cfg = HW_STATUS_CONFIG[statusKey];
+                    const isPending = !cfg.isCompleted;
                     return `
-                        <label class="flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-lg border cursor-pointer transition ${isPending ? cfg.cardClass : 'bg-slate-50/70 border-slate-100 hover:bg-slate-100/70'}">
-                            <span class="inline-flex items-center gap-2 min-w-0">
+                        <div class="flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-lg border transition ${isPending ? cfg.cardClass : 'bg-slate-50/70 border-slate-100'}">
+                            <label class="inline-flex items-center gap-2 min-w-0 cursor-pointer flex-1">
                                 <input type="checkbox"
                                        ${isPending ? 'checked' : ''}
                                        onchange="toggleStudentExtraHomeworkCheck('${st.id}', '${ex.id}', this.checked)"
                                        class="w-4 h-4 rounded border-slate-300 text-violet-600 focus:ring-violet-500 shrink-0">
                                 <span class="text-xs font-medium text-slate-700 truncate">${escapeHtml(ex.title)}</span>
-                            </span>
-                            <span class="shrink-0 text-[10px] font-bold px-1.5 py-0.5 rounded ${isPending ? cfg.solidClass : 'bg-emerald-100 text-emerald-700'}">
-                                ${isPending ? cfg.label : '已完成'}
-                            </span>
-                        </label>
+                            </label>
+                            <button type="button"
+                                    onclick="applyExtraStampToStudent('${st.id}', '${ex.id}')"
+                                    title="點擊直接蓋章"
+                                    class="shrink-0 text-[10px] font-bold px-2 py-0.5 rounded transition active:scale-95 ${cfg.solidClass}">
+                                ${cfg.label}
+                            </button>
+                        </div>
                     `;
                 }).join('');
 
@@ -1405,7 +1441,7 @@
                             </span>
                         </div>
                         <div class="space-y-1.5">
-                            ${checkboxesHtml || '<p class="text-[11px] text-slate-400">目前無其他作業圖卡</p>'}
+                            ${rowsHtml || '<p class="text-[11px] text-slate-400">目前無其他作業圖卡</p>'}
                         </div>
                     </div>
                 `;
@@ -1413,6 +1449,25 @@
 
             lucide.createIcons();
         }
+
+        window.applyExtraStampToStudent = function(studentId, exId) {
+            const dayRec = ensureDateRecord(selectedDate);
+            const stRec = dayRec.studentRecords[studentId];
+            if (!stRec) return;
+            if (!stRec.extraHwStatus) stRec.extraHwStatus = {};
+
+            if (activeExtraStampMode === 'cycle') {
+                const currentKey = normalizeStatus(stRec.extraHwStatus[exId]);
+                const nextIdx = (STATUS_KEYS.indexOf(currentKey) + 1) % STATUS_KEYS.length;
+                stRec.extraHwStatus[exId] = STATUS_KEYS[nextIdx];
+            } else {
+                const currentKey = normalizeStatus(stRec.extraHwStatus[exId]);
+                stRec.extraHwStatus[exId] = (currentKey === activeExtraStampMode) ? 'submitted' : activeExtraStampMode;
+            }
+
+            saveState();
+            renderExtraBoardPanel();
+        };
 
         window.addExtraHomeworkCard = function() {
             const input = document.getElementById('newExtraCardInput');
@@ -1501,7 +1556,9 @@
             handleExtraStudentDragLeave(studentId);
             if (!draggedExtraCardId) return;
 
-            const targetStatus = document.getElementById('extraDragStatusSelect')?.value || 'correction';
+            const targetStatus = (activeExtraStampMode && activeExtraStampMode !== 'cycle')
+                ? activeExtraStampMode
+                : 'incomplete';
             const dayRec = ensureDateRecord(selectedDate);
             const stRec = dayRec.studentRecords[studentId];
             const student = CLASS_STUDENTS.find(s => s.id === studentId);
@@ -1523,7 +1580,9 @@
             if (!stRec) return;
 
             if (!stRec.extraHwStatus) stRec.extraHwStatus = {};
-            const chosenStatus = document.getElementById('extraDragStatusSelect')?.value || 'correction';
+            const chosenStatus = (activeExtraStampMode && activeExtraStampMode !== 'cycle')
+                ? activeExtraStampMode
+                : 'incomplete';
             stRec.extraHwStatus[exId] = isChecked ? chosenStatus : 'submitted';
             saveState();
             renderExtraBoardPanel();
