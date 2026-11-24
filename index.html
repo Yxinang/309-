@@ -22,8 +22,9 @@
             min-height: 100dvh;
             margin: 0;
             padding-top: env(safe-area-inset-top);
-            padding-left: env(safe-area-inset-left);
-            padding-right: env(safe-area-inset-right);
+            padding-left: max(0.75rem, env(safe-area-inset-left));
+            padding-right: max(0.75rem, env(safe-area-inset-right));
+            padding-bottom: calc(env(safe-area-inset-bottom) + 6.5rem);
             overflow-x: clip !important;
             overflow-y: auto !important;
             -webkit-overflow-scrolling: touch;
@@ -54,28 +55,28 @@
         }
     </style>
 </head>
-<body class="text-slate-700 min-h-screen pb-16">
+<body class="text-slate-700 min-h-screen">
 
     <!-- 頂部導覽列 -->
-    <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/80 px-4 py-3">
+    <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/80 px-3.5 sm:px-4 py-3 -mx-3 sm:mx-0">
         <div class="max-w-4xl mx-auto flex justify-between items-center gap-2 min-w-0">
-            <div class="flex items-center gap-2.5 min-w-0">
-                <div class="w-9 h-9 rounded-xl bg-teal-600 text-white flex items-center justify-center font-bold shadow-sm shrink-0">
+            <div class="flex items-center gap-2 sm:gap-2.5 min-w-0">
+                <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-teal-600 text-white flex items-center justify-center text-xs sm:text-sm font-bold shadow-sm shrink-0">
                     309
                 </div>
                 <div class="min-w-0">
-                    <div class="flex items-center gap-2 flex-wrap">
-                        <h1 class="text-base md:text-lg font-bold text-slate-800 leading-tight">崇明國小 309班</h1>
+                    <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                        <h1 class="text-sm sm:text-base md:text-lg font-bold text-slate-800 leading-tight">崇明國小 309班</h1>
                         <button type="button" onclick="showSyncDiagnostic()" id="syncIndicator" class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
                             <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
                             連線中
                         </button>
                     </div>
-                    <p id="headerDate" class="text-xs text-slate-400">載入日期中...</p>
+                    <p id="headerDate" class="text-[11px] sm:text-xs text-slate-400">載入日期中...</p>
                 </div>
             </div>
             
-            <button type="button" id="logoutBtn" onclick="logout()" class="hidden shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 hover:bg-rose-50 hover:text-rose-600 text-slate-600 transition">
+            <button type="button" id="logoutBtn" onclick="logout()" class="hidden shrink-0 flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 hover:bg-rose-50 hover:text-rose-600 text-slate-600 transition">
                 <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
                 <span>登出</span>
             </button>
@@ -83,7 +84,7 @@
     </header>
 
     <!-- ==================== 1. 專屬登入驗證介面 ==================== -->
-    <main id="loginView" class="max-w-md mx-auto px-4 pt-8 md:pt-14 animate-pop">
+    <main id="loginView" class="max-w-md mx-auto px-1 sm:px-4 pt-8 md:pt-14 animate-pop">
         <div class="bg-white rounded-3xl p-6 md:p-8 card-shadow border border-slate-100 space-y-6">
             <div class="text-center space-y-1.5">
                 <div class="w-12 h-12 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center mx-auto mb-2">
@@ -147,7 +148,7 @@
     </main>
 
     <!-- ==================== 2. 家長專屬視角 ==================== -->
-    <main id="parentView" class="hidden max-w-4xl mx-auto p-4 md:p-6 space-y-4 animate-pop">
+    <main id="parentView" class="hidden max-w-4xl mx-auto px-1 py-4 sm:p-4 md:p-6 space-y-4 animate-pop">
         
         <section class="bg-white rounded-2xl p-3.5 md:p-4 card-shadow border border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div class="flex items-center gap-2 text-teal-700 font-bold text-sm">
@@ -202,7 +203,7 @@
                         <span id="parentMsgCountBadge" class="text-[11px] font-bold text-slate-400">0 則紀錄</span>
                     </div>
 
-                    <div id="parentMessageHistory" class="max-h-60 overflow-y-auto space-y-2.5 bg-slate-50/80 p-3 rounded-xl border border-slate-100">
+                    <div id="parentMessageHistory" class="max-h-56 overflow-y-auto space-y-2.5 bg-slate-50/80 p-3 rounded-xl border border-slate-100">
                     </div>
 
                     <div class="space-y-2 pt-1">
@@ -232,7 +233,8 @@
                     </div>
                 </section>
 
-                <section class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-slate-100 space-y-3">
+                <!-- 平日作業：靛藍系（Indigo） -->
+                <section class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-indigo-100 space-y-3">
                     <div class="flex justify-between items-center gap-2">
                         <div class="flex items-center gap-2 text-indigo-700 font-bold text-sm">
                             <div class="p-1.5 bg-indigo-50 rounded-lg"><i data-lucide="clipboard-check" class="w-4 h-4"></i></div>
@@ -244,13 +246,14 @@
                     <div id="parentCorrectionStats" class="pt-3 border-t border-slate-100 space-y-2"></div>
                 </section>
 
-                <section class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-violet-100 space-y-3">
+                <!-- 當日其他作業：珊瑚粉紅系（Rose），與平日作業靛藍系明確區分 -->
+                <section class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-rose-200 space-y-3">
                     <div class="flex items-center justify-between gap-2 flex-wrap">
-                        <div class="flex items-center gap-2 text-violet-700 font-bold text-sm">
-                            <div class="p-1.5 bg-violet-50 rounded-lg"><i data-lucide="layers" class="w-4 h-4"></i></div>
+                        <div class="flex items-center gap-2 text-rose-600 font-bold text-sm">
+                            <div class="p-1.5 bg-rose-50 rounded-lg"><i data-lucide="layers" class="w-4 h-4"></i></div>
                             <span>當日其他作業紀錄</span>
                         </div>
-                        <span id="parentExtraHwBadge" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-violet-50 text-violet-700 border border-violet-200">
+                        <span id="parentExtraHwBadge" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-600 border border-rose-200">
                             0 項需處理
                         </span>
                     </div>
@@ -289,7 +292,7 @@
     </main>
 
     <!-- ==================== 3. 老師管理區介面 ==================== -->
-    <main id="teacherView" class="hidden max-w-4xl mx-auto p-4 md:p-6 space-y-4 animate-pop">
+    <main id="teacherView" class="hidden max-w-4xl mx-auto px-1 py-4 sm:p-4 md:p-6 space-y-4 animate-pop">
         
         <section class="bg-white rounded-2xl p-3.5 md:p-4 card-shadow border border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div class="flex items-center gap-2 text-indigo-700 font-bold text-sm">
@@ -349,17 +352,17 @@
             </div>
         </div>
 
-        <!-- TAB 2: 其他作業點名（每日獨立設定） -->
+        <!-- TAB 2: 其他作業點名（每日獨立設定・珊瑚粉紅系） -->
         <div id="panel-extraBoard" class="hidden space-y-4">
-            <div class="bg-white rounded-2xl p-4 md:p-6 card-shadow border border-violet-100 space-y-4">
+            <div class="bg-white rounded-2xl p-4 md:p-6 card-shadow border border-rose-200 space-y-4">
                 <div class="flex justify-between items-center flex-wrap gap-2">
                     <h2 class="font-bold text-slate-800 text-sm md:text-base flex items-center gap-1.5 flex-wrap">
-                        <i data-lucide="layers" class="w-4 h-4 text-violet-600"></i>
-                        <span><span id="extraBoardDateLabel" class="text-violet-700"></span> 其他作業一鍵快速點名</span>
+                        <i data-lucide="layers" class="w-4 h-4 text-rose-600"></i>
+                        <span><span id="extraBoardDateLabel" class="text-rose-600"></span> 其他作業一鍵快速點名</span>
                     </h2>
                     <div class="flex items-center gap-2 flex-wrap">
-                        <span id="extraHwStats" class="text-xs font-bold text-violet-700 bg-violet-50 px-3 py-1 rounded-full"></span>
-                        <button type="button" onclick="clearAllExtraHomeworkCards()" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-bold bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 transition">
+                        <span id="extraHwStats" class="text-xs font-bold text-rose-700 bg-rose-50 border border-rose-200 px-3 py-1 rounded-full"></span>
+                        <button type="button" onclick="clearAllExtraHomeworkCards()" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-bold bg-slate-100 hover:bg-rose-100 text-slate-600 hover:text-rose-700 border border-slate-200 transition">
                             <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                             <span>清空當日其他作業</span>
                         </button>
@@ -367,8 +370,8 @@
                 </div>
 
                 <div class="flex gap-2">
-                    <input type="text" id="newExtraCardInput" placeholder="新增當日其他作業圖卡名稱（例如：考卷訂正、回條）..." onkeydown="if(event.key==='Enter') addExtraHomeworkCard()" class="flex-1 min-w-0 px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500">
-                    <button type="button" onclick="addExtraHomeworkCard()" class="shrink-0 px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-xl text-xs font-bold transition">
+                    <input type="text" id="newExtraCardInput" placeholder="新增當日其他作業圖卡名稱（例如：考卷訂正、回條）..." onkeydown="if(event.key==='Enter') addExtraHomeworkCard()" class="flex-1 min-w-0 px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-500">
+                    <button type="button" onclick="addExtraHomeworkCard()" class="shrink-0 px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition">
                         新增至當日
                     </button>
                 </div>
@@ -378,7 +381,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label for="extraHwSelect" class="block text-xs font-medium text-slate-400 mb-1">1. 選擇當日其他作業圖卡</label>
-                        <select id="extraHwSelect" onchange="renderExtraHomeworkGrid()" class="w-full bg-slate-50 border border-slate-200 text-slate-800 font-bold text-sm rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-violet-500">
+                        <select id="extraHwSelect" onchange="renderExtraHomeworkGrid()" class="w-full bg-slate-50 border border-slate-200 text-slate-800 font-bold text-sm rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-rose-500">
                         </select>
                     </div>
 
@@ -401,9 +404,9 @@
             </div>
         </div>
 
-        <!-- TAB 3: 平日回家作業批次快速點名 -->
+        <!-- TAB 3: 平日回家作業批次快速點名（靛藍系） -->
         <div id="panel-batchHw" class="hidden space-y-4">
-            <div class="bg-white rounded-2xl p-4 md:p-6 card-shadow border border-slate-100 space-y-4">
+            <div class="bg-white rounded-2xl p-4 md:p-6 card-shadow border border-indigo-100 space-y-4">
                 <div class="flex justify-between items-center flex-wrap gap-2">
                     <h2 class="font-bold text-slate-800 text-sm md:text-base flex items-center gap-1.5 flex-wrap">
                         <i data-lucide="zap" class="w-4 h-4 text-indigo-600"></i>
@@ -756,7 +759,6 @@
             return `${m}/${d} ${hh}:${mm}`;
         }
 
-        // 每天各自獨立紀錄，其他作業與平日作業都只看當日設定
         function createDefaultDayRecord(dateStr) {
             const studentRecords = {};
             CLASS_STUDENTS.forEach(st => {
@@ -877,7 +879,6 @@
         let isCloudReady = false;
         let lastSyncDiagnostic = "正在嘗試連線至 Firebase Realtime Database...";
 
-        // 每天各自獨立的其他作業清單，不自動帶入其他日期或全域舊卡片
         function getDayExtraCards(dayRec) {
             if (!Array.isArray(dayRec.extraCards)) {
                 dayRec.extraCards = [];
@@ -918,7 +919,6 @@
             return rec;
         }
 
-        // 統計該生在「所有有資料的天數」中，平日作業與其他作業尚未繳交／未完成的項目
         function collectAllUnpaidHomeworkAcrossDates(studentId) {
             const results = [];
             const recordsByDate = state.recordsByDate || {};
@@ -956,7 +956,7 @@
                         results.push({
                             date: dateKey,
                             category: '其他作業',
-                            categoryBadgeClass: 'bg-violet-50 text-violet-700 border border-violet-200',
+                            categoryBadgeClass: 'bg-rose-50 text-rose-600 border border-rose-200',
                             title: ex.title,
                             statusKey: statusKey,
                             label: cfg.label,
@@ -1254,7 +1254,6 @@
 
             renderParentMessageHistory(student.id);
 
-            // 1. 欠缺作業區：統計所有有資料天數中的「平日作業」與「其他作業」未繳交／未完成項目
             const allUnpaidItems = collectAllUnpaidHomeworkAcrossDates(student.id);
             const missingBadge = document.getElementById('parentMissingBadge');
             const missingListEl = document.getElementById('parentMissingHomeworkList');
@@ -1288,7 +1287,6 @@
                 `).join('');
             }
 
-            // 2. 當日平日回家作業狀況
             const hwContainer = document.getElementById('parentHomeworkList');
             hwContainer.innerHTML = '';
             let attentionCount = 0;
@@ -1317,7 +1315,6 @@
                 });
             }
 
-            // 3. 當日其他作業紀錄：只看當日設定，且登記為「已繳交」（submitted）者家長端不再顯示
             const extraListEl = document.getElementById('parentExtraHomeworkList');
             const extraBadgeEl = document.getElementById('parentExtraHwBadge');
             const dayExtraCards = getDayExtraCards(dayRec);
@@ -1338,10 +1335,10 @@
                 extraBadgeEl.innerText = "無其他待辦";
                 extraListEl.innerHTML = `<p class="text-xs text-slate-400 bg-slate-50 p-3 rounded-xl">目前無需顯示的其他作業項目。</p>`;
             } else {
-                extraBadgeEl.className = "text-xs font-bold px-2.5 py-0.5 rounded-full bg-violet-100 text-violet-700 border border-violet-200";
+                extraBadgeEl.className = "text-xs font-bold px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-600 border border-rose-200";
                 extraBadgeEl.innerText = `${visibleExtraItems.length} 項需處理`;
                 extraListEl.innerHTML = visibleExtraItems.map(item => `
-                    <div class="p-2.5 rounded-xl bg-violet-50/50 border border-violet-100 flex items-center justify-between gap-2">
+                    <div class="p-2.5 rounded-xl bg-rose-50/55 border border-rose-200/80 flex items-center justify-between gap-2">
                         <span class="text-sm font-bold text-slate-800 min-w-0 break-words">${escapeHtml(item.title)}</span>
                         <span class="shrink-0 text-xs font-bold px-2.5 py-1 rounded-lg ${item.cfg.badgeClass}">${item.cfg.label}</span>
                     </div>
@@ -1597,9 +1594,9 @@
             } else {
                 dayExtraCards.forEach(ex => {
                     tagListEl.innerHTML += `
-                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-violet-50 text-violet-800 border border-violet-200">
+                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200">
                             <button type="button" onclick="selectExtraHomeworkFromTag('${ex.id}')">${escapeHtml(ex.title)}</button>
-                            <button type="button" onclick="deleteExtraHomeworkCard('${ex.id}')" class="text-violet-400 hover:text-rose-600" title="刪除">×</button>
+                            <button type="button" onclick="deleteExtraHomeworkCard('${ex.id}')" class="text-rose-400 hover:text-rose-700" title="刪除">×</button>
                         </span>
                     `;
                 });
@@ -2077,7 +2074,7 @@
                             <span class="font-bold text-sm text-slate-800">${d} ${d === getTodayStr() ? '(今日)' : ''}</span>
                             <span class="text-[11px] font-bold text-teal-700 bg-teal-100/80 px-2 py-0.5 rounded-full">已簽 ${confirmedNum}/25</span>
                         </div>
-                        <div class="text-[11px] text-indigo-600 font-medium mb-0.5">平日作業 ${hwCount} 項・其他作業 ${exCount} 項</div>
+                        <div class="text-[11px] text-indigo-600 font-medium mb-0.5">平日作業 ${hwCount} 項・<span class="text-rose-600">其他作業 ${exCount} 項</span></div>
                         <p class="text-xs text-slate-500 truncate">${escapeHtml(rec.dailyNote || '無聯絡事項')}</p>
                     </button>
                 `;
