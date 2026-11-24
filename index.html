@@ -217,17 +217,18 @@
 
             <div class="md:col-span-7 space-y-4 min-w-0">
 
+                <!-- 跨有資料天數彙整：平日作業 + 其他作業未繳交／未完成提醒 -->
                 <section id="parentMissingHomeworkCard" class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-rose-100 space-y-3">
                     <div class="flex items-center justify-between gap-2 flex-wrap">
                         <div class="flex items-center gap-2 text-rose-700 font-bold text-sm">
                             <div class="p-1.5 bg-rose-50 rounded-lg"><i data-lucide="alert-circle" class="w-4 h-4"></i></div>
-                            <span>欠缺作業區（未完成／欠缺／遺失提醒）</span>
+                            <span>欠缺作業區（歷日平日／其他作業未繳交提醒）</span>
                         </div>
                         <span id="parentMissingBadge" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
                             無欠缺項目
                         </span>
                     </div>
-                    <div id="parentMissingHomeworkList" class="space-y-2">
+                    <div id="parentMissingHomeworkList" class="space-y-2 max-h-80 overflow-y-auto pr-0.5">
                     </div>
                 </section>
 
@@ -897,6 +898,7 @@
             if (!Array.isArray(rec.homeworkList)) rec.homeworkList = [];
             if (!Array.isArray(rec.extraCards)) rec.extraCards = [];
             if (!rec.studentRecords) rec.studentRecords = {};
+            getDayExtraCards(rec);
 
             CLASS_STUDENTS.forEach(st => {
                 if (!rec.studentRecords[st.id]) {
@@ -914,6 +916,59 @@
                 }
             });
             return rec;
+        }
+
+        // 統計該生在「所有有資料的天數」中，平日作業與其他作業尚未繳交／未完成的項目
+        function collectAllUnpaidHomeworkAcrossDates(studentId) {
+            const results = [];
+            const recordsByDate = state.recordsByDate || {};
+            const sortedDates = Object.keys(recordsByDate).sort((a, b) => b.localeCompare(a));
+
+            sortedDates.forEach(dateKey => {
+                const rec = recordsByDate[dateKey];
+                if (!rec || !rec.studentRecords || !rec.studentRecords[studentId]) return;
+                const stRec = rec.studentRecords[studentId];
+
+                const dayHwList = Array.isArray(rec.homeworkList) ? rec.homeworkList : [];
+                dayHwList.forEach(hw => {
+                    const statusKey = normalizeStatus((stRec.hwStatus || {})[hw.id]);
+                    const cfg = HW_STATUS_CONFIG[statusKey];
+                    if (!cfg.isCompleted) {
+                        results.push({
+                            date: dateKey,
+                            category: '平日作業',
+                            categoryBadgeClass: 'bg-indigo-50 text-indigo-700 border border-indigo-200',
+                            title: hw.title,
+                            statusKey: statusKey,
+                            label: cfg.label,
+                            hint: cfg.parentHint,
+                            badgeClass: cfg.badgeClass,
+                            icon: cfg.icon
+                        });
+                    }
+                });
+
+                const dayExtraList = Array.isArray(rec.extraCards) ? rec.extraCards : [];
+                dayExtraList.forEach(ex => {
+                    const statusKey = normalizeStatus((stRec.extraHwStatus || {})[ex.id]);
+                    const cfg = HW_STATUS_CONFIG[statusKey];
+                    if (!cfg.isCompleted) {
+                        results.push({
+                            date: dateKey,
+                            category: '其他作業',
+                            categoryBadgeClass: 'bg-violet-50 text-violet-700 border border-violet-200',
+                            title: ex.title,
+                            statusKey: statusKey,
+                            label: cfg.label,
+                            hint: cfg.parentHint,
+                            badgeClass: cfg.badgeClass,
+                            icon: cfg.icon
+                        });
+                    }
+                });
+            });
+
+            return results;
         }
 
         function getStudentMessages(studentId) {
@@ -1199,12 +1254,45 @@
 
             renderParentMessageHistory(student.id);
 
-            // 1. 只顯示當日設定好的平日回家作業
+            // 1. 欠缺作業區：統計所有有資料天數中的「平日作業」與「其他作業」未繳交／未完成項目
+            const allUnpaidItems = collectAllUnpaidHomeworkAcrossDates(student.id);
+            const missingBadge = document.getElementById('parentMissingBadge');
+            const missingListEl = document.getElementById('parentMissingHomeworkList');
+
+            if (allUnpaidItems.length === 0) {
+                missingBadge.className = "text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200";
+                missingBadge.innerText = "無欠缺項目";
+                missingListEl.innerHTML = `
+                    <div class="p-3 rounded-xl bg-emerald-50/60 border border-emerald-100 text-xs text-emerald-800 flex items-center gap-2">
+                        <i data-lucide="sparkles" class="w-4 h-4 text-emerald-600 shrink-0"></i>
+                        <span>目前已建檔日期的平日作業與其他作業皆已繳交或完成，沒有欠缺項目！</span>
+                    </div>
+                `;
+            } else {
+                missingBadge.className = "text-xs font-bold px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-700 border border-rose-200";
+                missingBadge.innerText = `共 ${allUnpaidItems.length} 項未繳交`;
+                missingListEl.innerHTML = allUnpaidItems.map(item => `
+                    <div class="p-3 rounded-xl bg-rose-50/45 border border-rose-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div class="min-w-0">
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-white text-slate-600 border border-slate-200">${escapeHtml(item.date)}</span>
+                                <span class="text-[11px] font-bold px-2 py-0.5 rounded ${item.categoryBadgeClass}">${escapeHtml(item.category)}</span>
+                                <span class="font-bold text-sm text-slate-800 break-words">${escapeHtml(item.title)}</span>
+                            </div>
+                            <div class="text-xs text-slate-500 mt-1 break-words">${escapeHtml(item.hint)}</div>
+                        </div>
+                        <span class="self-start sm:self-center shrink-0 inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-lg ${item.badgeClass}">
+                            <i data-lucide="${item.icon}" class="w-3.5 h-3.5"></i>${item.label}
+                        </span>
+                    </div>
+                `).join('');
+            }
+
+            // 2. 當日平日回家作業狀況
             const hwContainer = document.getElementById('parentHomeworkList');
             hwContainer.innerHTML = '';
             let attentionCount = 0;
             const correctionItems = [];
-            const missingOrDeficientItems = [];
             const dayHomeworkList = Array.isArray(dayRec.homeworkList) ? dayRec.homeworkList : [];
 
             if (dayHomeworkList.length === 0) {
@@ -1215,14 +1303,6 @@
                     const cfg = HW_STATUS_CONFIG[statusKey];
                     if (!cfg.isCompleted) {
                         attentionCount++;
-                        missingOrDeficientItems.push({
-                            title: hw.title,
-                            statusKey: statusKey,
-                            label: cfg.label,
-                            hint: cfg.parentHint,
-                            badgeClass: cfg.badgeClass,
-                            icon: cfg.icon
-                        });
                     }
                     if (statusKey === 'correction') correctionItems.push(hw.title);
 
@@ -1237,34 +1317,7 @@
                 });
             }
 
-            const missingBadge = document.getElementById('parentMissingBadge');
-            const missingListEl = document.getElementById('parentMissingHomeworkList');
-            if (missingOrDeficientItems.length === 0) {
-                missingBadge.className = "text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200";
-                missingBadge.innerText = "無欠缺項目";
-                missingListEl.innerHTML = `
-                    <div class="p-3 rounded-xl bg-emerald-50/60 border border-emerald-100 text-xs text-emerald-800 flex items-center gap-2">
-                        <i data-lucide="sparkles" class="w-4 h-4 text-emerald-600 shrink-0"></i>
-                        <span>今日平日回家作業皆已繳交或完成，沒有欠缺或遺失項目！</span>
-                    </div>
-                `;
-            } else {
-                missingBadge.className = "text-xs font-bold px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-700 border border-rose-200";
-                missingBadge.innerText = `${missingOrDeficientItems.length} 項待處理`;
-                missingListEl.innerHTML = missingOrDeficientItems.map(item => `
-                    <div class="p-3 rounded-xl bg-rose-50/45 border border-rose-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                        <div class="min-w-0">
-                            <div class="font-bold text-sm text-slate-800 break-words">${escapeHtml(item.title)}</div>
-                            <div class="text-xs text-slate-500 mt-0.5 break-words">${escapeHtml(item.hint)}</div>
-                        </div>
-                        <span class="self-start sm:self-center shrink-0 inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-lg ${item.badgeClass}">
-                            <i data-lucide="${item.icon}" class="w-3.5 h-3.5"></i>${item.label}
-                        </span>
-                    </div>
-                `).join('');
-            }
-
-            // 2. 其他作業區：只看當日設定，且登記為「已繳交」（submitted）者家長端不再顯示
+            // 3. 當日其他作業紀錄：只看當日設定，且登記為「已繳交」（submitted）者家長端不再顯示
             const extraListEl = document.getElementById('parentExtraHomeworkList');
             const extraBadgeEl = document.getElementById('parentExtraHwBadge');
             const dayExtraCards = getDayExtraCards(dayRec);
@@ -1302,7 +1355,7 @@
                         <div class="flex items-center justify-between">
                             <span class="text-xs font-bold text-amber-800 flex items-center gap-1.5">
                                 <i data-lucide="file-edit" class="w-3.5 h-3.5"></i>
-                                訂正統計：共 ${correctionItems.length} 項需訂正
+                                當日訂正統計：共 ${correctionItems.length} 項需訂正
                             </span>
                             <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-200/70 text-amber-900">
                                 ${correctionItems.length} 項
@@ -1318,7 +1371,7 @@
                     <div class="bg-slate-50 border border-slate-100 rounded-xl px-3 py-2 flex items-center justify-between text-xs text-slate-500">
                         <span class="flex items-center gap-1.5 font-medium">
                             <i data-lucide="file-check-2" class="w-3.5 h-3.5 text-emerald-600"></i>
-                            訂正統計：目前無需訂正項目
+                            當日訂正統計：目前無需訂正項目
                         </span>
                         <span class="font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">0 項</span>
                     </div>
