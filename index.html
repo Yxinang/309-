@@ -148,112 +148,92 @@
     </main>
 
     <!-- ==================== 2. 家長專屬視角 ==================== -->
-    <main id="parentView" class="hidden max-w-4xl mx-auto px-1 py-4 sm:p-4 md:p-6 space-y-4 animate-pop">
-        
-        <section class="bg-white rounded-2xl p-3.5 md:p-4 card-shadow border border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div class="flex items-center gap-2 text-teal-700 font-bold text-sm">
-                <div class="p-1.5 bg-teal-50 rounded-lg"><i data-lucide="calendar-days" class="w-4 h-4"></i></div>
-                <span>每日聯絡簿保留區</span>
-            </div>
-            <div class="flex items-center gap-2">
-                <select id="parentDateSelect" onchange="changeSelectedDate(this.value)" class="flex-1 sm:w-52 bg-slate-50 border border-slate-200 text-slate-800 font-bold text-xs md:text-sm rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500">
-                </select>
-                <button type="button" onclick="jumpToToday()" class="shrink-0 px-3 py-2 bg-teal-50 hover:bg-teal-100 text-teal-700 rounded-xl text-xs font-bold transition">
-                    回到今日
-                </button>
-            </div>
-        </section>
+    <main id="parentView" class="hidden max-w-4xl mx-auto px-1 py-3.5 sm:p-4 md:p-6 space-y-3.5 sm:space-y-4 animate-pop">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-3.5 sm:gap-4 md:gap-6 items-start">
 
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6 items-start">
-            
-            <div class="md:col-span-5 space-y-4 min-w-0">
-                <section class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-slate-100">
-                    <div class="flex justify-between items-center gap-3">
+            <!-- 主欄：手機版依 1～8 順序排列 -->
+            <div class="md:col-span-7 flex flex-col space-y-3.5 sm:space-y-4 min-w-0">
+
+                <!-- 1. 姓名 -->
+                <section class="order-1 bg-white rounded-2xl p-3.5 sm:p-5 card-shadow border border-slate-100">
+                    <div class="flex justify-between items-center gap-2.5">
                         <div class="flex items-center gap-3 min-w-0">
-                            <div id="parentStudentSeatBadge" class="w-12 h-12 rounded-2xl bg-teal-50 text-teal-700 font-bold text-lg flex items-center justify-center border border-teal-100 shrink-0">
+                            <div id="parentStudentSeatBadge" class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-teal-50 text-teal-700 font-bold text-base sm:text-lg flex items-center justify-center border border-teal-100 shrink-0">
                                 01
                             </div>
                             <div class="min-w-0">
-                                <span id="parentStudentCodeLabel" class="text-[11px] font-medium text-slate-400">學號 113056</span>
-                                <h2 id="parentStudentName" class="text-lg md:text-xl font-bold text-slate-800 truncate">黃琨翔</h2>
+                                <span id="parentStudentCodeLabel" class="block text-[11px] font-medium text-slate-400 truncate">學號 113056</span>
+                                <h2 id="parentStudentName" class="text-base sm:text-lg md:text-xl font-bold text-slate-800 truncate">黃琨翔</h2>
                             </div>
                         </div>
                         <div id="parentStatusBadge" class="text-right shrink-0"></div>
                     </div>
                 </section>
 
-                <section class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-slate-100 space-y-2.5">
-                    <div class="flex items-center justify-between gap-2">
-                        <div class="flex items-center gap-2 text-teal-700 font-bold text-sm">
-                            <div class="p-1.5 bg-teal-50 rounded-lg"><i data-lucide="book-open" class="w-4 h-4"></i></div>
-                            <span>當日聯絡事項與叮嚀</span>
-                        </div>
-                        <span id="parentNoteDateBadge" class="text-[11px] font-bold text-slate-400"></span>
+                <!-- 2. 時間（日期選擇與保留區） -->
+                <section class="order-2 bg-white rounded-2xl p-3.5 sm:p-4 card-shadow border border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3">
+                    <div class="flex items-center gap-2 text-teal-700 font-bold text-xs sm:text-sm min-w-0">
+                        <div class="p-1.5 bg-teal-50 rounded-lg shrink-0"><i data-lucide="calendar-days" class="w-4 h-4"></i></div>
+                        <span class="truncate">日期／每日聯絡簿保留區</span>
                     </div>
-                    <div id="parentDailyNote" class="text-sm text-slate-600 leading-relaxed bg-slate-50/80 p-3.5 rounded-xl whitespace-pre-line break-words">
-                    </div>
-                </section>
-
-                <section class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-slate-100 space-y-3">
-                    <div class="flex items-center justify-between gap-2">
-                        <div class="flex items-center gap-2 text-cyan-700 font-bold text-sm">
-                            <div class="p-1.5 bg-cyan-50 rounded-lg"><i data-lucide="message-square-heart" class="w-4 h-4"></i></div>
-                            <span>親師交流留言板</span>
-                        </div>
-                        <span id="parentMsgCountBadge" class="text-[11px] font-bold text-slate-400">0 則紀錄</span>
-                    </div>
-
-                    <div id="parentMessageHistory" class="max-h-56 overflow-y-auto space-y-2.5 bg-slate-50/80 p-3 rounded-xl border border-slate-100">
-                    </div>
-
-                    <div class="space-y-2 pt-1">
-                        <textarea id="parentNewMessageInput" rows="2" placeholder="有什麼想告訴老師的嗎？隨時可留言..." class="w-full p-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500"></textarea>
-                        <button type="button" onclick="sendParentMessage()" class="w-full py-2.5 bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl text-xs md:text-sm font-bold shadow-sm transition flex items-center justify-center gap-1.5">
-                            <i data-lucide="send" class="w-3.5 h-3.5"></i>
-                            送出留言給導師
+                    <div class="flex items-center gap-2 min-w-0">
+                        <select id="parentDateSelect" onchange="changeSelectedDate(this.value)" class="flex-1 min-w-0 sm:w-48 bg-slate-50 border border-slate-200 text-slate-800 font-bold text-xs sm:text-sm rounded-xl px-2.5 sm:px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500">
+                        </select>
+                        <button type="button" onclick="jumpToToday()" class="shrink-0 px-3 py-2 bg-teal-50 hover:bg-teal-100 text-teal-700 rounded-xl text-xs font-bold transition">
+                            回到今日
                         </button>
                     </div>
                 </section>
-            </div>
 
-            <div class="md:col-span-7 space-y-4 min-w-0">
-
-                <!-- 跨有資料天數彙整：平日作業 + 其他作業未繳交／未完成提醒 -->
-                <section id="parentMissingHomeworkCard" class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-rose-100 space-y-3">
-                    <div class="flex items-center justify-between gap-2 flex-wrap">
-                        <div class="flex items-center gap-2 text-rose-700 font-bold text-sm">
-                            <div class="p-1.5 bg-rose-50 rounded-lg"><i data-lucide="alert-circle" class="w-4 h-4"></i></div>
-                            <span>欠缺作業區（歷日平日／其他作業未繳交提醒）</span>
+                <!-- 3. 當日聯絡簿 -->
+                <section class="order-3 bg-white rounded-2xl p-3.5 sm:p-5 card-shadow border border-slate-100 space-y-2">
+                    <div class="flex items-center justify-between gap-2">
+                        <div class="flex items-center gap-2 text-teal-700 font-bold text-xs sm:text-sm min-w-0">
+                            <div class="p-1.5 bg-teal-50 rounded-lg shrink-0"><i data-lucide="book-open" class="w-4 h-4"></i></div>
+                            <span class="truncate">當日聯絡簿</span>
                         </div>
-                        <span id="parentMissingBadge" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        <span id="parentNoteDateBadge" class="text-[11px] font-bold text-slate-400 shrink-0"></span>
+                    </div>
+                    <div id="parentDailyNote" class="text-xs sm:text-sm text-slate-600 leading-relaxed bg-slate-50/80 p-3 sm:p-3.5 rounded-xl whitespace-pre-line break-words">
+                    </div>
+                </section>
+
+                <!-- 4. 欠繳作業（僅統計截至今日標準時間的紀錄，不含未來日期） -->
+                <section id="parentMissingHomeworkCard" class="order-4 bg-white rounded-2xl p-3.5 sm:p-5 card-shadow border border-rose-100 space-y-2.5">
+                    <div class="flex items-center justify-between gap-2 flex-wrap">
+                        <div class="flex items-center gap-2 text-rose-700 font-bold text-xs sm:text-sm min-w-0">
+                            <div class="p-1.5 bg-rose-50 rounded-lg shrink-0"><i data-lucide="alert-circle" class="w-4 h-4"></i></div>
+                            <span class="break-words">欠繳作業</span>
+                        </div>
+                        <span id="parentMissingBadge" class="text-[11px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0">
                             無欠缺項目
                         </span>
                     </div>
-                    <div id="parentMissingHomeworkList" class="space-y-2 max-h-80 overflow-y-auto pr-0.5">
+                    <div id="parentMissingHomeworkList" class="space-y-2 max-h-72 sm:max-h-80 overflow-y-auto pr-0.5">
                     </div>
                 </section>
 
-                <!-- 平日作業：靛藍系（Indigo） -->
-                <section class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-indigo-100 space-y-3">
+                <!-- 5. 平日作業（靛藍系） -->
+                <section class="order-5 bg-white rounded-2xl p-3.5 sm:p-5 card-shadow border border-indigo-100 space-y-2.5">
                     <div class="flex justify-between items-center gap-2">
-                        <div class="flex items-center gap-2 text-indigo-700 font-bold text-sm">
-                            <div class="p-1.5 bg-indigo-50 rounded-lg"><i data-lucide="clipboard-check" class="w-4 h-4"></i></div>
-                            <span>當日平日回家作業狀況</span>
+                        <div class="flex items-center gap-2 text-indigo-700 font-bold text-xs sm:text-sm min-w-0">
+                            <div class="p-1.5 bg-indigo-50 rounded-lg shrink-0"><i data-lucide="clipboard-check" class="w-4 h-4"></i></div>
+                            <span class="truncate">平日作業</span>
                         </div>
-                        <span id="hwSummaryTag" class="text-xs font-medium px-2.5 py-0.5 rounded-full"></span>
+                        <span id="hwSummaryTag" class="text-[11px] sm:text-xs font-medium px-2.5 py-0.5 rounded-full shrink-0"></span>
                     </div>
                     <div id="parentHomeworkList" class="divide-y divide-slate-100"></div>
-                    <div id="parentCorrectionStats" class="pt-3 border-t border-slate-100 space-y-2"></div>
+                    <div id="parentCorrectionStats" class="pt-2.5 border-t border-slate-100 space-y-2"></div>
                 </section>
 
-                <!-- 當日其他作業：咖啡色系（Amber Brown），與平日作業靛藍系明確區分 -->
-                <section class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-amber-300/80 space-y-3">
+                <!-- 6. 其他作業（咖啡色系） -->
+                <section class="order-6 bg-white rounded-2xl p-3.5 sm:p-5 card-shadow border border-amber-300/80 space-y-2.5">
                     <div class="flex items-center justify-between gap-2 flex-wrap">
-                        <div class="flex items-center gap-2 text-amber-900 font-bold text-sm">
-                            <div class="p-1.5 bg-amber-100/80 text-amber-800 rounded-lg"><i data-lucide="layers" class="w-4 h-4"></i></div>
-                            <span>當日其他作業紀錄</span>
+                        <div class="flex items-center gap-2 text-amber-900 font-bold text-xs sm:text-sm min-w-0">
+                            <div class="p-1.5 bg-amber-100/80 text-amber-800 rounded-lg shrink-0"><i data-lucide="layers" class="w-4 h-4"></i></div>
+                            <span class="truncate">其他作業</span>
                         </div>
-                        <span id="parentExtraHwBadge" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300">
+                        <span id="parentExtraHwBadge" class="text-[11px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300 shrink-0">
                             0 項需處理
                         </span>
                     </div>
@@ -261,31 +241,58 @@
                     </div>
                 </section>
 
-                <section class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-slate-100 space-y-2.5">
-                    <div class="flex items-center gap-2 text-amber-700 font-bold text-sm">
-                        <div class="p-1.5 bg-amber-50 rounded-lg"><i data-lucide="sparkles" class="w-4 h-4"></i></div>
-                        <span>科任課表現紀錄</span>
+                <!-- 7. 課任表現 -->
+                <section class="order-7 bg-white rounded-2xl p-3.5 sm:p-5 card-shadow border border-slate-100 space-y-2">
+                    <div class="flex items-center gap-2 text-amber-700 font-bold text-xs sm:text-sm">
+                        <div class="p-1.5 bg-amber-50 rounded-lg shrink-0"><i data-lucide="sparkles" class="w-4 h-4"></i></div>
+                        <span>課任表現</span>
                     </div>
-                    <div id="parentSpecialClass" class="text-sm text-slate-600 bg-amber-50/40 border border-amber-100/60 p-3.5 rounded-xl leading-relaxed break-words">
+                    <div id="parentSpecialClass" class="text-xs sm:text-sm text-slate-600 bg-amber-50/40 border border-amber-100/60 p-3 sm:p-3.5 rounded-xl leading-relaxed break-words">
                     </div>
                 </section>
 
-                <section id="parentHealthCard" class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-rose-100 space-y-2.5">
-                    <div class="flex items-center gap-2 text-rose-700 font-bold text-sm">
-                        <div class="p-1.5 bg-rose-50 rounded-lg"><i data-lucide="heart-pulse" class="w-4 h-4"></i></div>
-                        <span>在校健康與傷病通知</span>
+                <!-- 8. 傷病通知 -->
+                <section id="parentHealthCard" class="order-8 bg-white rounded-2xl p-3.5 sm:p-5 card-shadow border border-rose-100 space-y-2">
+                    <div class="flex items-center gap-2 text-rose-700 font-bold text-xs sm:text-sm">
+                        <div class="p-1.5 bg-rose-50 rounded-lg shrink-0"><i data-lucide="heart-pulse" class="w-4 h-4"></i></div>
+                        <span>傷病通知</span>
                     </div>
-                    <div id="parentHealthNote" class="text-sm text-slate-700 bg-rose-50/60 border border-rose-200/70 p-3.5 rounded-xl leading-relaxed min-h-[3.5rem] whitespace-pre-line break-words">
+                    <div id="parentHealthNote" class="text-xs sm:text-sm text-slate-700 bg-rose-50/60 border border-rose-200/70 p-3 sm:p-3.5 rounded-xl leading-relaxed min-h-[3.25rem] whitespace-pre-line break-words">
                         今日在校健康狀況良好，無傷病紀錄。
                     </div>
                 </section>
 
-                <section class="bg-white rounded-2xl p-4 card-shadow border border-slate-100 space-y-2.5">
-                    <button type="button" id="confirmBtnMain" onclick="confirmByParent()" class="w-full py-3.5 rounded-xl font-bold text-base shadow-md transition flex items-center justify-center gap-2">
+                <!-- 簽章確認按鈕 -->
+                <section class="order-9 bg-white rounded-2xl p-3.5 sm:p-4 card-shadow border border-slate-100 space-y-2.5">
+                    <button type="button" id="confirmBtnMain" onclick="confirmByParent()" class="w-full py-3 sm:py-3.5 px-3 rounded-xl font-bold text-sm sm:text-base shadow-md transition flex items-center justify-center gap-2">
                     </button>
-                    <button type="button" id="cancelConfirmBtn" onclick="cancelParentConfirm()" class="hidden w-full py-2.5 rounded-xl font-bold text-sm border border-rose-300 bg-rose-50 hover:bg-rose-100 text-rose-700 transition">
+                    <button type="button" id="cancelConfirmBtn" onclick="cancelParentConfirm()" class="hidden w-full py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm border border-rose-300 bg-rose-50 hover:bg-rose-100 text-rose-700 transition">
                         不小心按錯了？取消已確認狀態
                     </button>
+                </section>
+            </div>
+
+            <!-- 側欄：親師交流留言板 -->
+            <div class="md:col-span-5 space-y-3.5 sm:space-y-4 min-w-0">
+                <section class="bg-white rounded-2xl p-3.5 sm:p-5 card-shadow border border-slate-100 space-y-3">
+                    <div class="flex items-center justify-between gap-2">
+                        <div class="flex items-center gap-2 text-cyan-700 font-bold text-xs sm:text-sm min-w-0">
+                            <div class="p-1.5 bg-cyan-50 rounded-lg shrink-0"><i data-lucide="message-square-heart" class="w-4 h-4"></i></div>
+                            <span class="truncate">親師交流留言板</span>
+                        </div>
+                        <span id="parentMsgCountBadge" class="text-[11px] font-bold text-slate-400 shrink-0">0 則紀錄</span>
+                    </div>
+
+                    <div id="parentMessageHistory" class="max-h-52 sm:max-h-60 overflow-y-auto space-y-2.5 bg-slate-50/80 p-2.5 sm:p-3 rounded-xl border border-slate-100">
+                    </div>
+
+                    <div class="space-y-2 pt-1">
+                        <textarea id="parentNewMessageInput" rows="2" placeholder="有什麼想告訴老師的嗎？隨時可留言..." class="w-full p-2.5 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500"></textarea>
+                        <button type="button" onclick="sendParentMessage()" class="w-full py-2.5 bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-sm transition flex items-center justify-center gap-1.5">
+                            <i data-lucide="send" class="w-3.5 h-3.5"></i>
+                            送出留言給導師
+                        </button>
+                    </div>
                 </section>
             </div>
         </div>
@@ -919,12 +926,16 @@
             return rec;
         }
 
+        // 只統計截至當下標準時間（dateKey <= getTodayStr()）的紀錄，不顯示未來日期的作業
         function collectAllUnpaidHomeworkAcrossDates(studentId) {
             const results = [];
             const recordsByDate = state.recordsByDate || {};
-            const sortedDates = Object.keys(recordsByDate).sort((a, b) => b.localeCompare(a));
+            const standardTodayStr = getTodayStr();
+            const eligibleDates = Object.keys(recordsByDate)
+                .filter(dateKey => dateKey <= standardTodayStr)
+                .sort((a, b) => b.localeCompare(a));
 
-            sortedDates.forEach(dateKey => {
+            eligibleDates.forEach(dateKey => {
                 const rec = recordsByDate[dateKey];
                 if (!rec || !rec.studentRecords || !rec.studentRecords[studentId]) return;
                 const stRec = rec.studentRecords[studentId];
@@ -1220,6 +1231,7 @@
             const dayRec = ensureDateRecord(selectedDate);
             const stRec = dayRec.studentRecords[student.id];
 
+            // 2. 時間（日期下拉選單）
             const dateSel = document.getElementById('parentDateSelect');
             const allDates = Object.keys(state.recordsByDate).sort((a, b) => b.localeCompare(a));
             dateSel.innerHTML = '';
@@ -1229,6 +1241,7 @@
             });
             dateSel.value = selectedDate;
 
+            // 1. 姓名
             document.getElementById('parentStudentSeatBadge').innerText = student.seat;
             document.getElementById('parentStudentCodeLabel').innerText = `309班 ｜ 學號 ${student.studentCode}`;
             document.getElementById('parentStudentName').innerText = student.name;
@@ -1237,56 +1250,59 @@
             const badge = document.getElementById('parentStatusBadge');
             if (stRec.confirmed) {
                 badge.innerHTML = `
-                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                        <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> 已確認
+                    <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[11px] sm:text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        <i data-lucide="check-circle-2" class="w-3.5 h-3.5 shrink-0"></i> 已確認
                     </span>
-                    <div class="text-[11px] text-slate-400 mt-0.5">${stRec.confirmedTime} 簽章</div>
+                    <div class="text-[10px] sm:text-[11px] text-slate-400 mt-0.5">${stRec.confirmedTime} 簽章</div>
                 `;
             } else {
                 badge.innerHTML = `
-                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">
-                        <i data-lucide="clock" class="w-3.5 h-3.5"></i> 待確認
+                    <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[11px] sm:text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                        <i data-lucide="clock" class="w-3.5 h-3.5 shrink-0"></i> 待確認
                     </span>
                 `;
             }
 
+            // 3. 當日聯絡簿
             document.getElementById('parentDailyNote').innerText = dayRec.dailyNote || "當日無特別聯絡事項。";
 
             renderParentMessageHistory(student.id);
 
+            // 4. 欠繳作業（僅統計截至今日標準時間的紀錄）
             const allUnpaidItems = collectAllUnpaidHomeworkAcrossDates(student.id);
             const missingBadge = document.getElementById('parentMissingBadge');
             const missingListEl = document.getElementById('parentMissingHomeworkList');
 
             if (allUnpaidItems.length === 0) {
-                missingBadge.className = "text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200";
+                missingBadge.className = "text-[11px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200";
                 missingBadge.innerText = "無欠缺項目";
                 missingListEl.innerHTML = `
                     <div class="p-3 rounded-xl bg-emerald-50/60 border border-emerald-100 text-xs text-emerald-800 flex items-center gap-2">
                         <i data-lucide="sparkles" class="w-4 h-4 text-emerald-600 shrink-0"></i>
-                        <span>目前已建檔日期的平日作業與其他作業皆已繳交或完成，沒有欠缺項目！</span>
+                        <span>截至今日的平日作業與其他作業皆已繳交或完成，沒有欠缺項目！</span>
                     </div>
                 `;
             } else {
-                missingBadge.className = "text-xs font-bold px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-700 border border-rose-200";
+                missingBadge.className = "text-[11px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-700 border border-rose-200";
                 missingBadge.innerText = `共 ${allUnpaidItems.length} 項未繳交`;
                 missingListEl.innerHTML = allUnpaidItems.map(item => `
-                    <div class="p-3 rounded-xl bg-rose-50/45 border border-rose-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div class="p-2.5 sm:p-3 rounded-xl bg-rose-50/45 border border-rose-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                         <div class="min-w-0">
                             <div class="flex items-center gap-1.5 flex-wrap">
-                                <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-white text-slate-600 border border-slate-200">${escapeHtml(item.date)}</span>
-                                <span class="text-[11px] font-bold px-2 py-0.5 rounded ${item.categoryBadgeClass}">${escapeHtml(item.category)}</span>
-                                <span class="font-bold text-sm text-slate-800 break-words">${escapeHtml(item.title)}</span>
+                                <span class="text-[10px] sm:text-[11px] font-bold px-2 py-0.5 rounded bg-white text-slate-600 border border-slate-200">${escapeHtml(item.date)}</span>
+                                <span class="text-[10px] sm:text-[11px] font-bold px-2 py-0.5 rounded ${item.categoryBadgeClass}">${escapeHtml(item.category)}</span>
+                                <span class="font-bold text-xs sm:text-sm text-slate-800 break-words">${escapeHtml(item.title)}</span>
                             </div>
-                            <div class="text-xs text-slate-500 mt-1 break-words">${escapeHtml(item.hint)}</div>
+                            <div class="text-[11px] sm:text-xs text-slate-500 mt-1 break-words">${escapeHtml(item.hint)}</div>
                         </div>
-                        <span class="self-start sm:self-center shrink-0 inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-lg ${item.badgeClass}">
+                        <span class="self-start sm:self-center shrink-0 inline-flex items-center gap-1 text-[11px] sm:text-xs font-bold px-2 py-1 rounded-lg ${item.badgeClass}">
                             <i data-lucide="${item.icon}" class="w-3.5 h-3.5"></i>${item.label}
                         </span>
                     </div>
                 `).join('');
             }
 
+            // 5. 平日作業（靛藍系）
             const hwContainer = document.getElementById('parentHomeworkList');
             hwContainer.innerHTML = '';
             let attentionCount = 0;
@@ -1294,7 +1310,7 @@
             const dayHomeworkList = Array.isArray(dayRec.homeworkList) ? dayRec.homeworkList : [];
 
             if (dayHomeworkList.length === 0) {
-                hwContainer.innerHTML = `<p class="py-3 text-xs text-slate-400">當日尚未設定平日回家作業。</p>`;
+                hwContainer.innerHTML = `<p class="py-2.5 text-xs text-slate-400">當日尚未設定平日回家作業。</p>`;
             } else {
                 dayHomeworkList.forEach(hw => {
                     const statusKey = normalizeStatus(stRec.hwStatus[hw.id]);
@@ -1306,8 +1322,8 @@
 
                     hwContainer.innerHTML += `
                         <div class="py-2.5 flex justify-between items-center gap-2">
-                            <span class="text-sm font-medium text-slate-700 min-w-0 break-words">${escapeHtml(hw.title)}</span>
-                            <span class="shrink-0 inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-lg ${cfg.badgeClass}">
+                            <span class="text-xs sm:text-sm font-medium text-slate-700 min-w-0 break-words">${escapeHtml(hw.title)}</span>
+                            <span class="shrink-0 inline-flex items-center gap-1 text-[11px] sm:text-xs font-bold px-2 py-1 rounded-lg ${cfg.badgeClass}">
                                 <i data-lucide="${cfg.icon}" class="w-3.5 h-3.5"></i>${cfg.label}
                             </span>
                         </div>
@@ -1315,7 +1331,7 @@
                 });
             }
 
-            // 當日其他作業紀錄：咖啡色系，只看當日設定，且登記為「已繳交」（submitted）者家長端不再顯示
+            // 6. 其他作業（咖啡色系，登記為「已繳交」者家長端不再顯示）
             const extraListEl = document.getElementById('parentExtraHomeworkList');
             const extraBadgeEl = document.getElementById('parentExtraHwBadge');
             const dayExtraCards = getDayExtraCards(dayRec);
@@ -1332,16 +1348,16 @@
             });
 
             if (visibleExtraItems.length === 0) {
-                extraBadgeEl.className = "text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200";
+                extraBadgeEl.className = "text-[11px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200";
                 extraBadgeEl.innerText = "無其他待辦";
                 extraListEl.innerHTML = `<p class="text-xs text-slate-400 bg-slate-50 p-3 rounded-xl">目前無需顯示的其他作業項目。</p>`;
             } else {
-                extraBadgeEl.className = "text-xs font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300";
+                extraBadgeEl.className = "text-[11px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300";
                 extraBadgeEl.innerText = `${visibleExtraItems.length} 項需處理`;
                 extraListEl.innerHTML = visibleExtraItems.map(item => `
                     <div class="p-2.5 rounded-xl bg-amber-50/70 border border-amber-300/80 flex items-center justify-between gap-2">
-                        <span class="text-sm font-bold text-amber-950 min-w-0 break-words">${escapeHtml(item.title)}</span>
-                        <span class="shrink-0 text-xs font-bold px-2.5 py-1 rounded-lg ${item.cfg.badgeClass}">${item.cfg.label}</span>
+                        <span class="text-xs sm:text-sm font-bold text-amber-950 min-w-0 break-words">${escapeHtml(item.title)}</span>
+                        <span class="shrink-0 text-[11px] sm:text-xs font-bold px-2 py-1 rounded-lg ${item.cfg.badgeClass}">${item.cfg.label}</span>
                     </div>
                 `).join('');
             }
@@ -1349,46 +1365,49 @@
             const corrStatsEl = document.getElementById('parentCorrectionStats');
             if (correctionItems.length > 0) {
                 corrStatsEl.innerHTML = `
-                    <div class="bg-amber-50/80 border border-amber-200/80 rounded-xl p-3 space-y-1.5">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-amber-800 flex items-center gap-1.5">
-                                <i data-lucide="file-edit" class="w-3.5 h-3.5"></i>
-                                當日訂正統計：共 ${correctionItems.length} 項需訂正
+                    <div class="bg-amber-50/80 border border-amber-200/80 rounded-xl p-2.5 sm:p-3 space-y-1.5">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-[11px] sm:text-xs font-bold text-amber-800 flex items-center gap-1.5">
+                                <i data-lucide="file-edit" class="w-3.5 h-3.5 shrink-0"></i>
+                                <span>當日訂正統計：共 ${correctionItems.length} 項需訂正</span>
                             </span>
-                            <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-200/70 text-amber-900">
+                            <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-200/70 text-amber-900 shrink-0">
                                 ${correctionItems.length} 項
                             </span>
                         </div>
                         <div class="flex flex-wrap gap-1.5 pt-0.5">
-                            ${correctionItems.map(title => `<span class="text-xs font-medium bg-white text-amber-800 border border-amber-200 px-2 py-0.5 rounded-md">${escapeHtml(title)}</span>`).join('')}
+                            ${correctionItems.map(title => `<span class="text-[11px] sm:text-xs font-medium bg-white text-amber-800 border border-amber-200 px-2 py-0.5 rounded-md">${escapeHtml(title)}</span>`).join('')}
                         </div>
                     </div>
                 `;
             } else {
                 corrStatsEl.innerHTML = `
-                    <div class="bg-slate-50 border border-slate-100 rounded-xl px-3 py-2 flex items-center justify-between text-xs text-slate-500">
+                    <div class="bg-slate-50 border border-slate-100 rounded-xl px-3 py-2 flex items-center justify-between text-[11px] sm:text-xs text-slate-500">
                         <span class="flex items-center gap-1.5 font-medium">
-                            <i data-lucide="file-check-2" class="w-3.5 h-3.5 text-emerald-600"></i>
-                            當日訂正統計：目前無需訂正項目
+                            <i data-lucide="file-check-2" class="w-3.5 h-3.5 text-emerald-600 shrink-0"></i>
+                            <span>當日訂正統計：目前無需訂正項目</span>
                         </span>
-                        <span class="font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">0 項</span>
+                        <span class="font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full shrink-0">0 項</span>
                     </div>
                 `;
             }
 
             const summaryTag = document.getElementById('hwSummaryTag');
             if (dayHomeworkList.length === 0) {
-                summaryTag.className = "text-xs font-medium px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-500";
+                summaryTag.className = "text-[11px] sm:text-xs font-medium px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-500";
                 summaryTag.innerText = "當日無設定作業";
             } else if (attentionCount === 0) {
-                summaryTag.className = "text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700";
+                summaryTag.className = "text-[11px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700";
                 summaryTag.innerText = "全數完成";
             } else {
-                summaryTag.className = "text-xs font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-700";
+                summaryTag.className = "text-[11px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-700";
                 summaryTag.innerText = `${attentionCount} 項需留意`;
             }
 
+            // 7. 課任表現
             document.getElementById('parentSpecialClass').innerText = stRec.specialClass || "今日科任課表現良好。";
+
+            // 8. 傷病通知
             document.getElementById('parentHealthNote').innerText = (stRec.healthNote && stRec.healthNote.trim())
                 ? stRec.healthNote
                 : "今日在校健康狀況良好，無傷病紀錄。";
@@ -1396,12 +1415,12 @@
             const confirmBtn = document.getElementById('confirmBtnMain');
             const cancelBtn = document.getElementById('cancelConfirmBtn');
             if (stRec.confirmed) {
-                confirmBtn.className = "w-full py-3.5 rounded-xl font-bold text-base bg-emerald-50 text-emerald-700 border-2 border-emerald-500 flex items-center justify-center gap-2";
-                confirmBtn.innerHTML = `<i data-lucide="check-circle" class="w-5 h-5"></i> 家長已完成確認 (${stRec.confirmedTime})`;
+                confirmBtn.className = "w-full py-3 sm:py-3.5 px-3 rounded-xl font-bold text-sm sm:text-base bg-emerald-50 text-emerald-700 border-2 border-emerald-500 flex items-center justify-center gap-2";
+                confirmBtn.innerHTML = `<i data-lucide="check-circle" class="w-5 h-5 shrink-0"></i><span>家長已完成確認 (${stRec.confirmedTime})</span>`;
                 cancelBtn.classList.remove('hidden');
             } else {
-                confirmBtn.className = "w-full py-3.5 rounded-xl font-bold text-base bg-teal-600 hover:bg-teal-700 active:scale-[0.99] text-white shadow-lg shadow-teal-600/20 transition flex items-center justify-center gap-2";
-                confirmBtn.innerHTML = `<i data-lucide="check-square" class="w-5 h-5"></i> 我已閱讀並確認 (${selectedDate})`;
+                confirmBtn.className = "w-full py-3 sm:py-3.5 px-3 rounded-xl font-bold text-sm sm:text-base bg-teal-600 hover:bg-teal-700 active:scale-[0.99] text-white shadow-lg shadow-teal-600/20 transition flex items-center justify-center gap-2";
+                confirmBtn.innerHTML = `<i data-lucide="check-square" class="w-5 h-5 shrink-0"></i><span>我已閱讀並確認 (${selectedDate})</span>`;
                 cancelBtn.classList.add('hidden');
             }
 
