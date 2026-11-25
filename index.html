@@ -151,7 +151,7 @@
     <main id="parentView" class="hidden max-w-4xl mx-auto px-1 py-3.5 sm:p-4 md:p-6 space-y-3.5 sm:space-y-4 animate-pop">
         <div class="grid grid-cols-1 md:grid-cols-12 gap-3.5 sm:gap-4 md:gap-6 items-start">
 
-            <!-- 主欄：手機版依 1～8 順序排列 -->
+            <!-- 左側主欄：1.姓名、2.時間、3.當日聯絡簿、4.欠繳作業、5.平日作業、6.其他作業、確認按鈕 -->
             <div class="md:col-span-7 flex flex-col space-y-3.5 sm:space-y-4 min-w-0">
 
                 <!-- 1. 姓名 -->
@@ -198,7 +198,7 @@
                     </div>
                 </section>
 
-                <!-- 4. 欠繳作業（僅統計截至今日標準時間的紀錄，不含未來日期） -->
+                <!-- 4. 欠繳作業 -->
                 <section id="parentMissingHomeworkCard" class="order-4 bg-white rounded-2xl p-3.5 sm:p-5 card-shadow border border-rose-100 space-y-2.5">
                     <div class="flex items-center justify-between gap-2 flex-wrap">
                         <div class="flex items-center gap-2 text-rose-700 font-bold text-xs sm:text-sm min-w-0">
@@ -241,29 +241,8 @@
                     </div>
                 </section>
 
-                <!-- 7. 課任表現 -->
-                <section class="order-7 bg-white rounded-2xl p-3.5 sm:p-5 card-shadow border border-slate-100 space-y-2">
-                    <div class="flex items-center gap-2 text-amber-700 font-bold text-xs sm:text-sm">
-                        <div class="p-1.5 bg-amber-50 rounded-lg shrink-0"><i data-lucide="sparkles" class="w-4 h-4"></i></div>
-                        <span>課任表現</span>
-                    </div>
-                    <div id="parentSpecialClass" class="text-xs sm:text-sm text-slate-600 bg-amber-50/40 border border-amber-100/60 p-3 sm:p-3.5 rounded-xl leading-relaxed break-words">
-                    </div>
-                </section>
-
-                <!-- 8. 傷病通知 -->
-                <section id="parentHealthCard" class="order-8 bg-white rounded-2xl p-3.5 sm:p-5 card-shadow border border-rose-100 space-y-2">
-                    <div class="flex items-center gap-2 text-rose-700 font-bold text-xs sm:text-sm">
-                        <div class="p-1.5 bg-rose-50 rounded-lg shrink-0"><i data-lucide="heart-pulse" class="w-4 h-4"></i></div>
-                        <span>傷病通知</span>
-                    </div>
-                    <div id="parentHealthNote" class="text-xs sm:text-sm text-slate-700 bg-rose-50/60 border border-rose-200/70 p-3 sm:p-3.5 rounded-xl leading-relaxed min-h-[3.25rem] whitespace-pre-line break-words">
-                        今日在校健康狀況良好，無傷病紀錄。
-                    </div>
-                </section>
-
-                <!-- 簽章確認按鈕 -->
-                <section class="order-9 bg-white rounded-2xl p-3.5 sm:p-4 card-shadow border border-slate-100 space-y-2.5">
+                <!-- 簽章確認按鈕（桌面版在左欄底部，手機版在課任/傷病之後） -->
+                <section class="order-9 md:order-7 bg-white rounded-2xl p-3.5 sm:p-4 card-shadow border border-slate-100 space-y-2.5">
                     <button type="button" id="confirmBtnMain" onclick="confirmByParent()" class="w-full py-3 sm:py-3.5 px-3 rounded-xl font-bold text-sm sm:text-base shadow-md transition flex items-center justify-center gap-2">
                     </button>
                     <button type="button" id="cancelConfirmBtn" onclick="cancelParentConfirm()" class="hidden w-full py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm border border-rose-300 bg-rose-50 hover:bg-rose-100 text-rose-700 transition">
@@ -272,9 +251,10 @@
                 </section>
             </div>
 
-            <!-- 側欄：親師交流留言板 -->
-            <div class="md:col-span-5 space-y-3.5 sm:space-y-4 min-w-0">
-                <section class="bg-white rounded-2xl p-3.5 sm:p-5 card-shadow border border-slate-100 space-y-3">
+            <!-- 右側欄（電腦版）：親師交流留言板，下方依序為 7.課任表現 與 8.傷病通知 -->
+            <div class="md:col-span-5 flex flex-col space-y-3.5 sm:space-y-4 min-w-0">
+                <!-- 親師交流留言板 -->
+                <section class="order-9 md:order-1 bg-white rounded-2xl p-3.5 sm:p-5 card-shadow border border-slate-100 space-y-3">
                     <div class="flex items-center justify-between gap-2">
                         <div class="flex items-center gap-2 text-cyan-700 font-bold text-xs sm:text-sm min-w-0">
                             <div class="p-1.5 bg-cyan-50 rounded-lg shrink-0"><i data-lucide="message-square-heart" class="w-4 h-4"></i></div>
@@ -292,6 +272,27 @@
                             <i data-lucide="send" class="w-3.5 h-3.5"></i>
                             送出留言給導師
                         </button>
+                    </div>
+                </section>
+
+                <!-- 7. 課任表現（電腦版位於親師溝通下方） -->
+                <section class="order-7 md:order-2 bg-white rounded-2xl p-3.5 sm:p-5 card-shadow border border-slate-100 space-y-2">
+                    <div class="flex items-center gap-2 text-amber-700 font-bold text-xs sm:text-sm">
+                        <div class="p-1.5 bg-amber-50 rounded-lg shrink-0"><i data-lucide="sparkles" class="w-4 h-4"></i></div>
+                        <span>課任表現</span>
+                    </div>
+                    <div id="parentSpecialClass" class="text-xs sm:text-sm text-slate-600 bg-amber-50/40 border border-amber-100/60 p-3 sm:p-3.5 rounded-xl leading-relaxed break-words">
+                    </div>
+                </section>
+
+                <!-- 8. 傷病通知（電腦版位於課任表現下方） -->
+                <section id="parentHealthCard" class="order-8 md:order-3 bg-white rounded-2xl p-3.5 sm:p-5 card-shadow border border-rose-100 space-y-2">
+                    <div class="flex items-center gap-2 text-rose-700 font-bold text-xs sm:text-sm">
+                        <div class="p-1.5 bg-rose-50 rounded-lg shrink-0"><i data-lucide="heart-pulse" class="w-4 h-4"></i></div>
+                        <span>傷病通知</span>
+                    </div>
+                    <div id="parentHealthNote" class="text-xs sm:text-sm text-slate-700 bg-rose-50/60 border border-rose-200/70 p-3 sm:p-3.5 rounded-xl leading-relaxed min-h-[3.25rem] whitespace-pre-line break-words">
+                        今日在校健康狀況良好，無傷病紀錄。
                     </div>
                 </section>
             </div>
@@ -314,25 +315,30 @@
             </div>
         </section>
 
-        <div class="grid grid-cols-3 sm:grid-cols-6 gap-1 bg-slate-200/70 p-1 rounded-xl max-w-4xl mx-auto">
+        <!-- 老師管理分頁列 -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-1 bg-slate-200/70 p-1 rounded-xl max-w-4xl mx-auto">
             <button type="button" onclick="switchTeacherTab('overview')" id="tab-overview" class="py-2.5 text-[11px] md:text-xs font-bold rounded-lg bg-white text-teal-700 shadow-sm transition">
                 簽章總覽
             </button>
-            <button type="button" onclick="switchTeacherTab('extraBoard')" id="tab-extraBoard" class="py-2.5 text-[11px] md:text-xs font-bold rounded-lg text-slate-600 hover:text-slate-800 transition">
-                其他作業點名
+            <button type="button" onclick="switchTeacherTab('classNote')" id="tab-classNote" class="py-2.5 text-[11px] md:text-xs font-bold rounded-lg text-slate-600 hover:text-slate-800 transition">
+                聯絡/平日作業
             </button>
             <button type="button" onclick="switchTeacherTab('batchHw')" id="tab-batchHw" class="py-2.5 text-[11px] md:text-xs font-bold rounded-lg text-slate-600 hover:text-slate-800 transition">
                 平日作業點名
+            </button>
+            <button type="button" onclick="switchTeacherTab('extraBoard')" id="tab-extraBoard" class="py-2.5 text-[11px] md:text-xs font-bold rounded-lg text-slate-600 hover:text-slate-800 transition">
+                其他作業點名
             </button>
             <button type="button" onclick="switchTeacherTab('messages')" id="tab-messages" class="relative py-2.5 text-[11px] md:text-xs font-bold rounded-lg text-slate-600 hover:text-slate-800 transition">
                 親師留言
                 <span id="unreadMsgDot" class="hidden absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-rose-500"></span>
             </button>
-            <button type="button" onclick="switchTeacherTab('classNote')" id="tab-classNote" class="py-2.5 text-[11px] md:text-xs font-bold rounded-lg text-slate-600 hover:text-slate-800 transition">
-                聯絡/平日作業
-            </button>
             <button type="button" onclick="switchTeacherTab('studentDetail')" id="tab-studentDetail" class="py-2.5 text-[11px] md:text-xs font-bold rounded-lg text-slate-600 hover:text-slate-800 transition">
                 個別紀錄
+            </button>
+            <button type="button" onclick="switchTeacherTab('unpaidTracker')" id="tab-unpaidTracker" class="relative py-2.5 text-[11px] md:text-xs font-bold rounded-lg text-slate-600 hover:text-slate-800 transition">
+                未繳/訂正總表
+                <span id="unpaidTrackerBadgeDot" class="hidden absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-rose-500"></span>
             </button>
         </div>
 
@@ -355,6 +361,48 @@
                         <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
                         重設當日簽章
                     </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB NEW: 全班未繳交／需訂正作業統計總表（依座號姓名排列） -->
+        <div id="panel-unpaidTracker" class="hidden space-y-4">
+            <div class="bg-white rounded-2xl p-4 md:p-6 card-shadow border border-rose-100 space-y-4">
+                <div class="flex justify-between items-center flex-wrap gap-2">
+                    <div class="space-y-0.5">
+                        <h2 class="font-bold text-slate-800 text-sm md:text-base flex items-center gap-1.5">
+                            <i data-lucide="clipboard-list" class="w-4 h-4 text-rose-600"></i>
+                            <span>全班未繳交／需訂正作業追蹤總表（依座號姓名排序）</span>
+                        </h2>
+                        <p class="text-xs text-slate-400">按座號 1～25 號排列，同生多日或重複項目集中呈現，交齊可直接點「設已繳交」核銷</p>
+                    </div>
+                    <span id="teacherUnpaidTotalBadge" class="text-xs font-bold text-rose-700 bg-rose-50 border border-rose-200 px-3 py-1 rounded-full">
+                        共 0 筆待處理
+                    </span>
+                </div>
+
+                <!-- 篩選列 -->
+                <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5 bg-slate-50 p-3 rounded-xl border border-slate-200/80">
+                    <div class="sm:col-span-6 flex flex-wrap gap-1.5">
+                        <button type="button" onclick="setUnpaidFilterType('all')" id="unpaidFilter-all" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-800 text-white transition">
+                            全部項目
+                        </button>
+                        <button type="button" onclick="setUnpaidFilterType('unpaid')" id="unpaidFilter-unpaid" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-slate-600 border border-slate-200 hover:bg-slate-100 transition">
+                            僅未繳交／未完成
+                        </button>
+                        <button type="button" onclick="setUnpaidFilterType('correction')" id="unpaidFilter-correction" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-slate-600 border border-slate-200 hover:bg-slate-100 transition">
+                            僅需訂正
+                        </button>
+                    </div>
+                    <div class="sm:col-span-6">
+                        <select id="unpaidStudentFilterSelect" onchange="renderTeacherUnpaidTracker()" class="w-full bg-white border border-slate-200 text-slate-700 font-bold text-xs rounded-lg px-2.5 py-2 focus:outline-none focus:ring-2 focus:ring-rose-500">
+                            <option value="all">全部學生（1～25號）</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 列表區 -->
+                <div id="teacherUnpaidTrackerList" class="space-y-2.5 max-h-[34rem] overflow-y-auto pr-0.5">
                 </div>
             </div>
         </div>
@@ -882,6 +930,7 @@
         let currentTeacherTab = 'overview';
         let selectedMsgStudentId = CLASS_STUDENTS[0].id;
         let pendingHwSelection = [];
+        let unpaidFilterType = 'all';
         let dbRef = null;
         let isCloudReady = false;
         let lastSyncDiagnostic = "正在嘗試連線至 Firebase Realtime Database...";
@@ -926,7 +975,6 @@
             return rec;
         }
 
-        // 只統計截至當下標準時間（dateKey <= getTodayStr()）的紀錄，不顯示未來日期的作業
         function collectAllUnpaidHomeworkAcrossDates(studentId) {
             const results = [];
             const recordsByDate = state.recordsByDate || {};
@@ -947,6 +995,8 @@
                     if (!cfg.isCompleted) {
                         results.push({
                             date: dateKey,
+                            type: 'regular',
+                            itemId: hw.id,
                             category: '平日作業',
                             categoryBadgeClass: 'bg-indigo-50 text-indigo-700 border border-indigo-200',
                             title: hw.title,
@@ -966,6 +1016,8 @@
                     if (!cfg.isCompleted) {
                         results.push({
                             date: dateKey,
+                            type: 'extra',
+                            itemId: ex.id,
                             category: '其他作業',
                             categoryBadgeClass: 'bg-amber-100/90 text-amber-900 border border-amber-300',
                             title: ex.title,
@@ -980,6 +1032,38 @@
             });
 
             return results;
+        }
+
+        function collectClassUnpaidHomework() {
+            const allRows = [];
+            CLASS_STUDENTS.forEach(st => {
+                const items = collectAllUnpaidHomeworkAcrossDates(st.id);
+                items.forEach(item => {
+                    allRows.push({
+                        studentId: st.id,
+                        seat: st.seat,
+                        studentName: st.name,
+                        ...item
+                    });
+                });
+            });
+            allRows.sort((a, b) => {
+                const seatNumA = parseInt(a.seat, 10) || 0;
+                const seatNumB = parseInt(b.seat, 10) || 0;
+                if (seatNumA !== seatNumB) return seatNumA - seatNumB;
+                const nameCmp = a.studentName.localeCompare(b.studentName, 'zh-TW');
+                if (nameCmp !== 0) return nameCmp;
+                return b.date.localeCompare(a.date);
+            });
+            return allRows;
+        }
+
+        function updateUnpaidTrackerDot() {
+            const dot = document.getElementById('unpaidTrackerBadgeDot');
+            if (!dot) return;
+            const total = collectClassUnpaidHomework().length;
+            if (total > 0) dot.classList.remove('hidden');
+            else dot.classList.add('hidden');
         }
 
         function getStudentMessages(studentId) {
@@ -1044,6 +1128,7 @@
             if (!Array.isArray(state.notePresetCards)) state.notePresetCards = [...DEFAULT_NOTE_PRESET_CARDS];
             if (!Array.isArray(state.homeworkPresetCards)) state.homeworkPresetCards = [...DEFAULT_HOMEWORK_PRESET_CARDS];
             localStorage.setItem('class309_archive_cache', JSON.stringify(state));
+            updateUnpaidTrackerDot();
             if (dbRef && isCloudReady) {
                 set(dbRef, state).catch(err => {
                     lastSyncDiagnostic = "❌ 寫入雲端失敗：" + err.message;
@@ -1061,7 +1146,9 @@
                 if (student) renderParentView(student);
             } else if (authSession.role === 'teacher') {
                 updateUnreadMessageDot();
+                updateUnpaidTrackerDot();
                 if (currentTeacherTab === 'overview') renderTeacherOverview();
+                if (currentTeacherTab === 'unpaidTracker') renderTeacherUnpaidTracker();
                 if (currentTeacherTab === 'extraBoard') renderExtraBoardPanel();
                 if (currentTeacherTab === 'batchHw') populateBatchHomeworkSelect();
                 if (currentTeacherTab === 'messages') renderTeacherMessagesPanel();
@@ -1132,7 +1219,9 @@
                 teacherView.classList.remove('hidden');
                 document.getElementById('teacherDatePicker').value = selectedDate;
                 populateTeacherStudentSelect();
+                populateUnpaidStudentFilterSelect();
                 updateUnreadMessageDot();
+                updateUnpaidTrackerDot();
                 window.switchTeacherTab(currentTeacherTab);
             }
         };
@@ -1231,7 +1320,6 @@
             const dayRec = ensureDateRecord(selectedDate);
             const stRec = dayRec.studentRecords[student.id];
 
-            // 2. 時間（日期下拉選單）
             const dateSel = document.getElementById('parentDateSelect');
             const allDates = Object.keys(state.recordsByDate).sort((a, b) => b.localeCompare(a));
             dateSel.innerHTML = '';
@@ -1241,7 +1329,6 @@
             });
             dateSel.value = selectedDate;
 
-            // 1. 姓名
             document.getElementById('parentStudentSeatBadge').innerText = student.seat;
             document.getElementById('parentStudentCodeLabel').innerText = `309班 ｜ 學號 ${student.studentCode}`;
             document.getElementById('parentStudentName').innerText = student.name;
@@ -1263,12 +1350,10 @@
                 `;
             }
 
-            // 3. 當日聯絡簿
             document.getElementById('parentDailyNote').innerText = dayRec.dailyNote || "當日無特別聯絡事項。";
 
             renderParentMessageHistory(student.id);
 
-            // 4. 欠繳作業（僅統計截至今日標準時間的紀錄）
             const allUnpaidItems = collectAllUnpaidHomeworkAcrossDates(student.id);
             const missingBadge = document.getElementById('parentMissingBadge');
             const missingListEl = document.getElementById('parentMissingHomeworkList');
@@ -1302,7 +1387,6 @@
                 `).join('');
             }
 
-            // 5. 平日作業（靛藍系）
             const hwContainer = document.getElementById('parentHomeworkList');
             hwContainer.innerHTML = '';
             let attentionCount = 0;
@@ -1331,7 +1415,6 @@
                 });
             }
 
-            // 6. 其他作業（咖啡色系，登記為「已繳交」者家長端不再顯示）
             const extraListEl = document.getElementById('parentExtraHomeworkList');
             const extraBadgeEl = document.getElementById('parentExtraHwBadge');
             const dayExtraCards = getDayExtraCards(dayRec);
@@ -1404,10 +1487,7 @@
                 summaryTag.innerText = `${attentionCount} 項需留意`;
             }
 
-            // 7. 課任表現
             document.getElementById('parentSpecialClass').innerText = stRec.specialClass || "今日科任課表現良好。";
-
-            // 8. 傷病通知
             document.getElementById('parentHealthNote').innerText = (stRec.healthNote && stRec.healthNote.trim())
                 ? stRec.healthNote
                 : "今日在校健康狀況良好，無傷病紀錄。";
@@ -1535,6 +1615,18 @@
             }
         }
 
+        function populateUnpaidStudentFilterSelect() {
+            const sel = document.getElementById('unpaidStudentFilterSelect');
+            if (!sel) return;
+            const prevVal = sel.value || 'all';
+            sel.innerHTML = '';
+            sel.add(new Option('全部學生（1～25號）', 'all'));
+            CLASS_STUDENTS.forEach(st => {
+                sel.add(new Option(`${st.seat}號 ${st.name}`, st.id));
+            });
+            sel.value = (prevVal === 'all' || CLASS_STUDENTS.some(s => s.id === prevVal)) ? prevVal : 'all';
+        }
+
         function updateUnreadMessageDot() {
             const pendingCount = CLASS_STUDENTS.filter(st => {
                 const msgs = getStudentMessages(st.id);
@@ -1548,11 +1640,14 @@
             }
         }
 
+        const TEACHER_TABS = ['overview', 'classNote', 'batchHw', 'extraBoard', 'messages', 'studentDetail', 'unpaidTracker'];
+
         window.switchTeacherTab = function(tabName) {
             currentTeacherTab = tabName;
-            ['overview', 'extraBoard', 'batchHw', 'messages', 'classNote', 'studentDetail'].forEach(t => {
+            TEACHER_TABS.forEach(t => {
                 const btn = document.getElementById(`tab-${t}`);
                 const panel = document.getElementById(`panel-${t}`);
+                if (!btn || !panel) return;
                 if (t === tabName) {
                     btn.className = "relative py-2.5 text-[11px] md:text-xs font-bold rounded-lg bg-white text-teal-700 shadow-sm transition";
                     panel.classList.remove('hidden');
@@ -1563,14 +1658,159 @@
             });
 
             if (tabName === 'overview') renderTeacherOverview();
-            if (tabName === 'extraBoard') renderExtraBoardPanel();
+            if (tabName === 'classNote') loadTeacherClassNote();
             if (tabName === 'batchHw') {
                 renderStampPalette();
                 populateBatchHomeworkSelect();
             }
+            if (tabName === 'extraBoard') renderExtraBoardPanel();
             if (tabName === 'messages') renderTeacherMessagesPanel();
-            if (tabName === 'classNote') loadTeacherClassNote();
             if (tabName === 'studentDetail') window.loadTeacherStudentForm(document.getElementById('teacherStudentSelect').value);
+            if (tabName === 'unpaidTracker') renderTeacherUnpaidTracker();
+        };
+
+        window.setUnpaidFilterType = function(filterType) {
+            unpaidFilterType = filterType;
+            ['all', 'unpaid', 'correction'].forEach(key => {
+                const btn = document.getElementById(`unpaidFilter-${key}`);
+                if (!btn) return;
+                if (key === filterType) {
+                    btn.className = "px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-800 text-white transition";
+                } else {
+                    btn.className = "px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-slate-600 border border-slate-200 hover:bg-slate-100 transition";
+                }
+            });
+            renderTeacherUnpaidTracker();
+        };
+
+        window.renderTeacherUnpaidTracker = function() {
+            const listEl = document.getElementById('teacherUnpaidTrackerList');
+            const totalBadge = document.getElementById('teacherUnpaidTotalBadge');
+            const studentFilter = document.getElementById('unpaidStudentFilterSelect')?.value || 'all';
+            if (!listEl) return;
+
+            let rows = collectClassUnpaidHomework();
+            if (studentFilter !== 'all') {
+                rows = rows.filter(r => r.studentId === studentFilter);
+            }
+            if (unpaidFilterType === 'correction') {
+                rows = rows.filter(r => r.statusKey === 'correction');
+            } else if (unpaidFilterType === 'unpaid') {
+                rows = rows.filter(r => r.statusKey !== 'correction');
+            }
+
+            totalBadge.innerText = `共 ${rows.length} 筆待處理`;
+
+            if (rows.length === 0) {
+                listEl.innerHTML = `
+                    <div class="p-6 rounded-2xl bg-emerald-50/70 border border-emerald-200 text-center space-y-1">
+                        <p class="text-sm font-bold text-emerald-800">太棒了！目前篩選條件下沒有未繳交或需訂正的作業。</p>
+                        <p class="text-xs text-emerald-600">所有截至今日的平日作業與其他作業均已登記完成。</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const groupedByStudent = [];
+            rows.forEach(row => {
+                let grp = groupedByStudent.find(g => g.studentId === row.studentId);
+                if (!grp) {
+                    grp = {
+                        studentId: row.studentId,
+                        seat: row.seat,
+                        studentName: row.studentName,
+                        items: []
+                    };
+                    groupedByStudent.push(grp);
+                }
+                grp.items.push(row);
+            });
+
+            listEl.innerHTML = groupedByStudent.map(grp => `
+                <div class="p-3.5 rounded-2xl border border-slate-200 bg-slate-50/50 space-y-2.5">
+                    <div class="flex items-center justify-between gap-2 flex-wrap border-b border-slate-200/70 pb-2">
+                        <div class="flex items-center gap-2">
+                            <span class="w-8 h-8 rounded-xl bg-teal-600 text-white font-bold text-xs flex items-center justify-center shrink-0">${grp.seat}</span>
+                            <span class="font-bold text-sm text-slate-800">${escapeHtml(grp.studentName)}</span>
+                            <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-700">${grp.items.length} 項</span>
+                        </div>
+                        <button type="button" onclick="markStudentAllUnpaidResolved('${grp.studentId}', 'submitted')" class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 transition">
+                            此生全設已繳交
+                        </button>
+                    </div>
+                    <div class="space-y-2">
+                        ${grp.items.map(row => `
+                            <div class="p-2.5 rounded-xl bg-white border border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                                <div class="min-w-0 space-y-1">
+                                    <div class="flex items-center gap-1.5 flex-wrap">
+                                        <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-600">${escapeHtml(row.date)}</span>
+                                        <span class="text-[11px] font-bold px-2 py-0.5 rounded ${row.categoryBadgeClass}">${escapeHtml(row.category)}</span>
+                                        <span class="text-[11px] font-bold px-2 py-0.5 rounded-md ${row.badgeClass}">${row.label}</span>
+                                    </div>
+                                    <div class="font-bold text-sm text-slate-800 break-words">${escapeHtml(row.title)}</div>
+                                </div>
+                                <div class="flex items-center gap-1.5 shrink-0">
+                                    <button type="button" onclick="markUnpaidItemResolved('${row.date}', '${row.studentId}', '${row.type}', '${row.itemId}', 'submitted')" class="px-2.5 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-2xs transition">
+                                        設已繳交
+                                    </button>
+                                    <button type="button" onclick="markUnpaidItemResolved('${row.date}', '${row.studentId}', '${row.type}', '${row.itemId}', 'madeup')" class="px-2.5 py-1.5 rounded-lg text-xs font-bold bg-sky-600 hover:bg-sky-700 text-white shadow-2xs transition">
+                                        設已補交
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        };
+
+        window.markStudentAllUnpaidResolved = function(studentId, newStatus) {
+            const studentFilter = document.getElementById('unpaidStudentFilterSelect')?.value || 'all';
+            let rows = collectClassUnpaidHomework().filter(r => r.studentId === studentId);
+            if (studentFilter !== 'all' && studentFilter !== studentId) return;
+            if (unpaidFilterType === 'correction') {
+                rows = rows.filter(r => r.statusKey === 'correction');
+            } else if (unpaidFilterType === 'unpaid') {
+                rows = rows.filter(r => r.statusKey !== 'correction');
+            }
+
+            rows.forEach(row => {
+                const rec = ensureDateRecord(row.date);
+                const stRec = rec.studentRecords[row.studentId];
+                if (!stRec) return;
+                if (row.type === 'regular') {
+                    if (!stRec.hwStatus) stRec.hwStatus = {};
+                    stRec.hwStatus[row.itemId] = newStatus;
+                } else if (row.type === 'extra') {
+                    if (!stRec.extraHwStatus) stRec.extraHwStatus = {};
+                    stRec.extraHwStatus[row.itemId] = newStatus;
+                }
+            });
+
+            saveState();
+            renderTeacherUnpaidTracker();
+            const st = CLASS_STUDENTS.find(s => s.id === studentId);
+            showToast(`已將 ${st ? st.seat + '號 ' + st.name : ''} 的 ${rows.length} 項作業設為「${HW_STATUS_CONFIG[newStatus]?.label || '已繳交'}」`);
+        };
+
+        window.markUnpaidItemResolved = function(dateStr, studentId, type, itemId, newStatus) {
+            const rec = ensureDateRecord(dateStr);
+            const stRec = rec.studentRecords[studentId];
+            if (!stRec) return;
+
+            if (type === 'regular') {
+                if (!stRec.hwStatus) stRec.hwStatus = {};
+                stRec.hwStatus[itemId] = newStatus;
+            } else if (type === 'extra') {
+                if (!stRec.extraHwStatus) stRec.extraHwStatus = {};
+                stRec.extraHwStatus[itemId] = newStatus;
+            }
+
+            saveState();
+            renderTeacherUnpaidTracker();
+            const st = CLASS_STUDENTS.find(s => s.id === studentId);
+            const label = HW_STATUS_CONFIG[newStatus]?.label || '已繳交';
+            showToast(`已將 ${st ? st.seat + '號 ' + st.name : ''}（${dateStr}）登記為「${label}」`);
         };
 
         function renderExtraStampPalette() {
