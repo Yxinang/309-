@@ -11,6 +11,7 @@
         html {
             font-family: 'Noto Sans TC', sans-serif;
             background-color: #F4F7F9;
+            width: 100%;
             max-width: 100%;
             overflow-x: clip;
             scroll-behavior: smooth;
@@ -18,6 +19,7 @@
         body {
             font-family: 'Noto Sans TC', sans-serif;
             background-color: #F4F7F9;
+            width: 100%;
             max-width: 100%;
             min-height: 100dvh;
             margin: 0;
@@ -104,8 +106,10 @@
             <!-- 家長登入表單 -->
             <div id="parentLoginForm" class="space-y-4">
                 <div>
-                    <label for="loginStudentIdInput" class="block text-xs font-bold text-slate-600 mb-1.5">請輸入孩子學號</label>
-                    <input type="text" id="loginStudentIdInput" inputmode="numeric" autocomplete="username" placeholder="請輸入學號" onkeydown="if(event.key==='Enter') handleParentLogin()" class="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500">
+                    <label for="loginStudentIdInput" class="block text-xs font-bold text-slate-600 mb-1.5">
+                        請輸入孩子學號 <span class="text-teal-600 font-bold">(共六碼 : 113***)</span>
+                    </label>
+                    <input type="text" id="loginStudentIdInput" inputmode="numeric" maxlength="6" autocomplete="username" placeholder="例如：113***（共六碼）" onkeydown="if(event.key==='Enter') handleParentLogin()" class="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500">
                 </div>
                 <div class="flex items-center justify-between gap-2 flex-wrap pt-0.5">
                     <label for="rememberParentLogin" class="inline-flex items-center gap-2 cursor-pointer select-none text-xs font-bold text-slate-600">
@@ -1350,12 +1354,12 @@
             const rememberChecked = !!document.getElementById('rememberParentLogin')?.checked;
 
             if (!codeInput) {
-                showToast("請輸入孩子的學號");
+                showToast("請輸入孩子的學號（共六碼：113***）");
                 return;
             }
             const matchedStudent = CLASS_STUDENTS.find(s => s.studentCode === codeInput);
             if (!matchedStudent) {
-                showToast("查無此學號，請重新確認！");
+                showToast("查無此學號，請重新確認六碼學號！");
                 return;
             }
 
