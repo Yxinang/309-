@@ -22,11 +22,9 @@
             min-height: 100dvh;
             margin: 0;
             padding-top: env(safe-area-inset-top);
-            padding-left: max(0.75rem, env(safe-area-inset-left));
-            padding-right: max(0.75rem, env(safe-area-inset-right));
             padding-bottom: calc(env(safe-area-inset-bottom) + 6.5rem);
-            overflow-x: clip !important;
-            overflow-y: auto !important;
+            overflow-x: clip;
+            overflow-y: auto;
             -webkit-overflow-scrolling: touch;
             touch-action: pan-y;
             -webkit-tap-highlight-color: transparent;
@@ -57,10 +55,10 @@
 </head>
 <body class="text-slate-700 min-h-screen">
 
-    <!-- 頂部導覽列 -->
-    <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/80 px-3.5 sm:px-4 py-3 -mx-3 sm:mx-0">
+    <!-- 頂部導覽列（100% 寬度，安全左右內距，309 徽章完整不貼邊） -->
+    <header class="sticky top-0 z-30 w-full bg-white/95 backdrop-blur-md border-b border-slate-200/80 py-3" style="padding-left: max(0.875rem, env(safe-area-inset-left)); padding-right: max(0.875rem, env(safe-area-inset-right));">
         <div class="max-w-4xl mx-auto flex justify-between items-center gap-2 min-w-0">
-            <div class="flex items-center gap-2 sm:gap-2.5 min-w-0">
+            <div class="flex items-center gap-2.5 min-w-0">
                 <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-teal-600 text-white flex items-center justify-center text-xs sm:text-sm font-bold shadow-sm shrink-0">
                     309
                 </div>
@@ -84,7 +82,7 @@
     </header>
 
     <!-- ==================== 1. 專屬登入驗證介面 ==================== -->
-    <main id="loginView" class="max-w-md mx-auto px-1 sm:px-4 pt-8 md:pt-14 animate-pop">
+    <main id="loginView" class="w-full max-w-md mx-auto px-3.5 sm:px-4 pt-8 md:pt-14 animate-pop">
         <div class="bg-white rounded-3xl p-6 md:p-8 card-shadow border border-slate-100 space-y-6">
             <div class="text-center space-y-1.5">
                 <div class="w-12 h-12 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center mx-auto mb-2">
@@ -148,7 +146,7 @@
     </main>
 
     <!-- ==================== 2. 家長專屬視角 ==================== -->
-    <main id="parentView" class="hidden max-w-4xl mx-auto px-1 py-3.5 sm:p-4 md:p-6 space-y-3.5 sm:space-y-4 animate-pop">
+    <main id="parentView" class="hidden w-full max-w-4xl mx-auto px-3.5 sm:px-4 md:px-6 py-3.5 sm:py-4 md:py-6 space-y-3.5 sm:space-y-4 animate-pop">
         <div class="grid grid-cols-1 md:grid-cols-12 gap-3.5 sm:gap-4 md:gap-6 items-start">
 
             <!-- 左側主欄：1.姓名、2.時間、3.當日聯絡簿、4.欠繳作業、5.平日作業、6.其他作業、確認按鈕 -->
@@ -299,7 +297,7 @@
     </main>
 
     <!-- ==================== 3. 老師管理區介面 ==================== -->
-    <main id="teacherView" class="hidden max-w-4xl mx-auto px-1 py-4 sm:p-4 md:p-6 space-y-4 animate-pop">
+    <main id="teacherView" class="hidden w-full max-w-4xl mx-auto px-3.5 sm:px-4 md:px-6 py-3.5 sm:py-4 md:py-6 space-y-4 animate-pop">
         
         <section class="bg-white rounded-2xl p-3.5 md:p-4 card-shadow border border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div class="flex items-center gap-2 text-indigo-700 font-bold text-sm">
@@ -746,6 +744,15 @@
                 solidClass: 'bg-sky-600 text-white',
                 cardClass: 'bg-sky-50/80 border-sky-200',
                 icon: 'check-check'
+            },
+            correction_done: {
+                label: '訂正完成',
+                isCompleted: true,
+                parentHint: '',
+                badgeClass: 'bg-teal-50 text-teal-700 border border-teal-200',
+                solidClass: 'bg-teal-600 text-white',
+                cardClass: 'bg-teal-50/75 border-teal-200',
+                icon: 'check-square'
             },
             incomplete: {
                 label: '未完成',
@@ -1480,7 +1487,6 @@
                 `).join('');
             }
 
-            // 5. 當日平日回家作業（排除標記為「重複作業」的家長隱藏項目）
             const hwContainer = document.getElementById('parentHomeworkList');
             hwContainer.innerHTML = '';
             let attentionCount = 0;
@@ -1510,7 +1516,6 @@
                 });
             }
 
-            // 6. 當日其他作業（排除標記為「重複作業」的家長隱藏項目，且登記「已繳交」不顯示）
             const extraListEl = document.getElementById('parentExtraHomeworkList');
             const extraBadgeEl = document.getElementById('parentExtraHwBadge');
             const dayExtraCards = getDayExtraCards(dayRec);
