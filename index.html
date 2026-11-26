@@ -241,7 +241,7 @@
                     </div>
                 </section>
 
-                <!-- 簽章確認按鈕（桌面版在左欄底部，手機版在課任/傷病之後） -->
+                <!-- 簽章確認按鈕 -->
                 <section class="order-9 md:order-7 bg-white rounded-2xl p-3.5 sm:p-4 card-shadow border border-slate-100 space-y-2.5">
                     <button type="button" id="confirmBtnMain" onclick="confirmByParent()" class="w-full py-3 sm:py-3.5 px-3 rounded-xl font-bold text-sm sm:text-base shadow-md transition flex items-center justify-center gap-2">
                     </button>
@@ -253,7 +253,6 @@
 
             <!-- 右側欄（電腦版）：親師交流留言板，下方依序為 7.課任表現 與 8.傷病通知 -->
             <div class="md:col-span-5 flex flex-col space-y-3.5 sm:space-y-4 min-w-0">
-                <!-- 親師交流留言板 -->
                 <section class="order-9 md:order-1 bg-white rounded-2xl p-3.5 sm:p-5 card-shadow border border-slate-100 space-y-3">
                     <div class="flex items-center justify-between gap-2">
                         <div class="flex items-center gap-2 text-cyan-700 font-bold text-xs sm:text-sm min-w-0">
@@ -275,7 +274,7 @@
                     </div>
                 </section>
 
-                <!-- 7. 課任表現（電腦版位於親師溝通下方） -->
+                <!-- 7. 課任表現 -->
                 <section class="order-7 md:order-2 bg-white rounded-2xl p-3.5 sm:p-5 card-shadow border border-slate-100 space-y-2">
                     <div class="flex items-center gap-2 text-amber-700 font-bold text-xs sm:text-sm">
                         <div class="p-1.5 bg-amber-50 rounded-lg shrink-0"><i data-lucide="sparkles" class="w-4 h-4"></i></div>
@@ -285,7 +284,7 @@
                     </div>
                 </section>
 
-                <!-- 8. 傷病通知（電腦版位於課任表現下方） -->
+                <!-- 8. 傷病通知 -->
                 <section id="parentHealthCard" class="order-8 md:order-3 bg-white rounded-2xl p-3.5 sm:p-5 card-shadow border border-rose-100 space-y-2">
                     <div class="flex items-center gap-2 text-rose-700 font-bold text-xs sm:text-sm">
                         <div class="p-1.5 bg-rose-50 rounded-lg shrink-0"><i data-lucide="heart-pulse" class="w-4 h-4"></i></div>
@@ -407,7 +406,7 @@
             </div>
         </div>
 
-        <!-- TAB 2: 其他作業點名（每日獨立設定・咖啡色系） -->
+        <!-- TAB 2: 其他作業點名（每日獨立設定・咖啡色系・圖卡比照聯絡簿快捷圖卡） -->
         <div id="panel-extraBoard" class="hidden space-y-4">
             <div class="bg-white rounded-2xl p-4 md:p-6 card-shadow border border-amber-300/80 space-y-4">
                 <div class="flex justify-between items-center flex-wrap gap-2">
@@ -417,6 +416,10 @@
                     </h2>
                     <div class="flex items-center gap-2 flex-wrap">
                         <span id="extraHwStats" class="text-xs font-bold text-amber-900 bg-amber-100 border border-amber-300 px-3 py-1 rounded-full"></span>
+                        <button type="button" onclick="toggleExtraRepeatMode()" id="extraRepeatToggleBtn" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-600 border border-slate-200 transition">
+                            <i data-lucide="repeat" class="w-3.5 h-3.5"></i>
+                            <span>重複作業</span>
+                        </button>
                         <button type="button" onclick="clearAllExtraHomeworkCards()" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-bold bg-slate-100 hover:bg-amber-100 text-slate-600 hover:text-amber-900 border border-slate-200 transition">
                             <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                             <span>清空當日其他作業</span>
@@ -424,14 +427,19 @@
                     </div>
                 </div>
 
-                <div class="flex gap-2">
-                    <input type="text" id="newExtraCardInput" placeholder="新增當日其他作業圖卡名稱（例如：考卷訂正、回條）..." onkeydown="if(event.key==='Enter') addExtraHomeworkCard()" class="flex-1 min-w-0 px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-700">
-                    <button type="button" onclick="addExtraHomeworkCard()" class="shrink-0 px-4 py-2 bg-amber-800 hover:bg-amber-900 text-white rounded-xl text-xs font-bold transition">
-                        新增至當日
-                    </button>
+                <!-- 像聯絡簿那邊的快捷圖卡區 -->
+                <div class="space-y-1.5">
+                    <div class="flex items-center justify-between gap-2 flex-wrap">
+                        <span class="text-xs font-bold text-amber-900">當日其他作業圖卡（點擊選取點名；啟用「重複作業」時家長端隱藏、老師端保留）</span>
+                    </div>
+                    <div id="extraCardsTagList" class="flex flex-wrap gap-1.5"></div>
+                    <div class="flex gap-1.5 pt-0.5">
+                        <input type="text" id="newExtraCardInput" placeholder="新增當日其他作業圖卡文字（例如：考卷訂正、回條）..." onkeydown="if(event.key==='Enter') addExtraHomeworkCard()" class="flex-1 min-w-0 px-2.5 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-700">
+                        <button type="button" onclick="addExtraHomeworkCard()" class="shrink-0 px-3 py-1.5 bg-amber-100 hover:bg-amber-200 text-amber-950 border border-amber-300 rounded-lg text-xs font-bold transition">
+                            ＋圖卡
+                        </button>
+                    </div>
                 </div>
-
-                <div id="extraCardsTagList" class="flex flex-wrap gap-1.5"></div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
@@ -467,7 +475,13 @@
                         <i data-lucide="zap" class="w-4 h-4 text-indigo-600"></i>
                         <span><span id="batchHwDateLabel" class="text-indigo-700"></span> 平日回家作業一鍵快速點名</span>
                     </h2>
-                    <span id="batchHwStats" class="text-xs font-bold text-indigo-700 bg-indigo-50 px-3 py-1 rounded-full"></span>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span id="batchHwStats" class="text-xs font-bold text-indigo-700 bg-indigo-50 px-3 py-1 rounded-full"></span>
+                        <button type="button" onclick="toggleRegularRepeatMode()" id="regularRepeatToggleBtn" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-600 border border-slate-200 transition">
+                            <i data-lucide="repeat" class="w-3.5 h-3.5"></i>
+                            <span>重複作業</span>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -831,6 +845,8 @@
                 dailyNote: "1. 請攜帶水壺與學用品\n2. 請完成今日作業並簽名",
                 homeworkList: [],
                 extraCards: [],
+                hiddenFromParentRegular: [],
+                hiddenFromParentExtra: [],
                 studentRecords: studentRecords
             };
         }
@@ -954,6 +970,8 @@
             const rec = state.recordsByDate[dateStr];
             if (!Array.isArray(rec.homeworkList)) rec.homeworkList = [];
             if (!Array.isArray(rec.extraCards)) rec.extraCards = [];
+            if (!Array.isArray(rec.hiddenFromParentRegular)) rec.hiddenFromParentRegular = [];
+            if (!Array.isArray(rec.hiddenFromParentExtra)) rec.hiddenFromParentExtra = [];
             if (!rec.studentRecords) rec.studentRecords = {};
             getDayExtraCards(rec);
 
@@ -975,6 +993,79 @@
             return rec;
         }
 
+        function isHiddenFromParent(dayRec, type, itemId) {
+            if (!dayRec) return false;
+            if (type === 'regular') {
+                return Array.isArray(dayRec.hiddenFromParentRegular) && dayRec.hiddenFromParentRegular.includes(itemId);
+            }
+            if (type === 'extra') {
+                return Array.isArray(dayRec.hiddenFromParentExtra) && dayRec.hiddenFromParentExtra.includes(itemId);
+            }
+            return false;
+        }
+
+        window.toggleRegularRepeatMode = function() {
+            const dayRec = ensureDateRecord(selectedDate);
+            const hwId = document.getElementById('batchHwSelect')?.value;
+            if (!hwId) {
+                showToast("請先選擇當日平日回家作業項目");
+                return;
+            }
+            if (!Array.isArray(dayRec.hiddenFromParentRegular)) dayRec.hiddenFromParentRegular = [];
+            const idx = dayRec.hiddenFromParentRegular.indexOf(hwId);
+            if (idx >= 0) {
+                dayRec.hiddenFromParentRegular.splice(idx, 1);
+                showToast("已取消「重複作業」，家長端將恢復顯示此項作業");
+            } else {
+                dayRec.hiddenFromParentRegular.push(hwId);
+                showToast("已設為「重複作業」，家長端將隱藏此項作業（老師端仍可見）");
+            }
+            saveState();
+            updateRegularRepeatButton(dayRec, hwId);
+        };
+
+        function updateRegularRepeatButton(dayRec, hwId) {
+            const btn = document.getElementById('regularRepeatToggleBtn');
+            if (!btn) return;
+            const active = hwId && isHiddenFromParent(dayRec, 'regular', hwId);
+            btn.className = active
+                ? "inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-bold bg-amber-100 text-amber-950 border border-amber-400 transition"
+                : "inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-600 border border-slate-200 transition";
+            btn.innerHTML = `<i data-lucide="repeat" class="w-3.5 h-3.5"></i><span>${active ? '重複作業（家長隱藏中）' : '重複作業'}</span>`;
+            lucide.createIcons();
+        }
+
+        window.toggleExtraRepeatMode = function() {
+            const dayRec = ensureDateRecord(selectedDate);
+            const exId = document.getElementById('extraHwSelect')?.value;
+            if (!exId) {
+                showToast("請先選擇當日其他作業圖卡");
+                return;
+            }
+            if (!Array.isArray(dayRec.hiddenFromParentExtra)) dayRec.hiddenFromParentExtra = [];
+            const idx = dayRec.hiddenFromParentExtra.indexOf(exId);
+            if (idx >= 0) {
+                dayRec.hiddenFromParentExtra.splice(idx, 1);
+                showToast("已取消「重複作業」，家長端將恢復顯示此項其他作業");
+            } else {
+                dayRec.hiddenFromParentExtra.push(exId);
+                showToast("已設為「重複作業」，家長端將隱藏此項其他作業（老師端仍可見）");
+            }
+            saveState();
+            updateExtraRepeatButton(dayRec, exId);
+        };
+
+        function updateExtraRepeatButton(dayRec, exId) {
+            const btn = document.getElementById('extraRepeatToggleBtn');
+            if (!btn) return;
+            const active = exId && isHiddenFromParent(dayRec, 'extra', exId);
+            btn.className = active
+                ? "inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-bold bg-amber-200 text-amber-950 border border-amber-500 transition"
+                : "inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-bold bg-slate-100 hover:bg-amber-100 text-slate-600 hover:text-amber-900 border border-slate-200 transition";
+            btn.innerHTML = `<i data-lucide="repeat" class="w-3.5 h-3.5"></i><span>${active ? '重複作業（家長隱藏中）' : '重複作業'}</span>`;
+            lucide.createIcons();
+        }
+
         function collectAllUnpaidHomeworkAcrossDates(studentId) {
             const results = [];
             const recordsByDate = state.recordsByDate || {};
@@ -990,6 +1081,7 @@
 
                 const dayHwList = Array.isArray(rec.homeworkList) ? rec.homeworkList : [];
                 dayHwList.forEach(hw => {
+                    if (isHiddenFromParent(rec, 'regular', hw.id)) return;
                     const statusKey = normalizeStatus((stRec.hwStatus || {})[hw.id]);
                     const cfg = HW_STATUS_CONFIG[statusKey];
                     if (!cfg.isCompleted) {
@@ -1011,6 +1103,7 @@
 
                 const dayExtraList = Array.isArray(rec.extraCards) ? rec.extraCards : [];
                 dayExtraList.forEach(ex => {
+                    if (isHiddenFromParent(rec, 'extra', ex.id)) return;
                     const statusKey = normalizeStatus((stRec.extraHwStatus || {})[ex.id]);
                     const cfg = HW_STATUS_CONFIG[statusKey];
                     if (!cfg.isCompleted) {
@@ -1387,16 +1480,18 @@
                 `).join('');
             }
 
+            // 5. 當日平日回家作業（排除標記為「重複作業」的家長隱藏項目）
             const hwContainer = document.getElementById('parentHomeworkList');
             hwContainer.innerHTML = '';
             let attentionCount = 0;
             const correctionItems = [];
             const dayHomeworkList = Array.isArray(dayRec.homeworkList) ? dayRec.homeworkList : [];
+            const visibleRegularHw = dayHomeworkList.filter(hw => !isHiddenFromParent(dayRec, 'regular', hw.id));
 
-            if (dayHomeworkList.length === 0) {
-                hwContainer.innerHTML = `<p class="py-2.5 text-xs text-slate-400">當日尚未設定平日回家作業。</p>`;
+            if (visibleRegularHw.length === 0) {
+                hwContainer.innerHTML = `<p class="py-2.5 text-xs text-slate-400">當日無需顯示的平日回家作業。</p>`;
             } else {
-                dayHomeworkList.forEach(hw => {
+                visibleRegularHw.forEach(hw => {
                     const statusKey = normalizeStatus(stRec.hwStatus[hw.id]);
                     const cfg = HW_STATUS_CONFIG[statusKey];
                     if (!cfg.isCompleted) {
@@ -1415,12 +1510,14 @@
                 });
             }
 
+            // 6. 當日其他作業（排除標記為「重複作業」的家長隱藏項目，且登記「已繳交」不顯示）
             const extraListEl = document.getElementById('parentExtraHomeworkList');
             const extraBadgeEl = document.getElementById('parentExtraHwBadge');
             const dayExtraCards = getDayExtraCards(dayRec);
             const visibleExtraItems = [];
 
             dayExtraCards.forEach(ex => {
+                if (isHiddenFromParent(dayRec, 'extra', ex.id)) return;
                 const statusKey = normalizeStatus((stRec.extraHwStatus || {})[ex.id]);
                 if (statusKey !== 'submitted') {
                     visibleExtraItems.push({
@@ -1476,7 +1573,7 @@
             }
 
             const summaryTag = document.getElementById('hwSummaryTag');
-            if (dayHomeworkList.length === 0) {
+            if (visibleRegularHw.length === 0) {
                 summaryTag.className = "text-[11px] sm:text-xs font-medium px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-500";
                 summaryTag.innerText = "當日無設定作業";
             } else if (attentionCount === 0) {
@@ -1847,21 +1944,6 @@
             document.getElementById('extraBoardDateLabel').innerText = selectedDate;
             const dayExtraCards = getDayExtraCards(dayRec);
 
-            const tagListEl = document.getElementById('extraCardsTagList');
-            tagListEl.innerHTML = '';
-            if (dayExtraCards.length === 0) {
-                tagListEl.innerHTML = `<span class="text-xs text-slate-400">${selectedDate} 尚未設定其他作業圖卡；請輸入名稱並按「新增至當日」。</span>`;
-            } else {
-                dayExtraCards.forEach(ex => {
-                    tagListEl.innerHTML += `
-                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-100/90 text-amber-950 border border-amber-300">
-                            <button type="button" onclick="selectExtraHomeworkFromTag('${ex.id}')">${escapeHtml(ex.title)}</button>
-                            <button type="button" onclick="deleteExtraHomeworkCard('${ex.id}')" class="text-amber-700/70 hover:text-rose-600" title="刪除">×</button>
-                        </span>
-                    `;
-                });
-            }
-
             const sel = document.getElementById('extraHwSelect');
             const prevVal = sel.value;
             sel.innerHTML = '';
@@ -1870,17 +1952,40 @@
                 sel.add(new Option("此日尚未新增其他作業圖卡", ""));
                 document.getElementById('extraHwGrid').innerHTML = `<p class="col-span-full text-xs text-slate-400 text-center py-4">此日尚未新增其他作業圖卡</p>`;
                 document.getElementById('extraHwStats').innerText = "0 項圖卡";
-                return;
+                updateExtraRepeatButton(dayRec, "");
+            } else {
+                dayExtraCards.forEach(ex => {
+                    sel.add(new Option(ex.title, ex.id));
+                });
+                if (prevVal && dayExtraCards.some(h => h.id === prevVal)) {
+                    sel.value = prevVal;
+                }
             }
 
-            dayExtraCards.forEach(ex => {
-                sel.add(new Option(ex.title, ex.id));
-            });
-
-            if (prevVal && dayExtraCards.some(h => h.id === prevVal)) {
-                sel.value = prevVal;
+            const activeExId = sel.value;
+            const tagListEl = document.getElementById('extraCardsTagList');
+            if (dayExtraCards.length === 0) {
+                tagListEl.innerHTML = `<span class="text-xs text-slate-400">${selectedDate} 尚未新增其他作業圖卡，請在下方輸入並按「＋圖卡」。</span>`;
+            } else {
+                tagListEl.innerHTML = dayExtraCards.map(ex => {
+                    const isSelected = ex.id === activeExId;
+                    const isRepeat = isHiddenFromParent(dayRec, 'extra', ex.id);
+                    return `
+                        <span class="inline-flex items-center gap-1 rounded-lg border text-xs font-bold transition ${isSelected
+                            ? 'bg-amber-200/90 border-amber-500 text-amber-950 ring-1 ring-amber-500'
+                            : 'bg-amber-50 border-amber-200 text-amber-900 hover:bg-amber-100/80'}">
+                            <button type="button" onclick="selectExtraHomeworkFromTag('${ex.id}')" class="px-2.5 py-1 rounded-l-lg transition">
+                                ＋ ${escapeHtml(ex.title)}${isRepeat ? ' (重複)' : ''}
+                            </button>
+                            <button type="button" onclick="deleteExtraHomeworkCard('${ex.id}')" class="pr-1.5 text-amber-700/70 hover:text-rose-600" title="移除此其他作業圖卡">×</button>
+                        </span>
+                    `;
+                }).join('');
             }
-            window.renderExtraHomeworkGrid();
+
+            if (activeExId) {
+                window.renderExtraHomeworkGrid();
+            }
         }
 
         window.selectExtraHomeworkFromTag = function(exId) {
@@ -1888,6 +1993,7 @@
             if (sel) {
                 sel.value = exId;
                 window.renderExtraHomeworkGrid();
+                renderExtraBoardPanel();
             }
         };
 
@@ -1895,6 +2001,7 @@
             const dayRec = ensureDateRecord(selectedDate);
             const exId = document.getElementById('extraHwSelect').value;
             const grid = document.getElementById('extraHwGrid');
+            updateExtraRepeatButton(dayRec, exId);
             if (!exId) return;
 
             grid.innerHTML = '';
@@ -1972,15 +2079,15 @@
 
             input.value = '';
             saveState();
-            renderExtraBoardPanel();
             document.getElementById('extraHwSelect').value = newId;
-            window.renderExtraHomeworkGrid();
-            showToast(`已新增 ${selectedDate} 專屬其他作業圖卡「${title}」`);
+            renderExtraBoardPanel();
+            showToast(`已新增 ${selectedDate} 其他作業圖卡「${title}」`);
         };
 
         window.deleteExtraHomeworkCard = function(exId) {
             const dayRec = ensureDateRecord(selectedDate);
             dayRec.extraCards = getDayExtraCards(dayRec).filter(ex => ex.id !== exId);
+            dayRec.hiddenFromParentExtra = (dayRec.hiddenFromParentExtra || []).filter(id => id !== exId);
             CLASS_STUDENTS.forEach(s => {
                 if (dayRec.studentRecords[s.id] && dayRec.studentRecords[s.id].extraHwStatus) {
                     delete dayRec.studentRecords[s.id].extraHwStatus[exId];
@@ -2001,6 +2108,7 @@
             if (!confirm(`確定要清空 ${selectedDate} 的所有「其他作業圖卡」嗎？`)) return;
 
             dayRec.extraCards = [];
+            dayRec.hiddenFromParentExtra = [];
             CLASS_STUDENTS.forEach(s => {
                 if (dayRec.studentRecords[s.id]) {
                     dayRec.studentRecords[s.id].extraHwStatus = {};
@@ -2225,6 +2333,7 @@
                 sel.add(new Option(`${selectedDate} 尚未設定平日回家作業`, ""));
                 document.getElementById('batchHwGrid').innerHTML = `<p class="col-span-full text-xs text-slate-400 text-center py-4">請先至「聯絡/平日作業」分頁設定 ${selectedDate} 的作業項目</p>`;
                 document.getElementById('batchHwStats').innerText = "0 項作業";
+                updateRegularRepeatButton(dayRec, "");
                 return;
             }
 
@@ -2242,6 +2351,7 @@
             const dayRec = ensureDateRecord(selectedDate);
             const hwId = document.getElementById('batchHwSelect').value;
             const grid = document.getElementById('batchHwGrid');
+            updateRegularRepeatButton(dayRec, hwId);
             if (!hwId) return;
 
             grid.innerHTML = '';
@@ -2536,6 +2646,7 @@
         window.deleteHomeworkItem = function(hwId) {
             const dayRec = ensureDateRecord(selectedDate);
             dayRec.homeworkList = dayRec.homeworkList.filter(h => h.id !== hwId);
+            dayRec.hiddenFromParentRegular = (dayRec.hiddenFromParentRegular || []).filter(id => id !== hwId);
             CLASS_STUDENTS.forEach(s => {
                 delete dayRec.studentRecords[s.id].hwStatus[hwId];
             });
